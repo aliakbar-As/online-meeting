@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import lock from '../../../assets/auth/lock.png';
 import clock from '../../../assets/auth/clock.png';
+import { Button } from '../../Commons/Button';
 
 
 function Login() {
@@ -102,15 +103,15 @@ const SignIn = styled.a`
     font-size: 20px;
 
     text-align: center;
-    justify-center: center;
+    justify-content: center;
     align-items: center;
     align-self: center;
     
     padding: 10px 0;
-
+    cursor: pointer;
 
     &:hover {
-        background: #0483ee;
+        transition: opacity 0.2s ease 0s;
     }
 
 `;

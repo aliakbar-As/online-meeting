@@ -7,10 +7,14 @@ import styled from 'styled-components';
 
 import './form.css';
 
+import backArrow from '../../../../assets/mainScreens/backArrow.png';
 import infoIcon from '../../../../assets/mainScreens/info.png';
 import pdf from '../../../../assets/mainScreens/pdf.png';
 import excel from '../../../../assets/mainScreens/excel.png';
 import info from '../../../../assets/mainScreens/info2.png';
+import users from '../../../../assets/mainScreens/users.png';
+import pin from '../../../../assets/mainScreens/pin.png';
+import { Button } from '../../../../components/Commons';
 
 let tabs = [
     {
@@ -41,27 +45,11 @@ const FormInfo = (props) => {
                     <ArrowIcon src={downArrow} alt="downArrow" />
                 </IconsDiv>
 
-
-                <TabContainer>
-                    {tabs.map((item, index) => {
-                        return (
-                            <Tab
-                                key={item.id}
-                                style={{ borderBottom: tabSelectedId === item.id ? '4px solid #97A1FF' : '1px solid #fff' }}
-                                onClick={() => setTabSelectedId(item.id)}>
-                                <span style={{ color: tabSelectedId === item.id ? '#97A1FF' : '#fff' }}>
-                                    {item.title}
-                                </span>
-                            </Tab>
-                        )
-                    })}
-                </TabContainer>
+                <Back src={backArrow} alt="backArrow" />
 
             </TopView>
 
-            {tabSelectedId === 0 ?
 
-                <>
                     <Info>
                         <span>مجمع ها / مجمع تست</span>
                     </Info>
@@ -135,13 +123,175 @@ const FormInfo = (props) => {
                         </CardSectionOne>
 
                     </Card>
-                </>
 
-                : null}
+
+                    <Card>
+                        <Percent>
+                            <span>درصد حضور</span>
+
+                            <p>%    45 درصد</p>
+                        </Percent>
+
+
+                        <Count>
+
+                            <span>تعداد نفرات حاظر</span>
+
+                            <div>
+                                <p>نفر 82 </p>
+                                <img src={users} alt="users" />
+                            </div>
+                        </Count>
+
+                        <Links>
+                            <img src={downArrow} alt="downArrow" />
+
+                            <div>
+                                <p>لینک های مستندات مرتبط با مجمع</p>
+                                <img src={pin} alt="users" />
+                            </div>
+
+                        </Links>
+
+                    </Card>
+
+                    <Footer>
+                        <Button
+                            onPress={() => console.log('online meeting')}
+                            title={'مشاهده آنلاین'} />
+
+                        <Button
+                            primary
+                            onPress={() => console.log('survey')}
+                            title={'نظرسنجی'} />
+
+                    </Footer>
+
         </div>
     );
 };
 
+
+const Footer = styled.div`
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    display: flex;
+`;
+
+
+const Back = styled.img`
+    width: 48px;
+    height: 48px;
+    align-self: flex-end;
+`;
+
+const Percent = styled.div`
+    height: 104px;
+    width: 20%;
+    background: #A87EFF;
+    opacity: 0.9;
+    border-radius: 8px;
+    text-align: center;
+
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    display: flex;
+    cursor: pointer;
+
+    span {
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+
+    p {
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+`;
+
+const Count = styled.div`
+    height: 104px;
+    width: 20%;
+    background: #7B88FF;
+    opacity: 0.9;
+    border-radius: 8px;
+
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    padding-top: 10px;
+    cursor: pointer;
+    span {
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+    div {
+        flex-direction: row;
+        align-items: center;
+        display: flex;
+        justify-self: center;
+        text-align: center;
+    }
+
+    p {
+        font-weight: bold;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    img {
+        width: 25px;
+        height: 25px;
+        margin-left: 10px;
+    }
+
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+`;
+
+const Links = styled.div`
+    height: 104px;
+    width: 58.8%;
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    background: #2F3247;
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    justify-content: space-between;
+
+    align-self: flex-end;
+    padding: 10px;
+    cursor: pointer;
+    
+    div {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        display: flex;
+    }
+
+    img {
+        margin-left: 10px;
+    }
+
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+
+`;
 
 const InnerView = styled.div`
     flex-direction: row;
@@ -237,6 +387,7 @@ const Card = styled.div`
     justify-content: space-around;
     flex-direction: row;
     display: flex;
+    margin-bottom: 10px;
 `;
 
 const CardSectionInfo = styled.div`
@@ -289,15 +440,6 @@ const Tab = styled.div`
 `;
 
 
-const TabContainer = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    width: 85%;
-    display: flex;
-    /* background-color: red; */
-`;
-
 const ArrowIcon = styled.img`
     width: 13.33px;
     height: 8.23px;
@@ -325,14 +467,5 @@ const TopView = styled.div`
     display: flex;
     justify-content: space-between;
 `;
-
-const styles = {
-    tabContainer: {
-        flexDirection: 'row', alignItems: 'center',
-        justifyContent: 'flex-end',
-        display: 'flex',
-        width: '80%'
-    },
-};
 
 export default FormInfo;

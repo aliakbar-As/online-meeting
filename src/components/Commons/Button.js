@@ -29,7 +29,7 @@ const Normal = styled.button`
     width: 215px;
     height: 48px;
     
-    border: 1px solid #7B88FF;
+    border: 1px solid #A17BF1;
 
     background-color: transparent;
     border-radius: 8px;

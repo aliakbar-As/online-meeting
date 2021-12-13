@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import './admin.css';
+
+import { useNavigate } from 'react-router-dom';
+
+
 
 let items = [
     {
@@ -62,6 +67,8 @@ let items = [
 ];
 
 const OngoingEvents = (props) => {
+    const navigate = useNavigate();
+
 
     return (
         <Main>
@@ -75,18 +82,52 @@ const OngoingEvents = (props) => {
                         <span style={{ color: '#E7E9FF', fontSize: 14 }}>{item.date}</span>
 
 
-                        <Button style={() => console.log('onclick')}>
+                        <Info onClick={() => navigate({
+                            pathname: "/admin/info",
+                            search: null,
+                            state: null,
+                        })}>
                             مشاهده اطلاعیه
-                        </Button>
+                        </Info>
                     </Table>
                 )
             })}
+
+            <div className="addContainer">
+                <Add onClick={() => navigate({ pathname: "/admin/add", search: null, state: null, })}>
+                    افزودن مجمع
+                </Add>
+            </div>
+
+
 
         </Main>
     );
 };
 
-const Button = styled.button`
+
+
+
+const Add = styled.button`
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px;
+    width: 450px;
+    height: 48px;
+
+    text-align: center;
+    color: #fff;
+    
+    justify-content: flex-end;
+
+    font-size: 18px;
+cursor: pointer;
+border: 0px;
+
+
+`;
+
+
+const Info = styled.button`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     box-shadow: 0px 4px 6px rgba(25, 26, 29, 0.4);
     border-radius: 8px;
@@ -96,7 +137,6 @@ const Button = styled.button`
     height: 48px;
     font-size: 20px;
     border: 0px;
-
 `;
 
 const Logo = styled.img`
@@ -119,7 +159,11 @@ const Table = styled.div`
 
 const Main = styled.main`
     margin-top: 3%;
-    margin-bottom: 5%;
+    background: #2F3247;
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    margin: 3%;
 `;
 
 export default OngoingEvents;

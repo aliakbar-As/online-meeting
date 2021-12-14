@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components"
 import { Header, ModalComponent } from "../../../../Commons";
 
-import './election.css';
 
 import left from '../../../../../assets/mainScreens/leftArrow.svg';
 
@@ -11,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 let tableItems = [
     {
         id: 0,
-        title: 'عنوان انتخاب اول',
+        title: 'عنوان نظرسنجی اول',
         meeting: 'عنوان نام مجمع',
         count: 1,
         date: '1400/08/01',
@@ -19,7 +18,7 @@ let tableItems = [
     },
     {
         id: 0,
-        title: 'عنوان انتخاب دوم',
+        title: 'عنوان نظرسنجی دوم',
         meeting: 'عنوان نام مجمع2',
         count: 2,
         date: '1400/08/02',
@@ -27,7 +26,7 @@ let tableItems = [
     },
     {
         id: 0,
-        title: 'عنوان انتخاب سوم',
+        title: 'عنوان نظرسنجی سوم',
         meeting: 'عنوان نام مجمع3',
         count: 3,
         date: '1400/08/03',
@@ -36,7 +35,7 @@ let tableItems = [
 ];
 
 
-const Election = (props) => {
+const Survey = (props) => {
 
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(true);
@@ -57,12 +56,12 @@ const Election = (props) => {
 
 
             <Info>
-                <span>مجمع ها / انتخابات</span>
+                <span>مجمع ها / نظرسنجی</span>
             </Info>
 
 
             <SurveyView>
-                <span>انتخابات</span>
+                <span>نظرسنجی ها</span>
             </SurveyView>
 
 
@@ -81,7 +80,7 @@ const Election = (props) => {
                         return (
                             <Tr>
                                 <Td>
-                                    <SeeMore onClick={()=> navigate('/admin/election/detail')}>
+                                    <SeeMore onClick={()=> navigate('/admin/survey/detail')}>
                                         <img src={left} alt="arrow" />
                                         <span>مشاهده</span>
                                     </SeeMore>
@@ -98,8 +97,8 @@ const Election = (props) => {
             </div>
 
             <div className="addButton">
-                <Add onClick={() => navigate('/admin/election/add')}>
-                    افزودن انتخابات
+                <Add onClick={() => navigate('/admin/survey/add')}>
+                    افزودن نظرسنجی
                 </Add>
             </div>
 
@@ -223,4 +222,4 @@ const Info = styled.div`
         font-size: 14px;
     }
 `;
-export default Election;
+export default Survey;

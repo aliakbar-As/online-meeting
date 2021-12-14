@@ -38,7 +38,6 @@ const Normal = styled.button`
     text-align: center;
     justify-content: center;
     align-items: center;
-    align-self: center;
     color: #A87EFF;
     font-size: 20px;
     cursor: pointer;
@@ -64,7 +63,6 @@ const Primary = styled.button`
     text-align: center;
     justify-content: center;
     align-items: center;
-    align-self: center;
     color: #fff;
     font-size: 20px;
     cursor: pointer;

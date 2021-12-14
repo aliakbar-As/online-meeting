@@ -19,6 +19,13 @@ import StepOne from '../components/Screens/MainScreens/admin/addMeeting/StepOne'
 import StepTwo from '../components/Screens/MainScreens/admin/addMeeting/StepTwo';
 import FinalStep from '../components/Screens/MainScreens/admin/addMeeting/FinalStep';
 import Election from '../components/Screens/MainScreens/admin/election/Election';
+import ElectionDetails from '../components/Screens/MainScreens/admin/election/ElectionDetails';
+import AddElection from '../components/Screens/MainScreens/admin/election/AddElection';
+
+import AdminSurvey from '../components/Screens/MainScreens/admin/Survey/Survey';
+import SurveyDetails from '../components/Screens/MainScreens/admin/Survey/SurveyDetails';
+import AddSurvey from '../components/Screens/MainScreens/admin/Survey/AddSurvey';
+import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuestion';
 
 function RouterComponent() {
     return (
@@ -84,6 +91,34 @@ function RouterComponent() {
             <Route path="/admin/election"
                 element={<Election />}
             />
+
+            <Route path="/admin/election/detail"
+                element={<ElectionDetails />}
+            />
+
+            <Route path="/admin/election/add"
+                element={<AddElection />}
+            />
+
+
+
+
+            <Route path="/admin/survey"
+                element={<AdminSurvey />}
+            />
+
+            <Route path="/admin/survey/detail"
+                element={<SurveyDetails />}
+            />
+
+            <Route path="/admin/survey/add"
+                element={<AddSurvey />}
+            />
+
+            <Route path="/admin/survey/add/question"
+                element={<AddQuestion />}
+            />
+
         </Routes>
     );
 };

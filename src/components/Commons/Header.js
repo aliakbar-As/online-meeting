@@ -7,7 +7,7 @@ import downArrow from '../../assets/mainScreens/downArrow.png';
 
 
 export const Header = ({
-    
+    backOnclick
 }) => {
     return (
         <TopView onClick={() => console.log('user')}>
@@ -17,7 +17,7 @@ export const Header = ({
                 <ArrowIcon src={downArrow} alt="downArrow" />
             </IconsDiv>
 
-            <Back src={backArrow} alt="backArrow" />
+            <Back onClick={backOnclick} src={backArrow} alt="backArrow" />
         </TopView>
     );
 };

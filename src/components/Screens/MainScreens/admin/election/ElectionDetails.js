@@ -1,16 +1,37 @@
-import React, { useEffect, useState } from 'react';
 import styled from "styled-components"
-import { Header, ModalComponent } from "../../../../Commons";
+import { Header } from "../../../../Commons";
 
 import './election.css';
 
-import left from '../../../../../assets/mainScreens/leftArrow.svg';
-
 import { useNavigate } from 'react-router-dom';
+
+
+let chartItems = [
+    {
+        id: 0,
+        title: 'نفر اول',
+        percent: 20,
+    },
+    {
+        id: 2,
+        title: 'نفر دوم',
+        percent: 10,
+    },
+    {
+        id: 3,
+        title: 'نفر سوم',
+        percent: 5,
+    },
+    {
+        id: 3,
+        title: 'نفر چهارم',
+        percent: 75,
+    },
+];
 
 let tableItems = [
     {
-        id: 0,
+        id: 1,
         title: 'عنوان انتخاب اول',
         meeting: 'عنوان نام مجمع',
         count: 1,
@@ -18,7 +39,7 @@ let tableItems = [
         status: 'در حال بارگزاری 1',
     },
     {
-        id: 0,
+        id: 2,
         title: 'عنوان انتخاب دوم',
         meeting: 'عنوان نام مجمع2',
         count: 2,
@@ -26,29 +47,21 @@ let tableItems = [
         status: 'در حال بارگزاری 2',
     },
     {
-        id: 0,
+        id: 3,
         title: 'عنوان انتخاب سوم',
         meeting: 'عنوان نام مجمع3',
         count: 3,
         date: '1400/08/03',
         status: 'در حال بارگزاری 3',
     },
+    
 ];
 
 
-const Election = (props) => {
+const ElectionDetails = (props) => {
 
     const navigate = useNavigate();
-    const [modalVisible, setModalVisible] = useState(true);
 
-
-    useEffect(() => {
-
-        setTimeout(() => {
-            setModalVisible(false);
-        }, 3000);
-
-    }, []);
     return (
         <div className="main">
             <Header
@@ -60,36 +73,46 @@ const Election = (props) => {
                 <span>مجمع ها / انتخابات</span>
             </Info>
 
-
             <SurveyView>
-                <span>انتخابات</span>
+                <span style={{ color: '#fff' }}>02/08/1400   .   02/08/1400</span>
+
+
+                <span>انتخابات اول | مجمع اول <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | در حال برگزاری</span></span>
             </SurveyView>
+
+
+
+            <ChartView>
+                {chartItems.map(item => {
+                    return (
+                        <View>
+                            <span>{item.percent}%</span>
+
+                            <div style={{ width: 100, height: `${item.percent}%`, backgroundColor: 'red' }}>
+
+                            </div>
+
+
+                            <span>{item.title}</span>
+                        </View>
+                    )
+                })}
+            </ChartView>
 
 
 
             <div className="table">
                 <Table>
                     <Tr>
-                        <Th>اقدامات</Th>
-                        <Th>وضعیت</Th>
-                        <Th>تاریخ</Th>
-                        <Th>تعداد آرا</Th>
-                        <Th>نام مجمع</Th>
-                        <Th><p>عنوان</p></Th>
+                        <Th>تاثیرگذاری رای</Th>
+                        <Th>گزینه انتخابی</Th>
+                        <Th><p>نام و نام خانوادگی </p></Th>
                     </Tr>
                     {tableItems.map(item => {
                         return (
                             <Tr>
-                                <Td>
-                                    <SeeMore onClick={()=> navigate('/admin/election/detail')}>
-                                        <img src={left} alt="arrow" />
-                                        <span>مشاهده</span>
-                                    </SeeMore>
-                                </Td>
-                                <Td>{item.status}</Td>
-                                <Td>{item.date}</Td>
-                                <Td>{item.count}</Td>
-                                <Td>{item.meeting}</Td>
+                                <Td>{item.id} %</Td>
+                                <Td>{item.id}</Td>
                                 <Td><p>{item.title}</p></Td>
                             </Tr>
                         )
@@ -97,21 +120,29 @@ const Election = (props) => {
                 </Table>
             </div>
 
-            <div className="addButton">
-                <Add onClick={() => navigate('/admin/election/add')}>
-                    افزودن انتخابات
-                </Add>
-            </div>
-
-
-            <ModalComponent
-                modalVisible={modalVisible}
-                closeModal={() => setModalVisible(false)}
-                content={'انتخابات با موفقیت ثبت شد.'}
-            />
         </div>
     )
 }
+
+const View = styled.div`
+    margin-right: 5px;
+    height: 414px;
+`;
+
+const ChartView = styled.div`
+    background: #2F3247;
+    /* elevation 2 */
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    flex-direction: row;
+    align-items: flex-start;
+    display: flex;
+    justify-content: center;
+`;
+
 
 const Add = styled.button`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
@@ -123,7 +154,7 @@ const Add = styled.button`
     color: #fff;
     font-size: 18px;
     margin-top: 16px;
-    cursor: pointer;
+
 `;
 
 
@@ -133,7 +164,6 @@ const SeeMore = styled.div`
     display: flex;
 
     justify-content: center;
-    cursor: pointer;
 
     span {
         color: #97A1FF;
@@ -185,23 +215,19 @@ const Table = styled.table`
     margin-top: 20px;
     padding: 10px;
 
+    overflow-y: 'scroll'
 `;
 
 
 const SurveyView = styled.div`
     flex-direction: row;
     align-items: center;
-    align-self: flex-end;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 
     margin-top: 16px;
     
-    img {
-        width: 20px;
-        height: 20px;
-        margin-left: 10px;
-    }
+
     
     span {
         color: #97A1FF;
@@ -223,4 +249,4 @@ const Info = styled.div`
         font-size: 14px;
     }
 `;
-export default Election;
+export default ElectionDetails;

@@ -78,7 +78,7 @@ const ForumList = (props) => {
 
                     <Footer>
 
-                        <Survey>
+                        <Survey onClick={() => navigate('/admin/survey')}>
                             <Left src={left} alt="left arrow" />
                             <span>نظرسنجی ها</span>
                             <Icon src={wSurvey} alt="survey" />
@@ -128,6 +128,7 @@ const Survey = styled.button`
     justify-content: center;
 
     border: 0px;
+    cursor: pointer;
 
     span {
         font-size: 20px;

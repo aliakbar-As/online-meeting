@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Login.css';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -7,20 +7,32 @@ import { useNavigate } from 'react-router-dom';
 import lock from '../../../assets/auth/lock.png';
 import { Button } from '../../Commons/Button';
 
+import StoreContext from '../../../Stores';
+
+import spinner from '../../../assets/auth/spinner.svg';
 
 function VerificationCode() {
+    const { AuthStore } = useContext(StoreContext);
+
     const navigate = useNavigate();
 
     const [code, setCode] = useState('');
+    const [loading, setLoading] = useState(false);
 
 
     const onLogin = () => {
         if (code.length !== 0) {
-            navigate({
-                pathname: "register",
-                search: null,
-                state: null,
+            setLoading(true);
+            AuthStore.onLoginRole(code).then(res => {
+                if (res === 'registered') {
+                    navigate('/form');
+                    setLoading(false);
+                } else {
+                    navigate('/register');
+                    setLoading(false);
+                };
             });
+
         } else {
             alert('کد وارد شده نامعتبر میباشد!')
         };
@@ -34,7 +46,7 @@ function VerificationCode() {
             <Content>
                 <p>ورود | ثبت نام</p>
 
-                <span>.لطفا کد ارسال شده به شماره {'09193786953'} را وارد کنید</span>
+                <span>.لطفا کد ارسال شده به شماره {AuthStore.phoneNumber} را وارد کنید</span>
 
 
                 <Input
@@ -44,18 +56,19 @@ function VerificationCode() {
                     type={'text'}
                 />
 
-                <SignIn onClick={onLogin}>دریافت کد تایید</SignIn>
-
+                <SignIn disabled={loading} onClick={onLogin}>
+                    {loading ? <img src={spinner} alt='' /> : 'دریافت کد تایید'}
+                </SignIn>
             </Content>
         </>
     );
 };
 
 
-const SignIn = styled.a`
+const SignIn = styled.button`
     position: absolute;
     right: 34.51%;
-    top: 55%;
+    top: 65%;
     bottom: 41.5%;
 
     width: 215px;
@@ -69,17 +82,37 @@ const SignIn = styled.a`
     font-size: 20px;
 
     text-align: center;
-    justify-center: center;
+    justify-content: center;
     align-items: center;
     align-self: center;
     
     padding: 10px 0;
+    cursor: pointer;
 
-
+    color: #fff;
+    font-size: 20px;
     &:hover {
-        background: #0483ee;
+        transition: opacity 0.2s ease 0s;
     }
 
+    img {
+        width : 21.33px;
+        height: 29.33px;
+
+        animation:spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 
+    100% { -moz-transform: rotate(360deg); } 
+    }
+    @-webkit-keyframes spin { 
+        100% { -webkit-transform: rotate(360deg); } 
+    }
+    @keyframes spin { 
+        100% { 
+            -webkit-transform: rotate(360deg); 
+            transform:rotate(360deg); 
+        } 
+    }
 `;
 
 

@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Login.css';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
+import StoreContext from '../../../Stores';
 
 import lock from '../../../assets/auth/lock.png';
+import spinner from '../../../assets/auth/spinner.svg';
 
 
 function Register() {
+    const { AuthStore } = useContext(StoreContext);
+
     const navigate = useNavigate();
 
     const [fullName, setFullName] = useState('');
     const [nationalCode, setNationalCode] = useState('');
     const [exchangeCode, setExchangeCode] = useState('');
 
+    const [loading, setLoading] = useState(false);
 
+
+
+    const registerUser = () => {
+        setLoading(true);
+        AuthStore.registerUser(fullName, nationalCode, exchangeCode).then(res => {
+            
+            
+        });
+    };
 
     return (
         <>
@@ -47,7 +61,9 @@ function Register() {
                     type={'text'}
                 />
 
-                <SignIn onClick={() => console.log('onclick')}>ثبت نام</SignIn>
+                <SignIn disabled={loading} onClick={registerUser}>
+                    {loading ? <img src={spinner} alt='' /> : 'ثبت نام'}
+                </SignIn>
 
 
                 <LoginText>
@@ -56,54 +72,6 @@ function Register() {
 
             </Content>
         </>
-
-        // <div className="mainContainer">
-
-        //     <img src={lock} className="lockIcon" />
-
-
-        //     <h3 style={{ color: '#fff' }} className="hdrTitle">
-        //         ثبت نام
-        //     </h3>
-
-
-        //     <TextInput
-        //         value={fullName}
-        //         className="primaryInput"
-        //         onChange={e => setFullName(e.target.value)}
-        //         placeholder={'نام و نام خانوادگی'}
-        //         type={'text'}
-        //     />
-
-        //     <TextInput
-        //         className="primaryInput"
-        //         value={nationalCode}
-        //         onChange={e => setNationalCode(e.target.value)}
-        //         placeholder={'کد ملی'}
-        //         type={'text'}
-        //     />
-
-        //     <TextInput
-        //         className="primaryInput"
-        //         value={exchangeCode}
-        //         onChange={e => setExchangeCode(e.target.value)}
-        //         placeholder={'کد بورسی'}
-        //         type={'text'}
-        //     />
-
-        //     <h4 style={{ color: 'gray' }}>
-        //         {/* لطفا کد ارسال شده به شماره {'09193786953'} را وارد کنید */}
-        //     </h4>
-
-
-        //     <Button
-        //         onPress={() => console.log('onclick')}
-        //         title={'ثبت نام'}
-        //     />
-
-
-
-        // </div>
     );
 };
 
@@ -125,10 +93,11 @@ const LoginText = styled.span`
     }
 `;
 
-const SignIn = styled.a`
+
+const SignIn = styled.button`
     position: absolute;
     right: 34.51%;
-    top: 75%;
+    top: 70%;
     bottom: 41.5%;
 
     width: 215px;
@@ -142,17 +111,37 @@ const SignIn = styled.a`
     font-size: 20px;
 
     text-align: center;
-    justify-center: center;
+    justify-content: center;
     align-items: center;
     align-self: center;
     
     padding: 10px 0;
+    cursor: pointer;
 
-
+    color: #fff;
+    font-size: 20px;
     &:hover {
-        background: #0483ee;
+        transition: opacity 0.2s ease 0s;
     }
 
+    img {
+        width : 21.33px;
+        height: 29.33px;
+
+        animation:spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 
+    100% { -moz-transform: rotate(360deg); } 
+    }
+    @-webkit-keyframes spin { 
+        100% { -webkit-transform: rotate(360deg); } 
+    }
+    @keyframes spin { 
+        100% { 
+            -webkit-transform: rotate(360deg); 
+            transform:rotate(360deg); 
+        } 
+    }
 `;
 
 

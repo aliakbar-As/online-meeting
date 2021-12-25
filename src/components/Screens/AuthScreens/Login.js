@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -8,13 +8,19 @@ import lock from '../../../assets/auth/lock.png';
 import clock from '../../../assets/auth/clock.png';
 import { Button } from '../../Commons/Button';
 
+import StoreContext from '../../../Stores';
+
+import spinner from '../../../assets/auth/spinner.svg';
 
 function Login() {
+    const { AuthStore } = useContext(StoreContext);
+
     const navigate = useNavigate();
 
 
     const [phoneNumber, setPhoneNumber] = useState('');
     const [time, setTime] = useState(60);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
@@ -39,11 +45,19 @@ function Login() {
 
 
     const loginUser = () => {
+        setLoading(true);
+
         if (phoneNumber.length !== 0) {
-            navigate({
-                pathname: "form",
-                search: null,
-                state: phoneNumber,
+            AuthStore.loginUser(phoneNumber).then(res => {
+                if (res) {
+                    navigate('/code');
+                    setLoading(false);
+
+                } else {
+                    alert(AuthStore.errMessage);
+                    setLoading(false);
+
+                };
             });
 
         } else {
@@ -67,6 +81,7 @@ function Login() {
                     onChange={e => setPhoneNumber(e.target.value)}
                     placeholder={'شماره همراه'}
                     type={'text'}
+                    maxLength={11}
                 />
 
                 <div className="footerContainer">
@@ -78,7 +93,9 @@ function Login() {
                     </div>
                 </div>
 
-                <SignIn onClick={loginUser}>ورود</SignIn>
+                <SignIn disabled={loading} onClick={loginUser}>
+                    {loading ? <img src={spinner} alt='' /> : 'ورود'}
+                </SignIn>
 
             </Content>
         </>
@@ -86,7 +103,7 @@ function Login() {
 };
 
 
-const SignIn = styled.a`
+const SignIn = styled.button`
     position: absolute;
     right: 34.51%;
     top: 65%;
@@ -110,10 +127,30 @@ const SignIn = styled.a`
     padding: 10px 0;
     cursor: pointer;
 
+    color: #fff;
+    font-size: 20px;
     &:hover {
         transition: opacity 0.2s ease 0s;
     }
 
+    img {
+        width : 21.33px;
+        height: 29.33px;
+
+        animation:spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 
+    100% { -moz-transform: rotate(360deg); } 
+    }
+    @-webkit-keyframes spin { 
+        100% { -webkit-transform: rotate(360deg); } 
+    }
+    @keyframes spin { 
+        100% { 
+            -webkit-transform: rotate(360deg); 
+            transform:rotate(360deg); 
+        } 
+    }
 `;
 
 

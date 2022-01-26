@@ -1,0 +1,17 @@
+.addContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+}
+
+
+.leftIcon {
+    width: 21.33px;
+    height: 21.33px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}

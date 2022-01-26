@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 
 import user from '../../../../assets/mainScreens/user.png';
@@ -7,37 +7,51 @@ import styled from 'styled-components';
 
 import './form.css';
 
-import { Button } from '../../../../components/Commons';
+import { Button, ModalComponent } from '../../../../components/Commons';
+import StoreContext from '../../../../Stores';
+import moment from 'moment-jalaali';
 
 import backArrow from '../../../../assets/mainScreens/backArrow.png';
-import infoIcon from '../../../../assets/mainScreens/info.png';
 import survey from '../../../../assets/mainScreens/survey.png';
 
 import clock from '../../../../assets/mainScreens/clock.png';
 import calender from '../../../../assets/mainScreens/calender.png';
+import empty from '../../../../assets/mainScreens/Exclude.png';
 
+import { useNavigate } from 'react-router-dom';
 
 
 const Survey = (props) => {
+    const navigate = useNavigate();
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [modalVisible, setModalVisible] = useState(0);
+
+
+    useEffect(() => {
+        console.log('data', props.data)
+    }, []);
+
+    const getQuestionSurvey = () => {
+        navigate('/form/info/survey/surveys');
+    };
+
+
+    const onTakeSurvey = () => {
+        MeetingProfileStore.setSurveyId(props.data.surveyId);
+
+        MeetingProfileStore.checkExist().then(res => {
+            if (!res) {
+                setModalVisible(1);
+            } else {
+                setModalVisible(2)
+            }
+        });
+    };
+
 
     return (
         <div className="main">
-
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back src={backArrow} alt="backArrow" />
-
-            </TopView>
-
-
-            <Info>
-                <span>مجمع ها / مجمع تست / نظرسنجی</span>
-            </Info>
 
 
             <SurveyView>
@@ -47,7 +61,7 @@ const Survey = (props) => {
 
 
             <ShortDescription>
-                موضوع نظرسنجی : <span>عنوان نظرسنجی این مجمع</span>
+                موضوع نظرسنجی : <span>{props.data.title}</span>
             </ShortDescription>
 
             <Card>
@@ -58,13 +72,13 @@ const Survey = (props) => {
                     <div>
                         <img src={calender} alt="calender" />
 
-                        <p>1400/08/27</p>
+                        <p>{moment(props.data.endDatetime).format('jYYYY/jMM/jDD')}</p>
                     </div>
 
                     <div>
                         <img src={clock} alt="clock" />
 
-                        <p>11:00</p>
+                        <p>{moment(props.data.endDatetime).format('HH:MM')}</p>
                     </div>
                 </CardSection>
 
@@ -75,26 +89,34 @@ const Survey = (props) => {
                     <div>
                         <img src={calender} alt="calender" />
 
-                        <p>1400/08/27</p>
+                        <p>{moment(props.data.startDatetime).format('jYYYY/jMM/jDD')}</p>
                     </div>
 
                     <div>
                         <img src={clock} alt="clock" />
 
-                        <p>11:00</p>
+                        <p>{moment(props.data.startDatetime).format('HH:MM')}</p>
                     </div>
                 </CardSection>
 
             </Card>
 
 
-            <ShortDescription style={{color: '#B592FE'}}>
-                در حال حاظر نظرسنجی فعال نمی‌باشد
+            <ShortDescription style={{ color: '#B592FE' }}>
+                {props.data.surveyStatus === 0 ?
+                    'در حال حاظر نظرسنجی ایجاد شده است'
+                    :
+                    props.data.surveyStatus === 1 ?
+                        'نظرسنجی در حال برگزاری می‌باشد'
+                        :
+                        'در حال حاظر نظرسنجی به پایان رسید'}
+
+
             </ShortDescription>
 
 
             <Describtion>
-            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                {props.data.description}
             </Describtion>
 
             <Footer>
@@ -104,13 +126,35 @@ const Survey = (props) => {
 
                 <Button
                     primary
-                    onPress={() => console.log('کاندید می‌شوم')}
-                    title={'رای میدهم'} />
+                    onPress={onTakeSurvey}
+                    title={'شرکت در نظرسنجی'} />
 
             </Footer>
+
+            <ModalComponent
+                modalVisible={modalVisible !== 0}
+                closeModal={() => setModalVisible(0)}
+                hasError={modalVisible === 2}
+                alert={modalVisible === 1}
+                okOnclick={() => getQuestionSurvey()}
+                cancelOnclick={() => setModalVisible(0)}
+                content={modalVisible === 1 ? 'آیا در نظرسنجی شرکت می‌کنید؟' : 'شما قبلا در این نظرسنجی شرکت کرده اید'}
+            />
         </div>
     );
 };
+
+
+const Exit = styled.div`
+    font-size: 20px;
+
+    text-align: right;
+    text-decoration: underline;
+    color: #FF4651;
+    margin-top: 3%;
+    cursor: pointer;
+`;
+
 
 const Describtion = styled.p`
     text-align: right;
@@ -184,14 +228,10 @@ const Footer = styled.div`
     justify-content: flex-end;
     display: flex;
     margin-top: 50px;
+    
 `;
 
 
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
-`;
 
 const Card = styled.div`
     align-items: center;
@@ -224,53 +264,5 @@ const Info = styled.div`
         font-size: 14px;
     }
 `;
-
-
-const Tab = styled.div`
-    width: 28.3%;   
-    cursor: pointer;
-    text-align: center;
-    padding: 10px;
-`;
-
-
-const TabContainer = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    width: 85%;
-    display: flex;
-    /* background-color: red; */
-`;
-
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-`;
-
 
 export default Survey;

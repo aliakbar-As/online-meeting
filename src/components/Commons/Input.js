@@ -18,7 +18,7 @@ export const Input = ({
 };
 
 const TextInput = styled.input`
-    background: #545772;
+    background: transparent;
     border-radius: 8px;
     width: 450px;
     height: 48px;
@@ -27,5 +27,7 @@ const TextInput = styled.input`
     padding: 10px;
     border: 0px;
     margin-left: 16px;
-    
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
 `;

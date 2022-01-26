@@ -3,3 +3,9 @@
     color: #C6C9E0;
 
 }
+
+.upload {
+    width: 48px;
+        height: 48px;
+        cursor: pointer;
+}

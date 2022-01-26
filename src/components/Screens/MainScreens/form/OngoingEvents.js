@@ -1,90 +1,52 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
+import moment from 'moment-jalaali';
 
-
-let items = [
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-];
+import StoreContext from '../../../../Stores';
+import { useNavigate } from 'react-router-dom';
 
 const OngoingEvents = (props) => {
+    const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
+
+    const navigate = useNavigate();
+    // useEffect(() => {
+    //     console.log('data', props.data)
+    // }, []);
+
+
+    const handleMeetingDetails = (id) => {
+        MeetingProfileStore.setMettingId(id);
+        MeetingProfileStore.getMeetingDetails(id).then(() => {
+                navigate('/form/info');
+        });
+    };
 
     return (
         <Main>
-            {items.map((item, index) => {
+            {MeetingStore.data.map((item, index) => {
+                let date = moment(item.holdingDatetime).format('jYYYY/jMM/jDD');
+
                 return (
                     <Table key={item.id}>
-                        <Logo src={item.image} alt={item.id} />
+                        <Logo src={item.companyImageUrl} alt={item.id} />
                         <span style={{ color: '#EBEEFF', fontSize: 14 }}>{item.title}</span>
-                        <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.des}</span>
-                        <span style={{ color: '#A7AAC6', fontSize: 13 }}>کد : {item.code}</span>
-                        <span style={{ color: '#E7E9FF', fontSize: 14 }}>{item.date}</span>
+                        <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.holderCompanyTitle}</span>
+                        <span style={{ color: '#A7AAC6', fontSize: 13 }}>{item.tickerSymbol} : کد</span>
+                        <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
 
 
-                        <Button style={() => console.log('onclick')}>
-                            مشاهده اطلاعیه
+                        <Button onClick={() => handleMeetingDetails(item.id)}>
+                            مشاهده مجمع
                         </Button>
                     </Table>
                 )
             })}
-
+ 
         </Main>
     );
 };
+
+
 
 const Button = styled.button`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
@@ -96,12 +58,12 @@ const Button = styled.button`
     height: 48px;
     font-size: 20px;
     border: 0px;
-
+    cursor: pointer;
 `;
 
 const Logo = styled.img`
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
 `;
 
@@ -120,6 +82,14 @@ const Table = styled.div`
 const Main = styled.main`
     margin-top: 3%;
     margin-bottom: 5%;
+    margin-right: 3%;
+    margin-left: 3%;
+    
+    background: #2F3247;
+    /* elevation 2 */
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
 `;
 
 export default OngoingEvents;

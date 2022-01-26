@@ -1,147 +1,85 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
+import moment from 'moment-jalaali';
 
-import './admin.css';
-
+import StoreContext from '../../../../Stores';
 import { useNavigate } from 'react-router-dom';
 
-
-
-let items = [
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-];
-
 const OngoingEvents = (props) => {
+    const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
+
     const navigate = useNavigate();
+
+
+    const handleMeetingDetails = (id) => {
+        MeetingProfileStore.setMettingId(id);
+        MeetingProfileStore.getMeetingDetails(id).then(() => {
+            navigate('/admin/info');
+        });
+    };
 
 
     return (
         <Main>
-            {items.map((item, index) => {
+            {MeetingStore.data.map((item, index) => {
+                let date = moment(item.holdingDatetime).format('jYYYY/jMM/jDD');
+
                 return (
-                    <Table key={item.id}>
-                        <Logo src={item.image} alt={item.id} />
+                    <Table key={index}>
+                        <Logo src={item.companyImageUrl} alt={item.id} />
                         <span style={{ color: '#EBEEFF', fontSize: 14 }}>{item.title}</span>
-                        <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.des}</span>
-                        <span style={{ color: '#A7AAC6', fontSize: 13 }}>کد : {item.code}</span>
-                        <span style={{ color: '#E7E9FF', fontSize: 14 }}>{item.date}</span>
+                        <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.holderCompanyTitle}</span>
+                        <span style={{ color: '#A7AAC6', fontSize: 13 }}>{item.tickerSymbol} : کد</span>
+                        <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
 
 
-                        <Info onClick={() => navigate({
-                            pathname: "/admin/info",
-                            search: null,
-                            state: null,
-                        })}>
-                            مشاهده اطلاعیه
-                        </Info>
+                        <Button onClick={() => handleMeetingDetails(item.id)}>
+                            مشاهده و ویرایش
+                        </Button>
                     </Table>
                 )
             })}
 
-            <div className="addContainer">
-                <Add onClick={() => navigate({ pathname: "/admin/add", search: null, state: null, })}>
-                    افزودن مجمع
-                </Add>
-            </div>
 
-
-
+            <AddMeeting onClick={() => navigate('/admin/add')}>
+                افزودن مجمع
+            </AddMeeting>
         </Main>
     );
 };
 
 
-
-
-const Add = styled.button`
+const AddMeeting = styled.div`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px;
-    width: 450px;
+    width: 40%;
     height: 48px;
-
     text-align: center;
-    color: #fff;
-    
-    justify-content: flex-end;
-
-    font-size: 18px;
-cursor: pointer;
-border: 0px;
-
-
+    justify-content: center;
+    align-self: flex-end;
+    align-items: center;
+    display: flex;
+    margin: 10px;
+    margin-top: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
 `;
 
-
-const Info = styled.button`
-    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
-    box-shadow: 0px 4px 6px rgba(25, 26, 29, 0.4);
+const Button = styled.button`
+    background: transparent;
     border-radius: 8px;
+    border: 1px solid #7B88FF;
     text-align: center;
-    color: #fff;
+    color: #A87EFF;
     width: 215px;
     height: 48px;
     font-size: 20px;
-    border: 0px;
+    cursor: pointer;
 `;
 
 const Logo = styled.img`
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
 `;
 
@@ -159,11 +97,15 @@ const Table = styled.div`
 
 const Main = styled.main`
     margin-top: 3%;
+    margin-bottom: 5%;
+    margin-right: 3%;
+    margin-left: 3%;
     background: #2F3247;
-
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    margin: 3%;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
 `;
 
 export default OngoingEvents;

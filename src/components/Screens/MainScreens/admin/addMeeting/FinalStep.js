@@ -1,8 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-
-
-import { Button, Input } from '../../../../Commons';
 
 
 import backArrow from '../../../../../assets/mainScreens/backArrow.png';
@@ -13,21 +10,102 @@ import clock from '../../../../../assets/mainScreens/clock.png';
 
 import './meeting.css';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import StoreContext from '../../../../../Stores';
+
+import close from '../../../../../assets/mainScreens/close.svg';
+import check from '../../../../../assets/mainScreens/check.svg';
+import { ModalComponent } from '../../../../Commons';
 
 const FinalStep = (props) => {
     const navigate = useNavigate();
-    
+
+    const { MeetingStore } = useContext(StoreContext);
+
     const pdfFile = useRef(null);
     const excelFile = useRef(null);
     const infoFileRef = useRef(null);
 
-    const [companyName, setCompanyName] = useState('');
-    const [companyCode, setCompanyCode] = useState('');
 
-    const [pdf, setPdf] = useState(null);
-    const [excel, setExcel] = useState('');
-    const [infoFile, setInfoFile] = useState('');
+    const [excelFiles, setExcelFiles] = useState([]);
+    const [pdfFiles, setPdfFiles] = useState([]);
+    const [infoFiles, setInfoFiles] = useState([]);
+
+    const [files, setFiles] = useState([]);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+
+    const [successVisible, setSuccessVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const changeHandler = (event, id) => {
+        setFiles(files => [...files, event.target.files[0]]);
+
+        switch (id) {
+            case 0:
+                setExcelFiles(excelFiles => [...excelFiles, event.target.files[0]]);
+                break;
+
+            case 1:
+                setPdfFiles(pdfFiles => [...pdfFiles, event.target.files[0]]);
+                break;
+
+            case 2:
+                setInfoFiles(infoFiles => [...infoFiles, event.target.files[0]]);
+                break;
+
+            default:
+                console.log('break');
+                break;
+        };
+    };
+
+
+
+    const deleteIcon = (name, id) => {
+
+
+        setFiles(files.filter(item => item.name !== name));
+
+        switch (id) {
+            case 0:
+                setExcelFiles(excelFiles.filter(item => item.name !== name));
+                break;
+
+            case 1:
+                setPdfFiles(pdfFiles.filter(item => item.name !== name));
+                break;
+
+            case 2:
+                setInfoFiles(infoFiles.filter(item => item.name !== name));
+                break;
+
+            default:
+                console.log('break');
+                break;
+        };
+    };
+
+
+    const handleConditions = (id) => {
+        setModalVisible(false);
+
+        if (id === 0) {
+            MeetingStore.addMeeting(uploadedFiles).then(res => {
+                setModalVisible(true);
+                navigate('/admin')
+            });
+        } else {
+
+            var formData = new FormData();
+            files.map(item => formData.append('files', item));
+
+            MeetingStore.uploadFiles(1, formData).then(files => {
+                setSuccessVisible(true);
+                setUploadedFiles(files);
+            });
+        };
+    };
 
     return (
         <div className="main">
@@ -53,102 +131,251 @@ const FinalStep = (props) => {
             </SurveyView>
 
 
+            {successVisible ?
+                <Success>
+                    <Line />
 
-
-            <CardSection>
-                <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
-                    placeholder={'کد شرکت'}
-                    type={"text"}
-                />
-
-                <Input
-                    value={companyName}
-                    onChange={e => setCompanyName(e.target.value)}
-                    placeholder={'نام شرکت'}
-                    type={"text"}
-                />
-            </CardSection>
-
+                    <Title>
+                        <span>فایل ها با موفقیت بارگزاری شد. در ادامه، دکمه‌ی افزودن مجمع را بزنید</span>
+                        <img src={check} alt='' />
+                    </Title>
+                </Success>
+                : null}
 
             <CardSection>
                 <View>
-                    <input
-                        type={'file'}
-                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        onChange={e => setExcel(e.target.files[0])}
-                        hidden
-                        ref={excelFile}
-                    />
+                    {excelFiles.length === 0 ?
+                        <input
+                            type={'file'}
+                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            onChange={(e) => changeHandler(e, 0)}
+                            hidden
+                            ref={excelFile}
+                        />
+                        :
+                        <>
+                            {excelFiles.map((item, i) => (
+                                <input
+                                    type={'file'}
+                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    onChange={(e) => changeHandler(e, 0)}
+                                    hidden
+                                    ref={excelFile}
+                                />
+                            ))}
+                        </>
+                    }
+
                     <img onClick={() => excelFile.current.click()} src={upload} alt="upload" />
-                    <span>{excel === '' ? 'بارگزاری فایل اکسل' : excel.name}</span>
+
+                    {excelFiles.length === 0 ? <h5 style={{ color: '#7F829F' }}>بارگزاری فایل اکسل</h5> : null}
+
+                    {excelFiles.map((item, i) => {
+                        return (
+                            <Files key={i}>
+                                <img onClick={() => deleteIcon(item.name, 0)} src={close} alt='close' />
+
+                                <span>{pdfFiles.length === 0 ? 'بارگزاری فایل اکسل' : item.name}</span>
+                            </Files>
+                        )
+                    })}
                 </View>
 
 
                 <View>
-                    <input
-                        type={'file'}
-                        accept=".pdf"
-                        onChange={e => setPdf(e.target.files[0])}
-                        hidden
-                        ref={pdfFile}
-                    />
-                    <img onClick={() => pdfFile.current.click()} src={upload} alt="upload" />
-                    <span>{pdf === null ? 'بارگزاری فایل پی ‌دی‌ اف' : pdf.name}</span>
+
+                    {pdfFiles.length === 0 ?
+                        <input
+                            type={'file'}
+                            accept=".pdf"
+                            onChange={(e) => changeHandler(e, 1)}
+                            hidden
+                            ref={pdfFile}
+                        />
+                        :
+                        <>
+                            {pdfFiles.map((item, i) => (
+                                <input
+                                    key={i}
+                                    type={'file'}
+                                    accept=".pdf"
+                                    onChange={(e) => changeHandler(e, 1)}
+                                    hidden
+                                    ref={pdfFile}
+                                />
+                            ))}
+                        </>
+                    }
+
+                    <img onClick={() => pdfFile.current.click()} src={upload} alt="upload" className='upload' />
+
+                    {pdfFiles.length === 0 ? <h5 style={{ color: '#7F829F' }}>بارگزاری فایل پی ‌دی‌ اف</h5> : null}
+
+                    {pdfFiles.map((item, i) => {
+                        return (
+                            <Files key={i}>
+                                <img onClick={() => deleteIcon(item.name, 1)} src={close} alt='close' />
+
+                                <span>{pdfFiles.length === 0 ? 'بارگزاری فایل پی ‌دی‌ اف' : item.name}</span>
+                            </Files>
+                        )
+                    })}
                 </View>
             </CardSection>
 
 
             <CardSection>
                 <View>
-                    <input
-                        type={'file'}
-                        onChange={e => setInfoFile(e.target.files[0])}
-                        hidden
-                        ref={infoFileRef}
-                    />
+                    {infoFiles.length === 0 ?
+                        <input
+                            type={'file'}
+                            onChange={(e) => changeHandler(e, 2)}
+                            hidden
+                            ref={infoFileRef}
+                        />
+                        :
+                        <>
+                            {infoFiles.map((item, i) => (
+                                <input
+                                    type={'file'}
+                                    onChange={(e) => changeHandler(e, 2)}
+                                    hidden
+                                    ref={infoFileRef}
+                                />
+                            ))}
+                        </>
+                    }
+
                     <img onClick={() => infoFileRef.current.click()} src={upload} alt="upload" />
-                    <span>{infoFile === '' ? 'بارگزاری پیوست های اطلاعیه' : infoFile.name}</span>
+
+                    {infoFiles.length === 0 ? <h5 style={{ color: '#7F829F' }}>بارگزاری پیوست های اطلاعیه</h5> : null}
+                    {infoFiles.map((item, i) => {
+                        return (
+                            <Files key={i}>
+                                <img onClick={() => deleteIcon(item.name, 2)} src={close} alt='close' />
+
+                                <span>{infoFiles.length === 0 ? 'بارگزاری پیوست های اطلاعیه' : item.name}</span>
+                            </Files>
+                        )
+                    })}
                 </View>
             </CardSection>
 
 
             <Footer>
-                <Button
-                    primary
-                    onPress={() => navigate('/admin')}
-                    title={'افزودن مجمع'} />
+                <Button onClick={() => handleConditions(files.length === 0 || successVisible ? 0 : 1)}>
+                    <span>
+                        {files.length === 0 || successVisible? 'افزودن مجمع' : 'بارگزاری فایل ها'}
+                    </span>
+                </Button>
 
             </Footer>
+
+
+            <ModalComponent
+                modalVisible={modalVisible}
+                content={'.مجمع با موفقیت ثبت شد'}
+                closeModal={() => setModalVisible(false)}
+                hasError={false}
+            />
         </div>
     );
 };
+
+
+const Title = styled.section`
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    display: flex;
+    padding-right: 10px;
+    margin-top: 10px;
+
+
+    span {
+        color: #fff;
+        font-size: 16px;
+    }
+
+    img {
+        width: 34px;
+        height: 34px;
+        margin-left: 16px;
+    }
+`;
+
+const Line = styled.div`
+    width: 100%;
+    height: 12px;
+    background: #04DA9A;
+    border-radius: 8px 8px 0px 0px;
+`;
+
+
+const Success = styled.div`
+    background: #3DFEC4;
+    opacity: 0.4;
+    border-radius: 8px;
+    height: 80px;
+    width: 100%;
+    margin-top: 16px;
+`;
+
+const Button = styled.button`
+    width: 50%;
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px; 
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    span {
+        color: #fff;
+        font-size: 20px;
+
+    }
+`;
+
+const Files = styled.div`
+    background: #B4BBFF;
+    border-radius: 8px;
+    padding-right: 3px;
+    padding-left: 3px;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    padding: 5px;
+
+
+    span {
+        font-size: 10px;
+        color: #545772;
+        
+        
+    }
+
+    img {
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+`;
 
 
 const View = styled.div`
     flex-direction: row;
     display: flex;
     height: 48px;
-    width: 450px;
+    width: 50%;
     background: #545772;
     border-radius: 8px;
-    margin-left: 16px;
+    margin-left: 10px;
     justify-content: space-between;
     align-items: center;
     padding-right: 16px;
 
-
-    img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    }
+    
 `;
 
 

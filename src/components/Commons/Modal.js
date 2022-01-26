@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 
 import check from '../../assets/mainScreens/check.png';
+import error from '../../assets/mainScreens/error.png';
 
 
 const customStyles = {
@@ -26,30 +27,108 @@ export const ModalComponent = ({
     afterOpenModal,
     closeModal,
     contentLabel,
-    content
+    content, alert,
+    okOnclick,
+    cancelOnclick,
+    hasError
 }) => {
+    if (alert) {
+        return (
+            <Modal
+                isOpen={modalVisible}
+                onAfterOpen={afterOpenModal}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel={contentLabel}
+            >
+                <Alert>
+                    <span>{content}</span>
 
-    return (
-        <Modal
-            isOpen={modalVisible}
-            onAfterOpen={afterOpenModal}
-            onRequestClose={closeModal}
-            style={customStyles}
-            contentLabel={contentLabel}
-        >
-            <View>
-                <img src={check} alt="check" />
-                
-                <span>{content}</span>
-            </View>
-        </Modal>
-    );
+
+                    <Footer>
+                        <No onClick={cancelOnclick}>
+                            خیر
+                        </No>
+
+                        <Yes onClick={okOnclick}>
+                            بله
+                        </Yes>
+                    </Footer>
+                </Alert>
+            </Modal>
+        )
+    } else {
+        return (
+            <Modal
+                isOpen={modalVisible}
+                onAfterOpen={afterOpenModal}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel={contentLabel}
+            >
+                <View>
+                    <img src={hasError ? error : check} alt="check" />
+
+                    <span>{content}</span>
+                </View>
+            </Modal>
+        );
+    }
 };
 
+const No = styled.button`
+    background: #545772;
+    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
+    border-radius: 16px;
+    height: 48px;
+    width: 215px;
+    color: #fff;
+    font-size: 18px;
+    margin-right: 10px;
+     cursor: pointer;
+`;
+
+const Yes = styled.button`
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px;
+    height: 48px;
+    width: 215px;
+    color: #fff;
+    font-size: 18px;
+    margin-left: 10px;
+    cursor: pointer;
+`;
+
+const Footer = styled.div`
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10%;
+`;
+
+
+const Alert = styled.div`
+    width: 686px;
+    height: 220px;
+
+    background: #545772;
+
+    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
+    border-radius: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+
+    span {
+        margin-top: 20px;
+    }
+`;
 
 const View = styled.div`
     width: 686px;
-    height: 346px;
+    height: 250px;
 
     background: #545772;
 

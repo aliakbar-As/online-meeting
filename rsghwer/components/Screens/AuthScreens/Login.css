@@ -1,0 +1,67 @@
+body {
+    background-color: #232539;
+};
+
+.mainContainer {
+    background-color: #232539;
+}
+
+
+.lockIcon {
+    width: 400px;
+    height: 320px;
+};
+
+.hdrTitle {
+    color: #fff;
+    text-Align: center;
+}
+
+
+.innerContainer {
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    /* background-color: red; */
+}
+
+
+.clockIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.footerContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    padding: 0px 16px 0px 16px;
+
+    position: absolute;
+    right: 23%;
+    left: 31%;
+    top: 50%;
+    bottom: 41.5%;
+}
+
+.innerFooterContainer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.send-again-title {
+    color: #B4BBFF;
+    text-decoration: underline;
+    font-size: 12px;
+}
+
+.time-title{
+    margin-right: 5px;
+    text-decoration: none;
+}
+
+.primaryInput {
+    margin-top: 10;
+}

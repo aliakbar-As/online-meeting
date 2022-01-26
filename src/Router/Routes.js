@@ -26,6 +26,8 @@ import AdminSurvey from '../components/Screens/MainScreens/admin/Survey/Survey';
 import SurveyDetails from '../components/Screens/MainScreens/admin/Survey/SurveyDetails';
 import AddSurvey from '../components/Screens/MainScreens/admin/Survey/AddSurvey';
 import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuestion';
+import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
+import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
 
 function RouterComponent() {
     return (
@@ -39,7 +41,7 @@ function RouterComponent() {
                 element={<VerificationCode />}
             />
 
-            <Route path="/register"
+            <Route path="/code/register"
                 element={<Register />}
             />
 
@@ -53,13 +55,16 @@ function RouterComponent() {
                 element={<FormInfo />}
             />
 
+
             <Route path="/form/info/survey"
-                element={<Survey />}
+                element={<SurveyTypes />}
             />
 
-            <Route path="/form/info/candidate"
-                element={<Candidate />}
-            />
+            {/* <Route path="/form/info/survey/surveys"
+                element={<SurveyQuestion />}
+            /> */}
+
+
 
 
 

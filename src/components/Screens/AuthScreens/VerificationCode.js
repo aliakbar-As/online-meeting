@@ -25,10 +25,16 @@ function VerificationCode() {
             setLoading(true);
             AuthStore.onLoginRole(code).then(res => {
                 if (res === 'registered') {
-                    navigate('/form');
-                    setLoading(false);
+                    if (AuthStore.roleId !== 1) {
+                        navigate('/form');
+                        setLoading(false);
+                    } else {
+                        navigate('/admin');
+                        setLoading(false);
+                    };
+
                 } else {
-                    navigate('/register');
+                    navigate('register');
                     setLoading(false);
                 };
             });
@@ -68,7 +74,7 @@ function VerificationCode() {
 const SignIn = styled.button`
     position: absolute;
     right: 34.51%;
-    top: 65%;
+    top: 50%;
     bottom: 41.5%;
 
     width: 215px;

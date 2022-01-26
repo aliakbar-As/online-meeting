@@ -11,6 +11,7 @@ import { Button } from '../../Commons/Button';
 import StoreContext from '../../../Stores';
 
 import spinner from '../../../assets/auth/spinner.svg';
+import { Logger } from '../../../Utils';
 
 function Login() {
     const { AuthStore } = useContext(StoreContext);
@@ -24,24 +25,27 @@ function Login() {
 
     useEffect(() => {
 
-        timerCount();
-
-    }, []);
-
-
-    const timerCount = () => {
-
-        setInterval(() => {
+        const timer = setInterval(() => {
             setTime(time - 1);
-
-            if (time === 0) {
-                clearInterval();
-                return;
-            };
-
         }, 1000);
 
-    };
+
+        let token = localStorage.getItem('@token')
+        if (token !== null) {
+            Logger(token, 'token');
+            // navigate('/form');
+            navigate('/admin');
+        };
+
+
+        return () => {
+            if (time === 0) {
+                clearInterval(timer);
+                return;
+            };
+        }
+
+    }, []);
 
 
     const loginUser = () => {

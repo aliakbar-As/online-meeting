@@ -25,8 +25,13 @@ function Register() {
     const registerUser = () => {
         setLoading(true);
         AuthStore.registerUser(fullName, nationalCode, exchangeCode).then(res => {
+
+        if(res) {
+            navigate('/form');
+            return;
+        };
             
-            
+        alert(AuthStore.errMessage);
         });
     };
 

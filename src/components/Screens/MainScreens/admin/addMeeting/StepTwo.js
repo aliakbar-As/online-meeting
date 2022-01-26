@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 
 import styled from 'styled-components';
 
 
-import { Button, Header, Input } from '../../../../Commons';
+import { Button, DateModal, Header, Input } from '../../../../Commons';
 
-
+import StoreContext from '../../../../../Stores';
 
 import calander from '../../../../../assets/mainScreens/calender.png';
 import clock from '../../../../../assets/mainScreens/clock.png';
@@ -14,14 +14,60 @@ import clock from '../../../../../assets/mainScreens/clock.png';
 import './meeting.css';
 import { useNavigate } from 'react-router-dom';
 
+import jalaali from 'jalaali-js';
+
 const StepTwo = (props) => {
     const navigate = useNavigate();
+
+    const { MeetingStore } = useContext(StoreContext);
+
+
+    const [startDateModal, setStartDateModal] = useState(false);
+    const [endDateModal, setEndDateModal] = useState(false);
+
+
+    const [startDay, setStartDay] = useState(1);
+    const [startMonth, setStartMonth] = useState(1);
+    const [startYear, setStartYear] = useState(1400);
+
+
+    const [endDay, setEndDay] = useState(1);
+    const [endMonth, setEndMonth] = useState(1);
+    const [endYear, setEndYear] = useState(1400);
+
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+
+
+    const confirmDateData = () => {
+        // 2022-01-25T10:07:36.004Z
+
+        const sDay = Number(startDay);
+        const sMonth = Number(startMonth);
+        const sYear = Number(startYear);
+
+        const date = jalaali.toGregorian(sYear, sMonth, sDay);
+
+
+        const convertedStartDate = `${date.gy}-${date.gm}-${date.gd}T${startTime}:00`;
+
+        const eDay = Number(endDay);
+        const eMonth = Number(endMonth);
+        const eYear = Number(endYear);
+
+        const endDate = jalaali.toGregorian(eYear, eMonth, eDay);
+        const convertedEndDate = `${endDate.gy}-${endDate.gm}-${endDate.gd}T${endTime}:00`;
+
+        MeetingStore.setMeetingDate(convertedStartDate, convertedEndDate);
+
+        navigate('/admin/add/nextstep/finalstep');
+    };
 
 
     return (
         <div className="main">
 
-            <Header />
+            <Header backOnclick={() => navigate(-1)} />
 
 
             <Info>
@@ -37,29 +83,37 @@ const StepTwo = (props) => {
 
 
             <CardSection>
-                <View>
-                    <img src={calander} alt="calander" />
-                    <span>تاریخ پایان</span>
+                <View >
+                    <Clock
+                        type="time" id="appt" name="appt"
+                        min="09:00" max="18:00" required
+                        onChange={e => setStartTime(e.target.value)}
+                        type={'time'} />
+                    <span>ساعت شروع</span>
                 </View>
 
 
-                <View>
+                <View onClick={() => setStartDateModal(true)}>
                     <img src={calander} alt="calander" />
-                    <span>تاریخ شروع</span>
+                    <span>{`${startYear} / ${startMonth} / ${startDay}`} - تاریخ شروع</span>
                 </View>
             </CardSection>
 
 
             <CardSection>
                 <View>
-                    <img src={clock} alt="calander" />
+                    <Clock
+                        type="time" id="appt" name="appt"
+                        min="09:00" max="18:00" required
+                        onChange={e => setEndTime(e.target.value)}
+                        type={'time'} />
                     <span>ساعت پایان</span>
                 </View>
 
 
-                <View>
-                    <img src={clock} alt="calander" />
-                    <span>ساعت شروع</span>
+                <View onClick={() => setEndDateModal(true)}>
+                    <img src={calander} alt="calander" />
+                    <span>{`${endYear} / ${endMonth} / ${endDay}`} - تاریخ پایان</span>
                 </View>
             </CardSection>
 
@@ -67,13 +121,42 @@ const StepTwo = (props) => {
             <Footer>
                 <Button
                     primary
-                    onPress={() => navigate('/admin/add/nextstep/finalstep')}
+                    onPress={confirmDateData}
                     title={'تایید و ادامه'} />
 
             </Footer>
+
+
+            <DateModal
+                title={'تاریخ شروع'}
+                modalVisible={startDateModal}
+                closeModal={() => setStartDateModal(false)}
+                dayOnChange={e => setStartDay(e.target.value)}
+                monthOnChange={e => setStartMonth(e.target.value)}
+                yearOnChange={e => setStartYear(e.target.value)}
+                currentDate={`${startYear} / ${startMonth} / ${startDay}`}
+            />
+
+            <DateModal
+                title={'تاریخ پایان'}
+                modalVisible={endDateModal}
+                closeModal={() => setEndDateModal(false)}
+                dayOnChange={e => setEndDay(e.target.value)}
+                monthOnChange={e => setEndMonth(e.target.value)}
+                yearOnChange={e => setEndYear(e.target.value)}
+                currentDate={`${endYear} / ${endMonth} / ${endDay}`}
+            />
         </div>
     );
 };
+
+
+const Clock = styled.input`
+    background: transparent;
+    direction: rtl;
+    text-align: right;
+    color: #fff;
+`;
 
 
 const View = styled.div`

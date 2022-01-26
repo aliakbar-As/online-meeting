@@ -2,9 +2,6 @@
 import { Axios } from './Api';
 
 import { Logger } from '../Utils';
-import { AuthStore } from '../Stores/AuthStore';
-
-import axios from 'axios';
 
 class Request {
     constructor() {
@@ -167,9 +164,8 @@ class Request {
                 resolve(response);
             }
         } catch (error) {
-            Logger(error, 'requestLog');
-            // Logger(error.response.status, 'requestLog');
-            if (error.response.status === 401) {
+            Logger(error.stack, 'requestLog');
+            if (error.message == 'Request failed with status code 401') {
                 this.expiredToken();
             }
             Logger(request, 'request');
@@ -188,11 +184,13 @@ class Request {
     //     this.runQueue();
     // }
 
+    
     async expiredToken() {
-        console.log('expired token')
-        localStorage.removeItem('@token');
 
-        AuthStore.refreshToken();
+        localStorage.removeItem('@token');
+        // this.props.navigate('/')
+
+        // AuthStore.refreshToken();
     };
 
     removeDuplicate(url, data) {

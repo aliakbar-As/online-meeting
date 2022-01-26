@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 
 import user from '../../../../assets/mainScreens/user.png';
@@ -9,6 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../../components/Commons';
 
 import './admin.css';
+
+import StoreContext from '../../../../Stores';
+
+import moment from 'moment-jalaali';
 
 import backArrow from '../../../../assets/mainScreens/backArrow.png';
 import infoIcon from '../../../../assets/mainScreens/info.png';
@@ -22,12 +26,39 @@ import calender from '../../../../assets/mainScreens/calender.png';
 
 
 const ForumInfo = (props) => {
-    const [tabSelectedId, setTabSelectedId] = useState(0);
     const navigate = useNavigate();
 
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [percent, setPercent] = useState(0);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        MeetingProfileStore.getAttendanceMeeting().then(res => {
+            setPercent(res.percentagAttendance);
+            setCount(res.countOfPresent);
+        });
+
+    }, []);
+
+
+    const serveyOnclick = () => {
+        console.clear();
+        MeetingProfileStore.getSurvey(true, 2).then(res => {
+            navigate('/form/info/survey');
+        });
+    };
+
+
+    const leaveMeeting = () => {
+        MeetingProfileStore.leaveMeeting().then(() => {
+            navigate(-1);
+        });
+    };
 
     return (
         <div className="main">
+
             <TopView>
                 <IconsDiv>
                     <UserIcon src={user} alt="user" />
@@ -45,7 +76,7 @@ const ForumInfo = (props) => {
             </Info>
 
             <ShortDescription>
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                {MeetingProfileStore.meetingDetails.description}
             </ShortDescription>
 
             <Card>
@@ -53,37 +84,31 @@ const ForumInfo = (props) => {
 
                     <InfoView>
                         <LogoView>
-                            <span>تامین سرمایه امین</span>
+                            <span>{MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
 
-                            <img src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU'} alt="alt" />
+                            <img src={MeetingProfileStore.meetingDetails.companyImageUrl} alt="alt" />
                         </LogoView>
 
-                        <span style={{ color: '#A7AAC6' }}> کد : 66-ن </span>
+                        <span style={{ color: '#A7AAC6' }}>{MeetingProfileStore.meetingDetails.tickerSymbol}  : کد </span>
 
-                        <span> 1400/08/29 </span>
+                        <span>
+                            {/* {moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')} */}
+                        </span>
 
                     </InfoView>
 
 
                     <View>
-                        <span>مجمع سالیانه شرکت سرمایه امین</span>
-
-                        <InnerView>
-                            <span style={{ color: '#B4BBFF' }}> دریافت فایل پی دی اف </span>
-                            <img src={pdf} alt="alt" />
-                        </InnerView>
-
-                        <InnerView>
-                            <span style={{ color: '#B4BBFF' }}> دریافت فایل اکسل </span>
-                            <img src={excel} alt="alt" />
-                        </InnerView>
-
-                        <InnerView>
-                            <span style={{ color: '#B4BBFF' }}> پیوست های اطلاعیه </span>
-                            <img src={info} alt="alt" />
-                        </InnerView>
+                        <p>مجمع سالیانه {MeetingProfileStore.meetingDetails.holderCompanyTitle}</p>
 
 
+                        <span>بازار بورس : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.stockMarketTitle} </span></span>
+
+                        <span>گروه صنعت : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.industryGroupTitle} </span></span>
+                        <span>نام مدیر عامل : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.ceoTitle} </span></span>
+                        <span>حجم مبنا : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.baseVolume} </span></span>
+
+                        <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.companyDescription} </span>
 
                     </View>
 
@@ -100,123 +125,154 @@ const ForumInfo = (props) => {
 
 
                     <View>
-                        <span>رئیس : <span style={{ color: '#B4BBFF' }}> محمد لواسانی </span></span>
-
-                        <span>منشی : <span style={{ color: '#B4BBFF' }}> امیرحسین سجادی </span></span>
-
-                        <span>موضوع : <span style={{ color: '#B4BBFF' }}> موضوع مجمع اول </span></span>
-
-                        <span>شرکت برگزار کننده : <span style={{ color: '#B4BBFF' }}> های وب </span></span>
-
-                        <span>نوع مجمع : <span style={{ color: '#B4BBFF' }}> هفتگی </span></span>
+                        {MeetingProfileStore.meetingDetails.meetingUserDuties.map(item => (
+                            <span key={item.id}>{item.dutyTitle} : <span style={{ color: '#B4BBFF' }}> {item.stockholderName} </span></span>
+                        ))}
                     </View>
+
+                    <Edit>
+                        ویرایش
+                    </Edit>
+
                 </CardSectionOne>
 
             </Card>
 
-            <div className="buttonContainer">
-                <Button
-                    onPress={() => console.log('online meeting')}
-                    title={'ویرایش'} />
-            </div>
-
-
 
             <CardTwo>
 
-                <CardSection>
-                    <span>تاریخ و ساعت پایان</span>
+                <Date>
+                    <DateView>
+                        <CardSection>
+                            <span>تاریخ و ساعت پایان</span>
 
-                    <div>
-                        <img src={calender} alt="calender" />
+                            <div>
+                                <img src={calender} alt="calender" />
 
-                        <p>1400/08/27</p>
-                    </div>
+                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
+                            </div>
 
-                    <div>
-                        <img src={clock} alt="clock" />
+                            <div>
+                                <img src={clock} alt="clock" />
 
-                        <p>11:00</p>
-                    </div>
-                </CardSection>
-
-
-                <CardSection>
-                    <span>تاریخ و ساعت فروش</span>
-
-                    <div>
-                        <img src={calender} alt="calender" />
-
-                        <p>1400/08/27</p>
-                    </div>
-
-                    <div>
-                        <img src={clock} alt="clock" />
-
-                        <p>11:00</p>
-                    </div>
-                </CardSection>
-
-            </CardTwo>
-
-            <div className="buttonContainer">
-                <Button
-                    onPress={() => console.log('online meeting')}
-                    title={'ویرایش'} />
-            </div>
-
-            <Card>
-                <Percent>
-                    <span>درصد حضور</span>
-
-                    <p>%    45 درصد</p>
-                </Percent>
+                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
+                            </div>
+                        </CardSection>
 
 
-                <Count>
+                        <CardSection>
+                            <span>تاریخ و ساعت فروش</span>
 
-                    <span>تعداد نفرات حاظر</span>
+                            <div>
+                                <img src={calender} alt="calender" />
 
-                    <div>
-                        <p>نفر 82 </p>
-                        <img src={users} alt="users" />
-                    </div>
-                </Count>
+                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
+                            </div>
+
+                            <div>
+                                <img src={clock} alt="clock" />
+
+                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
+                            </div>
+                        </CardSection>
+
+                    </DateView>
+
+                    <Edit>
+                        ویرایش
+                    </Edit>
+                </Date>
+
 
                 <Links>
-                    <img src={downArrow} alt="downArrow" />
 
                     <div>
                         <p>لینک های مستندات مرتبط با مجمع</p>
                         <img src={pin} alt="users" />
                     </div>
 
+
+                    {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
+                        <InnerView key={i} href={item.fileUri} download>
+                            <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
+                            <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
+                        </InnerView>
+                    ))}
+
+                    <Edit>
+                        ویرایش
+                    </Edit>
                 </Links>
 
-            </Card>
+            </CardTwo>
+
+            <FooterCard>
+                <Percent>
+                    <span>درصد حضور</span>
+
+                    <InnerPercent>
+                        <p> درصد </p> <p> {percent}      %        </p>
+                    </InnerPercent>
+                </Percent>
+
+
+                <Count>
+                    <span>تعداد نفرات حاظر</span>
+
+                    <div>
+                        <p>نفر {count} </p>
+                        <img src={users} alt="users" />
+                    </div>
+                </Count>
+
+            </FooterCard>
+
 
             <Footer>
-
-                <Election>
-                    انتخابات
-                </Election>
+                <Online>
+                    مشاهده آنلاین
+                </Online>
 
                 <Button
                     primary
                     onPress={() => console.log('survey')}
-                    title={'نظرسنجی'} />
+                    title={'انتخابات و نظرسنجی'} />
 
             </Footer>
 
 
-            <div className="buttonContainer">
-                <Online>
-                    مشاهده آنلاین
-                </Online>
-            </div>
         </div>
     );
 };
+
+const FooterCard = styled.div`
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    display: flex;
+    margin-bottom: 20px;
+`;
+
+const InnerPercent = styled.div`
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    
+    p {
+        margin-left: 10px;
+    }
+`;
+const Edit = styled.button`
+    width: 215px;
+    height: 48px;
+    border: 1px solid #7B88FF;
+    background: transparent;
+    color: #A87EFF;
+    font-size: 23px;
+    border-radius: 8px;
+    align-self: flex-end;
+    margin-top: 16px;
+`;
 
 
 const Online = styled.button`
@@ -227,8 +283,7 @@ const Online = styled.button`
     color: #A87EFF;
     font-size: 20px;
     height: 48px;
-    width: 33.5%;
-    margin-top: 16px;
+    width: 40%;
     cursor: pointer;
 `;
 
@@ -253,17 +308,14 @@ const CardTwo = styled.div`
 
 
 const CardSection = styled.div`
-    width: 20%;
+    width: 45%;
     height: 150px;
     
-    
-    background: #2F3247;
-    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
     position: relative;
     padding: 10px;
 
-    margin-left: 10px;
+    /* margin-left: 10px; */
     span {
         font-size: 15px;
         color: #B4BBFF;
@@ -289,6 +341,26 @@ const CardSection = styled.div`
     }
 `;
 
+const Date = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    padding-bottom: 16px;
+    background: #2F3247;
+    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
+    border-radius: 8px;
+    margin-right: 16px;
+    padding-right: 16px;
+    padding-left: 16px;
+`;
+
+
+const DateView = styled.div`
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+`;
+
 const Footer = styled.div`
     flex-direction: row;
     align-items: center;
@@ -307,32 +379,32 @@ const Back = styled.img`
 `;
 
 const Percent = styled.div`
-    height: 104px;
-    width: 20%;
-    /* background: #A87EFF; */
-    opacity: 0.9;
+    height: 130px;
+    width: 25%;
     border-radius: 8px;
     text-align: center;
-
+    padding-top: 20px;
     align-items: center;
     flex-direction: column;
     justify-content: center;
     display: flex;
-    cursor: pointer;
 
+    opacity: 0.9;
     border: 1px solid #A87EFF;
-
-    color: #D2BDFF;
+    box-sizing: border-box;
+    /* padding-top: 10px; */
 
     span {
         font-weight: 300;
-        font-size: 14px;
+        font-size: 20px;
+        color: #D2BDFF;
     }
 
 
     p {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 25px;
+        color: #D2BDFF;
     }
 
     &:hover {
@@ -341,22 +413,27 @@ const Percent = styled.div`
     }
 `;
 
+
+
 const Count = styled.div`
-    height: 104px;
-    width: 20%;
-    /* background: #7B88FF; */
-    opacity: 0.9;
-    border-radius: 8px;
-    border: 1px solid #7B88FF;
+    height: 130px;
+    width: 25%;
+    margin-left: 16px;
     flex-direction: column;
     align-items: center;
     display: flex;
-    padding-top: 10px;
-    cursor: pointer;
+    padding-top: 20px;
+
+    opacity: 0.9;
+    border: 1px solid #7B88FF;
+    box-sizing: border-box;
+    border-radius: 8px;
+
     span {
         font-weight: 300;
-        font-size: 14px;
-        color: #B4BBFF;
+        font-size: 20px;
+        color: #D2BDFF;
+
     }
 
     div {
@@ -369,14 +446,15 @@ const Count = styled.div`
 
     p {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 25px;
         text-align: center;
-        color: #B4BBFF;
+        color: #D2BDFF;
+
     }
 
     img {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
         margin-left: 10px;
     }
 
@@ -387,19 +465,17 @@ const Count = styled.div`
 `;
 
 const Links = styled.div`
-    height: 104px;
-    width: 58.8%;
-    flex-direction: row;
-    align-items: center;
-    display: flex;
+    width: 53%;
+    align-items: flex-end;
     background: #2F3247;
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    align-self: flex-end;
+    align-self: flex-start;
     padding: 10px;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
     
     div {
         flex-direction: row;
@@ -419,7 +495,7 @@ const Links = styled.div`
 
 `;
 
-const InnerView = styled.div`
+const InnerView = styled.a`
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
@@ -429,12 +505,10 @@ const InnerView = styled.div`
         text-decoration: underline;
         font-size: 15px;
         margin-left: 16px;
-        cursor: pointer;
     }
 
     img {
-        margin-top: 16px;
-        margin-left: 16px;
+        margin-right: auto;
         padding: 5px;
         border-radius: 100%;
         background-color: white;
@@ -493,19 +567,22 @@ const View = styled.div`
 
 const CardSectionTwo = styled.div`
     width: 68.43%;
-    height: 337px;
+    /* height: 337px; */
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
-    padding: 10px
+    padding: 10px;
 `;
 
 const CardSectionOne = styled.div`
     width: 30%;
-    height: 337px;
+    /* height: 337px; */
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
 `;
 
 const Card = styled.div`

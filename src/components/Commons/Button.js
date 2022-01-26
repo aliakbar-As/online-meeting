@@ -6,7 +6,8 @@ export const Button = ({
     title,
     onChange,
     type,
-    primary
+    primary,
+    extraStyles
 }) => {
     if(primary) {
         return (
@@ -26,7 +27,7 @@ export const Button = ({
 };
 
 const Normal = styled.button`
-    width: 215px;
+    width: 450px;
     height: 48px;
     
     border: 1px solid #A17BF1;

@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
 import styled from 'styled-components';
 
 import './form.css';
+
+import StoreContext from '../../../../Stores';
+
+import moment from 'moment-jalaali';
 
 import backArrow from '../../../../assets/mainScreens/backArrow.png';
 import infoIcon from '../../../../assets/mainScreens/info.png';
@@ -16,161 +20,280 @@ import users from '../../../../assets/mainScreens/users.png';
 import pin from '../../../../assets/mainScreens/pin.png';
 import { Button } from '../../../../components/Commons';
 
-let tabs = [
-    {
-        id: 2,
-        title: 'رویداد های لغو شده'
-    },
-    {
-        id: 1,
-        title: 'رویداد های آینده'
-    },
-    {
-        id: 0,
-        title: 'رویداد های در حال برگذاری'
-    },
-];
-
+import clock from '../../../../assets/mainScreens/clock.png';
+import calender from '../../../../assets/mainScreens/calender.png';
 
 const FormInfo = (props) => {
-    const [tabSelectedId, setTabSelectedId] = useState(0);
+    const navigate = useNavigate();
+
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [percent, setPercent] = useState(0);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        MeetingProfileStore.getAttendanceMeeting().then(res => {
+            setPercent(res.percentagAttendance);
+            setCount(res.countOfPresent);
+        });
+
+    }, []);
+
+
+    const serveyOnclick = () => {
+        console.clear();
+        MeetingProfileStore.getSurvey(true, 2).then(res => {
+            navigate('/form/info/survey');
+        });
+    };
+
+
+    const leaveMeeting = () => {
+        MeetingProfileStore.leaveMeeting().then(() => {
+            navigate(-1);
+        });
+    };
 
 
     return (
         <div className="main">
-            <TopView>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
+            
+            <ShortDescription>
+                {MeetingProfileStore.meetingDetails.description}
+            </ShortDescription>
 
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
+            <Card>
+                <CardSectionTwo>
 
-                <Back src={backArrow} alt="backArrow" />
+                    <InfoView>
+                        <LogoView>
+                            <span>{MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
 
-            </TopView>
+                            <img src={MeetingProfileStore.meetingDetails.companyImageUrl} alt="alt" />
+                        </LogoView>
 
+                        <span style={{ color: '#A7AAC6' }}>{MeetingProfileStore.meetingDetails.tickerSymbol}  : کد </span>
 
-                    <Info>
-                        <span>مجمع ها / مجمع تست</span>
-                    </Info>
+                        <span>
+                            {/* {moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')} */}
+                        </span>
 
-                    <ShortDescription>
-                        لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
-                    </ShortDescription>
-
-                    <Card>
-                        <CardSectionTwo>
-
-                            <InfoView>
-                                <LogoView>
-                                    <span>تامین سرمایه امین</span>
-
-                                    <img src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU'} alt="alt" />
-                                </LogoView>
-
-                                <span style={{ color: '#A7AAC6' }}> کد : 66-ن </span>
-
-                                <span> 1400/08/29 </span>
-
-                            </InfoView>
+                    </InfoView>
 
 
-                            <View>
-                                <span>مجمع سالیانه شرکت سرمایه امین</span>
-
-                                <InnerView>
-                                    <img src={pdf} alt="alt" />
-                                    <span style={{ color: '#B4BBFF' }}> دریافت فایل پی دی اف </span>
-                                </InnerView>
-
-                                <InnerView>
-                                    <img src={excel} alt="alt" />
-                                    <span style={{ color: '#B4BBFF' }}> دریافت فایل اکسل </span>
-                                </InnerView>
-
-                                <InnerView>
-                                    <img src={info} alt="alt" />
-                                    <span style={{ color: '#B4BBFF' }}> پیوست های اطلاعیه </span>
-                                </InnerView>
+                    <View>
+                        <p>مجمع سالیانه {MeetingProfileStore.meetingDetails.holderCompanyTitle}</p>
 
 
+                        <span>بازار بورس : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.stockMarketTitle} </span></span>
 
-                            </View>
+                        <span>گروه صنعت : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.industryGroupTitle} </span></span>
+                        <span>نام مدیر عامل : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.ceoTitle} </span></span>
+                        <span>حجم مبنا : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.baseVolume} </span></span>
 
-                        </CardSectionTwo>
+                        <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.companyDescription} </span>
 
+                    </View>
 
-                        <CardSectionOne>
-
-                            <CardSectionInfo>
-                                <span>اطلاعات مجمع</span>
-
-                                <img src={infoIcon} alt="alt" />
-                            </CardSectionInfo>
+                </CardSectionTwo>
 
 
-                            <View>
-                                <span>رئیس : <span style={{ color: '#B4BBFF' }}> محمد لواسانی </span></span>
+                <CardSectionOne>
 
-                                <span>منشی : <span style={{ color: '#B4BBFF' }}> امیرحسین سجادی </span></span>
+                    <CardSectionInfo>
+                        <span>اطلاعات مجمع</span>
 
-                                <span>موضوع : <span style={{ color: '#B4BBFF' }}> موضوع مجمع اول </span></span>
-
-                                <span>شرکت برگزار کننده : <span style={{ color: '#B4BBFF' }}> های وب </span></span>
-
-                                <span>نوع مجمع : <span style={{ color: '#B4BBFF' }}> هفتگی </span></span>
-                            </View>
-                        </CardSectionOne>
-
-                    </Card>
+                        <img src={infoIcon} alt="alt" />
+                    </CardSectionInfo>
 
 
-                    <Card>
-                        <Percent>
-                            <span>درصد حضور</span>
+                    <View>
+                        {MeetingProfileStore.meetingDetails.meetingUserDuties.map(item => (
+                            <span key={item.id}>{item.dutyTitle} : <span style={{ color: '#B4BBFF' }}> {item.stockholderName} </span></span>
+                        ))}
+                    </View>
+                </CardSectionOne>
 
-                            <p>%    45 درصد</p>
-                        </Percent>
+            </Card>
 
 
-                        <Count>
+            <Card>
 
-                            <span>تعداد نفرات حاظر</span>
+                <DateView>
+                    <CardSection>
+                        <span>تاریخ و ساعت پایان</span>
 
-                            <div>
-                                <p>نفر 82 </p>
-                                <img src={users} alt="users" />
-                            </div>
-                        </Count>
+                        <div>
+                            <img src={calender} alt="calender" />
 
-                        <Links>
-                            <img src={downArrow} alt="downArrow" />
+                            <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
+                        </div>
 
-                            <div>
-                                <p>لینک های مستندات مرتبط با مجمع</p>
-                                <img src={pin} alt="users" />
-                            </div>
+                        <div>
+                            <img src={clock} alt="clock" />
 
-                        </Links>
+                            <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
+                        </div>
+                    </CardSection>
 
-                    </Card>
 
-                    <Footer>
-                        <Button
-                            onPress={() => console.log('online meeting')}
-                            title={'مشاهده آنلاین'} />
+                    <CardSection>
+                        <span>تاریخ و ساعت فروش</span>
 
-                        <Button
-                            primary
-                            onPress={() => console.log('survey')}
-                            title={'نظرسنجی'} />
+                        <div>
+                            <img src={calender} alt="calender" />
 
-                    </Footer>
+                            <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
+                        </div>
 
+                        <div>
+                            <img src={clock} alt="clock" />
+
+                            <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
+                        </div>
+                    </CardSection>
+
+                </DateView>
+
+
+                <Links>
+
+                    <div>
+                        <p>لینک های مستندات مرتبط با مجمع</p>
+                        <img src={pin} alt="users" />
+                    </div>
+
+
+                    {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
+                        <InnerView key={i} href={item.fileUri} download>
+                            <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
+                            <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
+                        </InnerView>
+                    ))}
+
+                </Links>
+
+            </Card>
+
+
+            <FooterCard>
+                <Percent>
+                    <span>درصد حضور</span>
+
+                    <InnerPercent>
+                        <p> درصد </p> <p> {percent}      %        </p>
+                    </InnerPercent>
+                </Percent>
+
+
+                <Count>
+                    <span>تعداد نفرات حاظر</span>
+
+                    <div>
+                        <p>نفر {count} </p>
+                        <img src={users} alt="users" />
+                    </div>
+                </Count>
+            </FooterCard>
+
+
+            <Footer>
+                <Button
+                    onPress={() => console.log('online meeting')}
+                    title={'مشاهده آنلاین'} />
+
+                <Button
+                    primary
+                    onPress={serveyOnclick}
+                    title={'انتخابات و نظرسنجی'} />
+
+            </Footer>
+
+
+            <Exit onClick={leaveMeeting}>
+                خروج
+            </Exit>
         </div>
     );
 };
 
+
+const FooterCard = styled.div`
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    display: flex;
+    margin-bottom: 20px;
+`;
+
+
+const CardSection = styled.div`
+    width: 45%;
+    height: 150px;
+    
+    border-radius: 8px;
+    position: relative;
+    padding: 10px;
+
+    /* margin-left: 10px; */
+    span {
+        font-size: 15px;
+        color: #B4BBFF;
+        text-align: center;
+    }
+
+    div {
+        margin-top: 10px;
+        flex-direction: row;
+        align-items: center;
+        align-self: flex-start;
+        display: flex;
+        justify-content: flex-start;
+        margin-left: 30%;
+        height: 30%;
+    }
+
+    p {
+        size: 15px;
+        color: #7B88FF;
+        margin-left: 10px;
+        text-align: center;
+    }
+`;
+
+const DateView = styled.div`
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+
+    width: 45%;
+    height: 150px;
+    background: #2F3247;
+    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
+    border-radius: 8px;
+
+`;
+
+
+const InnerPercent = styled.div`
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    
+    p {
+        margin-left: 10px;
+    }
+`;
+
+const Exit = styled.div`
+    font-size: 20px;
+
+    text-align: right;
+text-decoration: underline;
+    color: #FF4651;
+    margin-top: 3%;
+    cursor: pointer;
+`;
 
 const Footer = styled.div`
     flex-direction: row;
@@ -187,28 +310,32 @@ const Back = styled.img`
 `;
 
 const Percent = styled.div`
-    height: 104px;
-    width: 20%;
-    background: #A87EFF;
-    opacity: 0.9;
+    height: 130px;
+    width: 25%;
     border-radius: 8px;
     text-align: center;
-
+    padding-top: 20px;
     align-items: center;
     flex-direction: column;
     justify-content: center;
     display: flex;
-    cursor: pointer;
+
+    opacity: 0.9;
+    border: 1px solid #A87EFF;
+    box-sizing: border-box;
+    /* padding-top: 10px; */
 
     span {
         font-weight: 300;
-        font-size: 14px;
+        font-size: 20px;
+        color: #D2BDFF;
     }
 
 
     p {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 25px;
+        color: #D2BDFF;
     }
 
     &:hover {
@@ -218,20 +345,24 @@ const Percent = styled.div`
 `;
 
 const Count = styled.div`
-    height: 104px;
-    width: 20%;
-    background: #7B88FF;
-    opacity: 0.9;
-    border-radius: 8px;
-
+    height: 130px;
+    width: 25%;
+    margin-left: 16px;
     flex-direction: column;
     align-items: center;
     display: flex;
-    padding-top: 10px;
-    cursor: pointer;
+    padding-top: 20px;
+
+    opacity: 0.9;
+    border: 1px solid #7B88FF;
+    box-sizing: border-box;
+    border-radius: 8px;
+
     span {
         font-weight: 300;
-        font-size: 14px;
+        font-size: 20px;
+        color: #D2BDFF;
+
     }
 
     div {
@@ -244,13 +375,15 @@ const Count = styled.div`
 
     p {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 25px;
         text-align: center;
+        color: #D2BDFF;
+
     }
 
     img {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
         margin-left: 10px;
     }
 
@@ -261,19 +394,17 @@ const Count = styled.div`
 `;
 
 const Links = styled.div`
-    height: 104px;
-    width: 58.8%;
-    flex-direction: row;
-    align-items: center;
-    display: flex;
+    width: 53%;
+    align-items: flex-end;
     background: #2F3247;
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    align-self: flex-end;
+    align-self: flex-start;
     padding: 10px;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
     
     div {
         flex-direction: row;
@@ -293,7 +424,7 @@ const Links = styled.div`
 
 `;
 
-const InnerView = styled.div`
+const InnerView = styled.a`
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
@@ -303,11 +434,9 @@ const InnerView = styled.div`
         text-decoration: underline;
         font-size: 15px;
         margin-left: 16px;
-        cursor: pointer;
     }
 
     img {
-        margin-top: 16px;
         margin-right: auto;
         padding: 5px;
         border-radius: 100%;
@@ -351,7 +480,6 @@ const InfoView = styled.div`
 
 
 const View = styled.div`
-    font-size: 15px;
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-end;
@@ -360,7 +488,14 @@ const View = styled.div`
     display: flex;
     
     span {
-        margin-top: 20px;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 20px;
+        color: #DDE0F3;
+
     }
 `;
 

@@ -8,6 +8,7 @@ const authStore = types.model('authStore', {
     phoneNumber: types.maybeNull(types.string),
     errMessage: types.maybeNull(types.string),
 
+    roleId: types.maybeNull(types.number),
 }).actions((self) => {
     return {
         async loginUser(phoneNumber) {
@@ -17,10 +18,10 @@ const authStore = types.model('authStore', {
             return new Promise(async (resolve, reject) => {
                 Axios.post('http://om-api-test.hiweb.ir/api/User/Login', {
                     mobileNo: phoneNumber
-                }).then(res => {
-                    const data = res.data;
+                }).then(({ data }) => {
 
-                    console.log('res', res);
+                    Logger(data, 'Login');
+                    
                     if (data.hasError) {
                         this.setErrorMessage(data.error);
                         resolve(false);
@@ -43,6 +44,8 @@ const authStore = types.model('authStore', {
                     verificationCode: code,
                 }).then(res => {
                     const data = res.data;
+                    Logger(data, 'Verification');
+
                     if (data.hasError) {
                         this.setErrorMessage(data.error);
                         resolve(false);
@@ -52,37 +55,54 @@ const authStore = types.model('authStore', {
 
                     resolve(data.data.active ? 'registered' : 'none');
 
-                    console.log('res', res);
+                    this.setRoleId(data.data.userRoles);
+
                 }).catch(error => {
                     console.log('errr', error)
                 });
             }).catch(error => console.warn(error));
 
         },
-        async registerUser(name, nCode, bCode) {
-            this.fillUserModel({
-                ...self.userModel,
-                fullName: name,
-                stockholderType: 1,
-                exchangeCode: bCode,
-                nationalCode: nCode,
-                registrationNo: ""
-            });
 
-            request.post('/User/User/Register', {
-                fullName: name,
-                mobileNumber: self.phoneNumber,
-                stockholderType: 1,
-                exchangeCode: bCode,
-                nationalCode: nCode,
-                registrationNo: "string"
-            }).then(res => {
-                Logger(res, 'register');
-                
-            }).catch(err => console.log('erroe', err));
+
+        async registerUser(name, nCode, bCode) {
+            // this.fillUserModel({
+            //     ...self.userModel,
+            //     fullName: name,
+            //     stockholderType: 1,
+            //     exchangeCode: bCode,
+            //     nationalCode: nCode,
+            //     registrationNo: ""
+            // });
+            return new Promise(async (resolve, reject) => {
+
+                request.post('/User/User/Register', {
+                    fullName: name,
+                    mobileNumber: self.phoneNumber,
+                    stockholderType: 1,
+                    exchangeCode: bCode,
+                    nationalCode: nCode,
+                    registrationNo: null
+                }, {}, false).then(res => {
+                    const data = res.data;
+                    Logger(data, 'register');
+                    if (data.hasError) {
+                        this.setErrorMessage(data.error);
+                        resolve(false);
+                        return;
+                    };
+                    resolve(true);
+                }).catch(err => {
+                    console.log('erroe', err);
+                    resolve(false);
+                });
+            }).catch(erro => console.log('erro', erro));
         },
 
 
+        setRoleId(data) {
+            self.roleId = data[0].roleId;
+        },
         setPhoneNumber(phone) {
             self.phoneNumber = phone;
         },

@@ -1,52 +1,55 @@
-import React, { useState } from 'react';
-
-
-import user from '../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../assets/mainScreens/downArrow.png';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import './form.css';
 
-import { Button } from '../../../../components/Commons';
+import { Button, ModalComponent } from '../../../../components/Commons';
+import StoreContext from '../../../../Stores';
 
-import backArrow from '../../../../assets/mainScreens/backArrow.png';
-import infoIcon from '../../../../assets/mainScreens/info.png';
-import survey from '../../../../assets/mainScreens/survey.png';
+import survey from '../../../../assets/mainScreens/condidate.png';
 
 import clock from '../../../../assets/mainScreens/clock.png';
 import calender from '../../../../assets/mainScreens/calender.png';
+import moment from 'moment-jalaali';
 
+import { useNavigate } from 'react-router-dom';
 
 const Candidate = (props) => {
+    const navigate = useNavigate();
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [modalVisible, setModalVisible] = useState(0);
+
+    const getQuestionSurvey = () => {
+        MeetingProfileStore.setSurveyId(props.data.surveyId);
+        navigate('/form/info/survey/surveys');
+    };
+
+
+    const onTakeSurvey = () => {
+        MeetingProfileStore.setSurveyId(MeetingProfileStore.surveyList[0].surveyId);
+
+        MeetingProfileStore.checkExist().then(res => {
+            if (!res) {
+                setModalVisible(1);
+            } else {
+                setModalVisible(2)
+            }
+        });
+    };
 
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back src={backArrow} alt="backArrow" />
-
-            </TopView>
-
-
-            <Info>
-                <span>مجمع ها / مجمع تست / کاندید</span>
-            </Info>
-
 
             <SurveyView>
-                <span>کاندید</span>
+                <span>انتخابات</span>
                 <img src={survey} alt="survey" />
             </SurveyView>
 
 
             <ShortDescription>
-                موضوع کاندید : <span>عنوان کاندید این مجمع</span>
+                موضوع کاندید : <span>{props.data.title}</span>
             </ShortDescription>
 
             <Card>
@@ -57,13 +60,13 @@ const Candidate = (props) => {
                     <div>
                         <img src={calender} alt="calender" />
 
-                        <p>1400/08/27</p>
+                        <p>{moment(props.data.endDatetime).format('jYYYY/jMM/jDD')}</p>
                     </div>
 
                     <div>
                         <img src={clock} alt="clock" />
 
-                        <p>11:00</p>
+                        <p>{moment(props.data.endDatetime).format('HH:MM')}</p>
                     </div>
                 </CardSection>
 
@@ -74,26 +77,35 @@ const Candidate = (props) => {
                     <div>
                         <img src={calender} alt="calender" />
 
-                        <p>1400/08/27</p>
+                        <p>{moment(props.data.startDatetime).format('jYYYY/jMM/jDD')}</p>
+
                     </div>
 
                     <div>
                         <img src={clock} alt="clock" />
 
-                        <p>11:00</p>
+                        <p>{moment(props.data.startDatetime).format('HH:MM')}</p>
                     </div>
                 </CardSection>
 
             </Card>
 
 
-            <ShortDescription style={{color: '#B592FE'}}>
-                در حال حاظر نظرسنجی فعال نمی‌باشد
+            <ShortDescription style={{ color: '#B592FE' }}>
+                {props.data.surveyStatus === 0 ?
+                    'در حال حاظر نظرسنجی ایجاد شده است'
+                    :
+                    props.data.surveyStatus === 1 ?
+                        'نظرسنجی در حال برگزاری می‌باشد'
+                        :
+                        'در حال حاظر نظرسنجی به پایان رسید'}
+
+
             </ShortDescription>
 
 
             <Describtion>
-                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است
+                {props.data.description}
             </Describtion>
 
             <Footer>
@@ -103,10 +115,20 @@ const Candidate = (props) => {
 
                 <Button
                     primary
-                    onPress={() => console.log('کاندید می‌شوم')}
-                    title={'کاندید می‌شوم'} />
+                    onPress={onTakeSurvey}
+                    title={'شرکت در انتخابات'} />
 
             </Footer>
+
+            <ModalComponent
+                modalVisible={modalVisible !== 0}
+                closeModal={() => setModalVisible(0)}
+                hasError={modalVisible === 2}
+                alert={modalVisible === 1}
+                okOnclick={() => getQuestionSurvey()}
+                cancelOnclick={() => setModalVisible(0)}
+                content={modalVisible === 1 ? 'آیا در نظرسنجی شرکت می‌کنید؟' : 'شما قبلا در این نظرسنجی شرکت کرده اید'}
+            />
         </div>
     );
 };
@@ -183,6 +205,8 @@ const Footer = styled.div`
     justify-content: flex-end;
     display: flex;
     margin-top: 50px;
+    border-bottom: 1px solid #545772;
+    padding-bottom: 30px;
 `;
 
 
@@ -211,65 +235,6 @@ const ShortDescription = styled.p`
     }
 `;
 
-
-const Info = styled.div`
-    border-bottom: 1px solid #545772;
-    text-align: right;
-    margin-top: 16px;
-    padding: 10px;
-    
-    span {
-        color: #545772;
-        font-size: 14px;
-    }
-`;
-
-
-const Tab = styled.div`
-    width: 28.3%;   
-    cursor: pointer;
-    text-align: center;
-    padding: 10px;
-`;
-
-
-const TabContainer = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    width: 85%;
-    display: flex;
-    /* background-color: red; */
-`;
-
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-`;
 
 
 export default Candidate;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 
 import OngoingEvents from './OngoingEvents';
@@ -8,83 +8,52 @@ import styled from 'styled-components';
 import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
 
+
+import StoreContext from '../../../../Stores';
+
 let tabs = [
     {
-        id: 2,
+        id: 4,
+        title: 'رویداد های برگزار شده'
+    },
+    {
+        id: 3,
         title: 'رویداد های لغو شده'
     },
     {
-        id: 1,
+        id: 2,
         title: 'رویداد های آینده'
     },
     {
-        id: 0,
-        title: 'رویداد های در حال برگذاری'
+        id: 1,
+        title: 'رویداد های در حال برگزاری'
     },
 ];
 
-let items = [
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-    {
-        id: 0,
-        title: 'تامین سرمایه امین',
-        des: 'مجمع سالیانه شرکت سرمایه امین',
-        code: 'ن-66',
-        date: '29/08/1400',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU',
-    },
-];
 
 const Form = (props) => {
-    const [tabSelectedId, setTabSelectedId] = useState(0);
+    const { MeetingStore } = useContext(StoreContext);
 
+    const [tabSelectedId, setTabSelectedId] = useState(1);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        requestMeetingData(1);
+    }, []);
+
+
+    const requestMeetingData = (tabId) => {
+        setLoading(true);
+        MeetingStore.fetchData(true, tabId).then(res => {
+            setLoading(false);
+        });
+    };
+
+
+    const handleTabSelected = (id) => {
+        setTabSelectedId(id);
+        requestMeetingData(id);
+    };
 
     return (
         <>
@@ -101,7 +70,7 @@ const Form = (props) => {
                             <Tab
                                 key={item.id}
                                 style={{ borderBottom: tabSelectedId === item.id ? '4px solid #97A1FF' : '1px solid #fff' }}
-                                onClick={() => setTabSelectedId(item.id)}>
+                                onClick={() => handleTabSelected(item.id)}>
                                 <span style={{ color: tabSelectedId === item.id ? '#97A1FF' : '#fff' }}>
                                     {item.title}
                                 </span>
@@ -112,11 +81,26 @@ const Form = (props) => {
 
             </TopView>
 
-            {tabSelectedId === 0 ? <OngoingEvents /> : null}
+            {MeetingStore.data.length !== 0 ?
+                <OngoingEvents
+                    id={tabSelectedId}
+                />
+                :
+                <NullData>
+                    ! موردی یافت نشد
+                </NullData>
+            }
+
         </>
     );
 };
 
+const NullData = styled.div`
+    font-size: 23px;
+    color: #fff;
+    text-align: center;
+    margin-top: 30%;
+`;
 const Tab = styled.div`
     width: 28.3%;   
     cursor: pointer;

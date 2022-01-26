@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 
 import user from '../../../../../assets/mainScreens/user.png';
@@ -14,18 +14,83 @@ import backArrow from '../../../../../assets/mainScreens/backArrow.png';
 import './meeting.css';
 import { useNavigate } from 'react-router';
 
+import StoreContext from '../../../../../Stores';
+
+
+
+let meetingtype = [
+    {
+        title: 'مجمع عمومی',
+        id: 1,
+    },
+    {
+        title: 'مجمع عمومی سالانه',
+        id: 2,
+    },
+    {
+        title: 'مجمع عمومی',
+        id: 3,
+    },
+];
+
 const StepOne = (props) => {
     const navigate = useNavigate();
 
+    const { MeetingStore } = useContext(StoreContext);
 
-    const [meetingInfo, setMeetingInfo] = useState({
-        boss: '',
-        secretary: '',
-        observer: '',
-        name: '',
-        type: '',
-        subject: '',
-    });
+    const [companyList, setCompanyList] = useState([]);
+    const [stockholder, setStockholder] = useState([]);
+
+    const [description, setDescription] = useState('');
+    const [meetingName, setMeetingName] = useState('');
+
+
+    const [companyId, setCompanyId] = useState('');
+
+
+    const [bossName, setBossName] = useState('');
+    const [secretary, setSecretary] = useState('');
+    const [supervisor, setSupervisor] = useState('');
+    const [meetingType, setMeetingType] = useState('');
+
+    useEffect(() => {
+        addCompany();
+    }, []);
+
+
+    const addCompany = () => {
+        MeetingStore.getCompanyCode().then(data => setCompanyList(data));
+
+        MeetingStore.getStockholder().then(data => setStockholder(data));
+    };
+
+
+    const confirmInfo = () => {
+        const duties = [
+            {
+                userId: bossName,
+                dutyId: bossName !== '' ? 110 : 0,
+            },
+            {
+                userId: secretary,
+                dutyId: secretary !== '' ? 111 : 0,
+            },
+            {
+                userId: supervisor,
+                dutyId: 112,
+            },
+        ];
+
+        let ids = duties.filter(item => item.dutyId === 0);
+
+        if (ids.length > 0 || companyId === '' || meetingName === '' || meetingType === '') {
+            alert('لطفا موارد را به صورت کامل پر کنید!');
+            return;
+        };
+        MeetingStore.fillDuties(duties, companyId, meetingName, description, Number(meetingType));
+        navigate('/admin/add/nextstep');
+    };
+
 
     return (
         <div className="main">
@@ -37,7 +102,7 @@ const StepOne = (props) => {
                     <ArrowIcon src={downArrow} alt="downArrow" />
                 </IconsDiv>
 
-                <Back src={backArrow} alt="backArrow" />
+                <Back onClick={() => navigate(-1)} src={backArrow} alt="backArrow" />
             </TopView>
 
 
@@ -52,55 +117,88 @@ const StepOne = (props) => {
 
 
             <View>
-                <Input
-                    placeholder={'نام و نام خانوادگی منشی'}
-                    type={'text'}
-                    value={meetingInfo.secretary}
-                />
+                <select
+                    style={selectStyle}
+                    onChange={e => setBossName(e.target.value)}
+                    value={bossName}>
+                    <option value=''>نام و نام خانوادگی رییس</option>
+                    {stockholder.map((item, index) => (
+                        <option
+                            key={index}
+                            value={item.userId}>
+                            {item.stockholderName}
+                        </option>
+                    ))}
+                </select>
 
-                <Input
-                    placeholder={'نام و نام خانوادگی رییس'}
-                    type={'text'}
-                    value={meetingInfo.boss}
-                />
+                <select
+                    style={selectStyle}
+                    onChange={e => setCompanyId(e.target.value)}
+                    value={companyId}>
+                    <option value=''>نام و کد شرکت</option>
+                    {companyList.map((item, index) => (
+                        <option key={index} value={item.companyId}>{item.companyTitle}</option>
+                    ))}
+                </select>
             </View>
 
 
             <View>
+                <select
+                    onChange={e => setSupervisor(e.target.value)}
+                    style={selectStyle}
+                    value={supervisor}>
+                    <option value=''>نام و نام خانوادگی ناظر</option>
+                    {stockholder.map((item, index) => (
+                        <option key={index} value={item.userId}>{item.stockholderName}</option>
+                    ))}
+                </select>
+
+                <select
+                    style={selectStyle}
+                    onChange={e => setSecretary(e.target.value)}
+                    value={secretary}>
+                    <option value=''>نام و نام خانوادگی منشی</option>
+                    {stockholder.map((item, index) => (
+                        <option key={index} value={item.userId}>{item.stockholderName}</option>
+                    ))}
+                </select>
+            </View>
+
+
+            <View>
+                <select
+                    style={selectStyle}
+                    onChange={e => setMeetingType(e.target.value)}
+                    value={meetingType}>
+                    <option value=''>نوع مجمع</option>
+                    {meetingtype.map((item, index) => (
+                        <option key={index} value={item.id}>{item.title}</option>
+                    ))}
+                </select>
+
                 <Input
                     placeholder={'نام مجمع'}
                     type={'text'}
-                    value={meetingInfo.name}
-                />
-
-                <Input
-                    placeholder={'نام و نام خانوادگی ناظر'}
-                    type={'text'}
-                    value={meetingInfo.observer}
+                    value={meetingName}
+                    onChange={e => setMeetingName(e.target.value)}
                 />
             </View>
 
 
-            <View>
-                <Input
-                    placeholder={'موضوع مجمع'}
-                    type={'text'}
-                    value={meetingInfo.subject}
-                />
+            <Description
+                placeholder={'...توضیحات'}
+                type={'text'}
+                value={description}
+                onChange={e => setDescription(e.target.value)}
 
-                <Input
-                    placeholder={'نوع مجمع'}
-                    type={'text'}
-                    value={meetingInfo.type}
-                />
-            </View>
-
-
+            />
 
             <Footer>
                 <Button
                     primary
-                    onPress={() => navigate('/admin/add/nextstep')}
+                    onPress={confirmInfo}
+                    // onPress={() => console.log('data', duties)}
                     title={'تایید و ادامه'} />
 
             </Footer>
@@ -108,6 +206,22 @@ const StepOne = (props) => {
     );
 };
 
+const Description = styled.textarea`
+    background: transparent;
+    border-radius: 8px;
+    width: 95%;
+    height: 80px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 20px;
+    justify-content: flex-end;
+`;
 
 const View = styled.div`
     display: flex;
@@ -195,5 +309,21 @@ const TopView = styled.div`
     cursor: pointer;
 `;
 
+const selectStyle = {
+    background: 'transparent',
+    color: '#7F829F',
+    fontSize: 16,
+    width: 450,
+    borderRadius: 8,
+    flexDirection: 'row-reverse',
+    padding: 5,
+    textAlign: 'right',
+    direction: 'rtl',
+    marginLeft: 16,
+    height: 48,
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    display: 'flex',
+};
 
 export default StepOne;

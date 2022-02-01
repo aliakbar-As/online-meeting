@@ -130,7 +130,7 @@ const ForumInfo = (props) => {
                         ))}
                     </View>
 
-                    <Edit>
+                    <Edit onClick={() => navigate('/admin/editDuties')}>
                         ویرایش
                     </Edit>
 
@@ -272,6 +272,7 @@ const Edit = styled.button`
     border-radius: 8px;
     align-self: flex-end;
     margin-top: 16px;
+    cursor: pointer;
 `;
 
 

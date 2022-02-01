@@ -22,12 +22,14 @@ import Election from '../components/Screens/MainScreens/admin/election/Election'
 import ElectionDetails from '../components/Screens/MainScreens/admin/election/ElectionDetails';
 import AddElection from '../components/Screens/MainScreens/admin/election/AddElection';
 
+import AdminSurveyType from '../components/Screens/MainScreens/admin/AdminSurveyTypes';
 import AdminSurvey from '../components/Screens/MainScreens/admin/Survey/Survey';
 import SurveyDetails from '../components/Screens/MainScreens/admin/Survey/SurveyDetails';
 import AddSurvey from '../components/Screens/MainScreens/admin/Survey/AddSurvey';
 import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuestion';
 import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
 import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
+import EditDuties from '../components/Screens/MainScreens/admin/addMeeting/EditDuties';
 
 function RouterComponent() {
     return (
@@ -81,6 +83,9 @@ function RouterComponent() {
             <Route path="/admin/add"
                 element={<StepOne />}
             />
+            <Route path="/admin/editDuties"
+                element={<EditDuties />}
+            />
 
             <Route path="/admin/add/nextstep"
                 element={<StepTwo />}
@@ -108,6 +113,9 @@ function RouterComponent() {
 
 
 
+            <Route path="/admin/surveyType"
+                element={<AdminSurveyType />}
+            />
             <Route path="/admin/survey"
                 element={<AdminSurvey />}
             />

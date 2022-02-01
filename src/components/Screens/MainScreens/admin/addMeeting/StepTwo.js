@@ -49,17 +49,26 @@ const StepTwo = (props) => {
         const date = jalaali.toGregorian(sYear, sMonth, sDay);
 
 
-        const convertedStartDate = `${date.gy}-${date.gm}-${date.gd}T${startTime}:00`;
+        const dayConverted = date.gd.toString().length == 1 ? '0' + date.gd : date.gd;
+        const monthConverted = date.gm.toString().length == 1 ? '0' + date.gm : date.gm;
+
+
+        const convertedStartDate = `${date.gy}-${monthConverted}-${dayConverted}T${startTime}:36.004Z`;
 
         const eDay = Number(endDay);
         const eMonth = Number(endMonth);
         const eYear = Number(endYear);
 
         const endDate = jalaali.toGregorian(eYear, eMonth, eDay);
-        const convertedEndDate = `${endDate.gy}-${endDate.gm}-${endDate.gd}T${endTime}:00`;
+
+
+        const eDayConverted = endDate.gd.toString().length == 1 ? '0' + endDate.gd : endDate.gd;
+        const eMonthConverted = endDate.gm.toString().length == 1 ? '0' + endDate.gm : endDate.gm;
+
+
+        const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
         MeetingStore.setMeetingDate(convertedStartDate, convertedEndDate);
-
         navigate('/admin/add/nextstep/finalstep');
     };
 

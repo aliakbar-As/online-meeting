@@ -42,7 +42,7 @@ let tabs = [
 const ForumList = (props) => {
     const navigate = useNavigate();
 
-    const { MeetingStore } = useContext(StoreContext);
+    const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
 
     const [tabSelectedId, setTabSelectedId] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
@@ -54,6 +54,7 @@ const ForumList = (props) => {
     }, []);
 
     const requestMeetingData = (tabId) => {
+        MeetingStore.resetMettingData();
         setLoading(true);
         MeetingStore.fetchData(true, tabId).then(res => {
             setLoading(false);
@@ -63,6 +64,13 @@ const ForumList = (props) => {
     const handleTabSelected = (id) => {
         setTabSelectedId(id);
         requestMeetingData(id);
+    };
+
+
+    const getSurveyList = () => {
+        MeetingProfileStore.getSurvey(true, 2, 'admin').then(() => {
+            navigate('/admin/surveyType');
+        });
     };
 
     return (
@@ -99,7 +107,7 @@ const ForumList = (props) => {
                     />
 
                     <Footer>
-                        <Survey onClick={() => navigate('/admin/survey')}>
+                        <Survey onClick={getSurveyList}>
                             <Left src={left} alt="left arrow" />
                             <span>انتخابات و نظرسنجی</span>
                         </Survey>
@@ -195,6 +203,7 @@ const Tab = styled.div`
     cursor: pointer;
     text-align: center;
     padding: 10px;
+    font-size: 14px;
 `;
 
 

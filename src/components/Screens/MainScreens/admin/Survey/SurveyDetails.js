@@ -1,9 +1,12 @@
-import styled from "styled-components"
+import React, { useEffect, useState ,useContext} from 'react';
+import styled from "styled-components";
 import { Header } from "../../../../Commons";
 
 import { useNavigate } from 'react-router-dom';
 
 import '../election/election.css';
+
+import StoreContext from '../../../../../Stores';
 
 let chartItems = [
     {
@@ -61,6 +64,37 @@ const SurveyDetails = (props) => {
 
     const navigate = useNavigate();
 
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [survey, setSurvey] = useState({
+        description: "",
+        endDatetime: "",
+        meetingTitle: "",
+        startDatetime: "",
+        surveyId: "",
+        surveyStatus: 0,
+        surveyType: 0,
+        title: "",
+    });
+
+    useEffect(() => {
+        getSurveyInfo();
+        getSurveyDetails();
+    }, []);
+
+    const getSurveyInfo = () => {
+        MeetingProfileStore.getElectionInfo().then(res => {
+            setSurvey(res);
+        });
+    };
+
+    const getSurveyDetails = () => {
+        MeetingProfileStore.showSurveyDetails().then(res => {
+
+        });
+    };
+
+
     return (
         <div className="main">
             <Header
@@ -117,10 +151,33 @@ const SurveyDetails = (props) => {
                         )
                     })}
                 </Table>
+
+                <Box>
+                    <span>نام و نام خانوادگی کاندیدها</span>
+
+
+                </Box>
             </div>
         </div>
     )
 }
+
+
+
+const Box = styled.div`
+    background: #2F3247;
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    width: 42%;
+    height: 100%;
+    padding: 10px;
+
+    overflow-y: 'scroll';
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+`;
 
 const View = styled.div`
     margin-right: 5px;

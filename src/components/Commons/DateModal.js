@@ -26,7 +26,11 @@ const customStyles = {
 const renderDayDate = (onChange) => {
     const dayList = [];
     for (var i = 1; i <= 31; i++) {
-        dayList.push(i);
+        if (i.toString().length == 1) {
+            dayList.push(`0${i}`);
+        } else {
+            dayList.push(i);
+        };
     };
 
     return (
@@ -48,7 +52,11 @@ const renderDayDate = (onChange) => {
 const renderMonthDate = (onChange) => {
     const dayList = [];
     for (var i = 1; i <= 12; i++) {
-        dayList.push(i);
+        if (i.toString().length == 1) {
+            dayList.push(`0${i}`);
+        } else {
+            dayList.push(i);
+        };
     };
 
     return (
@@ -69,7 +77,7 @@ const renderMonthDate = (onChange) => {
 
 const renderYearDate = (onChange) => {
     const dayList = [];
-    for (var i = 1300; i <= 1400; i++) {
+    for (var i = 1300; i <= 1403; i++) {
         dayList.push(i);
     };
 

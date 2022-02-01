@@ -1,10 +1,15 @@
+import React, { useEffect, useState, useContext } from 'react';
 import styled from "styled-components"
 import { Header } from "../../../../Commons";
 
 import './election.css';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { MeetingProfileStore, MeetingStore } from "../../../../../Stores/MeetingStore";
 
+import moment from 'moment-jalaali';
+
+import StoreContext from '../../../../../Stores';
 
 let chartItems = [
     {
@@ -54,13 +59,45 @@ let tableItems = [
         date: '1400/08/03',
         status: 'در حال بارگزاری 3',
     },
-    
+
 ];
 
 
 const ElectionDetails = (props) => {
 
     const navigate = useNavigate();
+
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+
+    const [survey, setSurvey] = useState({
+        description: "",
+        endDatetime: "",
+        meetingTitle: "",
+        startDatetime: "",
+        surveyId: "",
+        surveyStatus: 0,
+        surveyType: 0,
+        title: "",
+    });
+
+    useEffect(() => {
+        getSurveyInfo();
+        getSurveyDetails();
+    }, []);
+
+    const getSurveyInfo = () => {
+        MeetingProfileStore.getElectionInfo().then(res => {
+            setSurvey(res);
+        });
+    };
+
+    const getSurveyDetails = () => {
+        MeetingProfileStore.showSurveyDetails().then(res => {
+
+        });
+    };
+
 
     return (
         <div className="main">
@@ -74,18 +111,18 @@ const ElectionDetails = (props) => {
             </Info>
 
             <SurveyView>
-                <span style={{ color: '#fff' }}>02/08/1400   .   02/08/1400</span>
+                <span style={{ color: '#fff' }}>{moment(survey.startDatetime).format('jYYYY/jMM/jDD')}   -   {moment(survey.endDatetime).format('jYYYY/jMM/jDD')}</span>
 
 
-                <span>انتخابات اول | مجمع اول <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | در حال برگزاری</span></span>
+                <span>{survey.title} | {survey.meetingTitle} <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | در حال برگزاری</span></span>
             </SurveyView>
 
 
 
             <ChartView>
-                {chartItems.map(item => {
+                {chartItems.map((item, i) => {
                     return (
-                        <View>
+                        <View key={i}>
                             <span>{item.percent}%</span>
 
                             <div style={{ width: 100, height: `${item.percent}%`, backgroundColor: 'red' }}>
@@ -110,7 +147,7 @@ const ElectionDetails = (props) => {
                     </Tr>
                     {tableItems.map(item => {
                         return (
-                            <Tr>
+                            <Tr key={item.id}>
                                 <Td>{item.id} %</Td>
                                 <Td>{item.id}</Td>
                                 <Td><p>{item.title}</p></Td>
@@ -118,15 +155,49 @@ const ElectionDetails = (props) => {
                         )
                     })}
                 </Table>
+
+                <Box>
+                    <span>نام و نام خانوادگی کاندیدها</span>
+
+
+                </Box>
             </div>
 
         </div>
     )
-}
+};
+
+const Box = styled.div`
+    background: #2F3247;
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    width: 42%;
+    height: 100%;
+    padding: 10px;
+
+    overflow-y: 'scroll';
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+`;
 
 const View = styled.div`
     margin-right: 5px;
     height: 414px;
+
+    /* -webkit-transform:rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); */
+  transform: rotate(180deg);
+
+    span {
+        -webkit-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
+    }
+
 `;
 
 const ChartView = styled.div`
@@ -138,42 +209,12 @@ const ChartView = styled.div`
     padding: 16px;
     margin-top: 16px;
     flex-direction: row;
-    align-items: flex-start;
-    display: flex;
-    justify-content: center;
-`;
-
-
-const Add = styled.button`
-    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
-    border-radius: 8px;
-    width: 450px;
-    height: 48px;
-
-    text-align: center;
-    color: #fff;
-    font-size: 18px;
-    margin-top: 16px;
-
-`;
-
-
-const SeeMore = styled.div`
-    flex-direction: row;
     align-items: center;
     display: flex;
-
     justify-content: center;
+    /* writing-mode: vertical-lr; */
 
-    span {
-        color: #97A1FF;
-        margin-left: 10px;
-    }
-
-    img {
-        width: 12px;
-        height: 12px;
-    }
+    
 `;
 
 
@@ -210,8 +251,8 @@ const Table = styled.table`
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     /* width: 80%; */
-    width: 922px;
-    height: 243px;
+    width: 55%;
+    height: 100%;
     margin-top: 20px;
     padding: 10px;
 

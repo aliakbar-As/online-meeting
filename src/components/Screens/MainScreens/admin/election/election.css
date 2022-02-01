@@ -3,14 +3,17 @@
 }
 
 .table {
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     display: flex;
+    height: 243px;
+    margin-top: 32px;
+    margin-bottom: 40px;
 }
 
 .addButton {
     justify-content: flex-end;
     display: flex;
-    padding-right: 15%;
 }
 
 

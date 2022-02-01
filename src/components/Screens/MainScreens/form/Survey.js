@@ -11,12 +11,10 @@ import { Button, ModalComponent } from '../../../../components/Commons';
 import StoreContext from '../../../../Stores';
 import moment from 'moment-jalaali';
 
-import backArrow from '../../../../assets/mainScreens/backArrow.png';
 import survey from '../../../../assets/mainScreens/survey.png';
 
 import clock from '../../../../assets/mainScreens/clock.png';
 import calender from '../../../../assets/mainScreens/calender.png';
-import empty from '../../../../assets/mainScreens/Exclude.png';
 
 import { useNavigate } from 'react-router-dom';
 

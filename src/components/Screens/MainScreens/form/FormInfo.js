@@ -41,8 +41,7 @@ const FormInfo = (props) => {
 
 
     const serveyOnclick = () => {
-        console.clear();
-        MeetingProfileStore.getSurvey(true, 2).then(res => {
+        MeetingProfileStore.getSurvey(true, 2, 'user').then(res => {
             navigate('/form/info/survey');
         });
     };
@@ -57,7 +56,7 @@ const FormInfo = (props) => {
 
     return (
         <div className="main">
-            
+
             <ShortDescription>
                 {MeetingProfileStore.meetingDetails.description}
             </ShortDescription>

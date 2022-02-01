@@ -139,7 +139,7 @@ class Request {
                 if (method === 'get' || method === 'delete') {
                     requestConfig.params = { ...requestConfig.params };
                 } else {
-                    data.token = token;
+                    // data.token = token;
                 }
             }
 

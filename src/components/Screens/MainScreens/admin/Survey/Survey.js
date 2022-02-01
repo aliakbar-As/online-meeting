@@ -1,64 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from "styled-components"
 import { Header, ModalComponent } from "../../../../Commons";
 
 
 import left from '../../../../../assets/mainScreens/leftArrow.svg';
-
+import './form.css';
 import { useNavigate } from 'react-router-dom';
+    
+import StoreContext from '../../../../../Stores';
 
-let tableItems = [
-    {
-        id: 0,
-        title: 'عنوان نظرسنجی اول',
-        meeting: 'عنوان نام مجمع',
-        count: 1,
-        date: '1400/08/01',
-        status: 'در حال بارگزاری 1',
-    },
-    {
-        id: 0,
-        title: 'عنوان نظرسنجی دوم',
-        meeting: 'عنوان نام مجمع2',
-        count: 2,
-        date: '1400/08/02',
-        status: 'در حال بارگزاری 2',
-    },
-    {
-        id: 0,
-        title: 'عنوان نظرسنجی سوم',
-        meeting: 'عنوان نام مجمع3',
-        count: 3,
-        date: '1400/08/03',
-        status: 'در حال بارگزاری 3',
-    },
-];
+import moment from 'moment-jalaali';
 
 
 const Survey = (props) => {
-
     const navigate = useNavigate();
-    const [modalVisible, setModalVisible] = useState(true);
+
+    const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
 
 
-    useEffect(() => {
+    const seeElectionInfo = (id) => {
+        MeetingProfileStore.setSurveyId(id);
+        navigate('/admin/survey/detail');
+    };
 
-        setTimeout(() => {
-            setModalVisible(false);
-        }, 3000);
 
-    }, []);
     return (
         <div className="main">
-            <Header
-                backOnclick={() => navigate(-1)}
-            />
-
-
-            <Info>
-                <span>مجمع ها / نظرسنجی</span>
-            </Info>
-
 
             <SurveyView>
                 <span>نظرسنجی ها</span>
@@ -76,19 +46,23 @@ const Survey = (props) => {
                         <Th>نام مجمع</Th>
                         <Th><p>عنوان</p></Th>
                     </Tr>
-                    {tableItems.map(item => {
+                    {props.data.map(item => {
                         return (
-                            <Tr>
+                            <Tr key={item.surveyId}>
                                 <Td>
-                                    <SeeMore onClick={()=> navigate('/admin/survey/detail')}>
+                                    <SeeMore onClick={() => seeElectionInfo(item.surveyId)}>
                                         <img src={left} alt="arrow" />
-                                        <span>مشاهده</span>
+                                        <span style={{ color: '#04DA9A' }}>مشاهده</span>
+                                    </SeeMore>
+                                    <SeeMore onClick={() => setShowAlert(true)}>
+                                        <img src={left} alt="arrow" />
+                                        <span>ویرایش</span>
                                     </SeeMore>
                                 </Td>
-                                <Td>{item.status}</Td>
-                                <Td>{item.date}</Td>
-                                <Td>{item.count}</Td>
-                                <Td>{item.meeting}</Td>
+                                <Td>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</Td>
+                                <Td>{moment(item.startDatetime).format('jYYYY/jMM/jDD')}</Td>
+                                <Td>{item.countOfVotes}</Td>
+                                <Td>{item.meetingTitle}</Td>
                                 <Td><p>{item.title}</p></Td>
                             </Tr>
                         )

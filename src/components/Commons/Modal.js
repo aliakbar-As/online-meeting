@@ -30,7 +30,7 @@ export const ModalComponent = ({
     content, alert,
     okOnclick,
     cancelOnclick,
-    hasError
+    hasError, okTitle, cancelTitle
 }) => {
     if (alert) {
         return (
@@ -47,11 +47,11 @@ export const ModalComponent = ({
 
                     <Footer>
                         <No onClick={cancelOnclick}>
-                            خیر
+                            {cancelTitle === undefined ? 'خیر' : cancelTitle}
                         </No>
 
                         <Yes onClick={okOnclick}>
-                            بله
+                            {okTitle === undefined ? 'بله' : okTitle}
                         </Yes>
                     </Footer>
                 </Alert>

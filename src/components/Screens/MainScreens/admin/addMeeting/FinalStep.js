@@ -38,6 +38,12 @@ const FinalStep = (props) => {
     const [successVisible, setSuccessVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
+
+    useEffect(() => {
+        console.log('start', MeetingStore.holdingDatetime);
+        console.log('end', MeetingStore.endDatetime);
+    }, []);
+
     const changeHandler = (event, id) => {
         setFiles(files => [...files, event.target.files[0]]);
 
@@ -64,6 +70,10 @@ const FinalStep = (props) => {
 
     const deleteIcon = (name, id) => {
 
+        if (successVisible) {
+            alert('امکان حذف فایل وجود ندارد!');
+            return;
+        };
 
         setFiles(files.filter(item => item.name !== name));
 
@@ -265,7 +275,7 @@ const FinalStep = (props) => {
             <Footer>
                 <Button onClick={() => handleConditions(files.length === 0 || successVisible ? 0 : 1)}>
                     <span>
-                        {files.length === 0 || successVisible? 'افزودن مجمع' : 'بارگزاری فایل ها'}
+                        {files.length === 0 || successVisible ? 'افزودن مجمع' : 'بارگزاری فایل ها'}
                     </span>
                 </Button>
 

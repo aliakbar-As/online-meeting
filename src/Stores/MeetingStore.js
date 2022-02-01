@@ -16,8 +16,8 @@ const meetingStore = types.model('meetingStore', {
     meetingType: types.maybeNull(types.number),
     holderCompanyId: types.maybeNull(types.string),
     title: types.maybeNull(types.string),
-    holdingDatetime: types.optional(types.string, "2022-01-18T07:51:16.952Z"),
-    endDatetime: types.optional(types.string, "2022-01-18T07:51:16.952Z"),
+    holdingDatetime: types.maybeNull(types.string),
+    endDatetime: types.maybeNull(types.string),
     meetingStatus: types.optional(types.number, 1),
     description: types.maybeNull(types.string),
     meetingDuties: types.optional(types.array(SingleDuty), []),
@@ -127,7 +127,7 @@ const meetingStore = types.model('meetingStore', {
                     description: self.description,
                     meetingDocuments: files,
                     meetingUserDuties: self.meetingDuties,
-                }, false, {})
+                }, true, {})
                     .then(({ data }) => {
                         Logger(data, 'Meeting/Add');
 
@@ -139,6 +139,17 @@ const meetingStore = types.model('meetingStore', {
                     });
             });
 
+        },
+
+        resetMettingData() {
+            self.meetingType = null;
+            self.holderCompanyId = null;
+            self.title = null;
+            self.holdingDatetime = null;
+            self.endDatetime = null;
+            self.meetingStatus = 1;
+            self.description = null;
+            self.meetingDuties = [];
         },
 
         fillData(data) {
@@ -284,6 +295,44 @@ const meetingProfileStore = types.model('meetingProfileStore', {
         },
 
 
+
+        async getSurvey(clear = false, surveyType, userType) {
+
+            console.log(userType)
+            const url = userType === 'admin' ? '/Survey' : '/Survey/Surveys';
+
+            return new Promise(async (resolve, reject) => {
+                if (clear) this.resetList();
+
+                request.get(url, {
+                    params: {
+                        count: 50,
+                        orderBy: 'surveyType',
+                        skip: 0,
+                        surveyType: surveyType,
+                        meetingId: userType === 'admin' ? undefined : self.meetingId,
+                    }
+                })
+                    .then(({ data }) => {
+                        Logger(data, 'Surveys');
+
+                        if (data.hasError) {
+                            resolve(false);
+                            this.setErrorMessage(data.data.exception);
+                            return;
+                        };
+                        if (surveyType === 2) {
+                            this.fillSurveyList(data.data.list);
+                            resolve(true);
+                        } else {
+                            resolve(data.data.list);
+                        }
+                    }).catch(err => {
+                        console.log('surveyType err', err);
+                        resolve(false);
+                    });
+            });
+        },
         async getQuestionSurvey() {
             return new Promise(async (resolve, reject) => {
                 request.get(`/Survey/${self.surveyId}/SurveyQuestions`)
@@ -321,6 +370,42 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                     .then(({ data }) => {
                         Logger(data, 'Adds');
                         resolve(data.data.isSuccess);
+                    }).catch(err => {
+                        resolve(false);
+                        console.log('CheckExist error', err);
+                    });
+            });
+        },
+
+
+
+        getElectionInfo() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/SurveyQuestionAnswer/ShowSurveyResultInfo`, {
+                    params: {
+                        surveyId: self.surveyId
+                    }
+                })
+                    .then(({ data }) => {
+                        Logger(data, 'ShowSurveyResultInfo');
+                        resolve(data.data.survey);
+                    }).catch(err => {
+                        resolve(false);
+                        console.log('CheckExist error', err);
+                    });
+            });
+        },
+
+        showSurveyDetails() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/SurveyQuestionAnswer/ShowSurveyResultDetail`, {
+                    params: {
+                        id: 'B35B2CF2-C77E-4E50-AF5F-2922AE9D380C'
+                    }
+                })
+                    .then(({ data }) => {
+                        Logger(data, 'ShowSurveyResultDetail');
+                        resolve(data.data.survey);
                     }).catch(err => {
                         resolve(false);
                         console.log('CheckExist error', err);

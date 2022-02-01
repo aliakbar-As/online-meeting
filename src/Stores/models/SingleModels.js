@@ -61,7 +61,8 @@ export const SingleSurveyList = types.model({
 
     surveyStatus: types.maybeNull(types.number),
     surveyType: types.maybeNull(types.number),
-
+    countOfVotes: types.maybeNull(types.number),
+    
 });
 
 

@@ -1,6 +1,6 @@
 import { types, applySnapshot } from 'mobx-state-tree';
 import { Logger, request } from '../Utils';
-import { SingleMetting, SingleSurveyList, SingleDuty } from './models/SingleModels';
+import { SingleMetting, SingleSurveyList, SingleDuty, SingleChart } from './models/SingleModels';
 
 
 
@@ -141,6 +141,27 @@ const meetingStore = types.model('meetingStore', {
 
         },
 
+        getMeetingList() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/Meeting/MeetingList`, {
+                    params: {
+                        count: 50,
+                        skip: 0,
+                        orderBy: 'title',
+                    }
+                }, false, {})
+                    .then(({ data }) => {
+                        Logger(data, 'MeetingList');
+                        resolve(data.data.list);
+
+                    }).catch(err => {
+                        console.log('Company', err);
+                        resolve(false);
+                    });
+            });
+        },
+
+
         resetMettingData() {
             self.meetingType = null;
             self.holderCompanyId = null;
@@ -204,6 +225,8 @@ const meetingProfileStore = types.model('meetingProfileStore', {
 
     surveyList: types.optional(types.array(SingleSurveyList), []),
     surveyId: types.maybeNull(types.string),
+
+    charts: types.optional(types.array(SingleChart), []),
 
 }).actions((self) => {
     return {
@@ -379,8 +402,12 @@ const meetingProfileStore = types.model('meetingProfileStore', {
 
 
 
-        getElectionInfo() {
+        getElectionInfo(clear = false,) {
+
             return new Promise(async (resolve, reject) => {
+
+                if (clear) this.resetCharts();
+
                 request.get(`/SurveyQuestionAnswer/ShowSurveyResultInfo`, {
                     params: {
                         surveyId: self.surveyId
@@ -388,6 +415,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 })
                     .then(({ data }) => {
                         Logger(data, 'ShowSurveyResultInfo');
+                        if (clear) this.setChartInfo(data.data.showSurveyResults);
                         resolve(data.data.survey);
                     }).catch(err => {
                         resolve(false);
@@ -400,17 +428,29 @@ const meetingProfileStore = types.model('meetingProfileStore', {
             return new Promise(async (resolve, reject) => {
                 request.get(`/SurveyQuestionAnswer/ShowSurveyResultDetail`, {
                     params: {
-                        id: 'B35B2CF2-C77E-4E50-AF5F-2922AE9D380C'
+                        id: self.surveyId
                     }
                 })
                     .then(({ data }) => {
                         Logger(data, 'ShowSurveyResultDetail');
-                        resolve(data.data.survey);
+                        resolve(data.data.list);
                     }).catch(err => {
                         resolve(false);
                         console.log('CheckExist error', err);
                     });
             });
+        },
+
+
+        setChartInfo(data) {
+            if (data.length === 0) {
+                return false;
+            };
+            Array.prototype.push.apply(self.charts, data.map(item => item));
+        },
+
+        resetCharts() {
+            self.charts = [];
         },
 
         resetList() {

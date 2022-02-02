@@ -22,7 +22,10 @@ const Election = (props) => {
 
     const seeElectionInfo = (id) => {
         MeetingProfileStore.setSurveyId(id);
-        navigate('/admin/election/detail');
+
+        MeetingProfileStore.getElectionInfo(true).then(res => {
+            navigate('/admin/election/detail');
+        });
     };
 
     return (

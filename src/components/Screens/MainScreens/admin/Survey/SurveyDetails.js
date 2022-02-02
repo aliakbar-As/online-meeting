@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styled from "styled-components";
 import { Header } from "../../../../Commons";
 
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import '../election/election.css';
 
 import StoreContext from '../../../../../Stores';
+import moment from 'moment-jalaali';
 
 let chartItems = [
     {
@@ -56,7 +57,7 @@ let tableItems = [
         date: '1400/08/03',
         status: 'در حال بارگزاری 3',
     },
-    
+
 ];
 
 
@@ -65,6 +66,8 @@ const SurveyDetails = (props) => {
     const navigate = useNavigate();
 
     const { MeetingProfileStore } = useContext(StoreContext);
+
+    const [list, setList] = useState([]);
 
     const [survey, setSurvey] = useState({
         description: "",
@@ -90,7 +93,7 @@ const SurveyDetails = (props) => {
 
     const getSurveyDetails = () => {
         MeetingProfileStore.showSurveyDetails().then(res => {
-
+            setList(res);
         });
     };
 
@@ -107,10 +110,10 @@ const SurveyDetails = (props) => {
             </Info>
 
             <SurveyView>
-                <span style={{ color: '#fff' }}>02/08/1400   .   02/08/1400</span>
+                <span style={{ color: '#fff' }}>{moment(survey.startDatetime).format('jYYYY/jMM/jDD')}   -   {moment(survey.endDatetime).format('jYYYY/jMM/jDD')}</span>
 
 
-                <span>نظرسنجی اول | مجمع اول <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | تمام شده</span></span>
+                <span>{survey.title} | {survey.meetingTitle} <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | در حال برگزاری</span></span>
             </SurveyView>
 
 
@@ -121,10 +124,7 @@ const SurveyDetails = (props) => {
                         <View>
                             <span>{item.percent}%</span>
 
-                            <div style={{ width: 100, height: `${item.percent}%`, backgroundColor: 'red' }}>
-
-                            </div>
-
+                            <div style={{ width: 100, height: `${item.percent}%`, background: `rgb(255, 0, 0,${item.percent / 100})` }} />
 
                             <span>{item.title}</span>
                         </View>
@@ -135,27 +135,31 @@ const SurveyDetails = (props) => {
 
 
             <div className="table">
-                <Table>
-                    <Tr>
-                        <Th>تاثیرگذاری رای</Th>
-                        <Th>گزینه انتخابی</Th>
-                        <Th><p>نام و نام خانوادگی </p></Th>
-                    </Tr>
-                    {tableItems.map(item => {
-                        return (
-                            <Tr>
-                                <Td>{item.id} %</Td>
-                                <Td>{item.id}</Td>
-                                <Td><p>{item.title}</p></Td>
-                            </Tr>
-                        )
-                    })}
-                </Table>
+                <Content>
+                    <Table>
+                        <Tr>
+                            <Th>تاثیرگذاری رای</Th>
+                            <Th>گزینه انتخابی</Th>
+                            <Th><p>نام و نام خانوادگی </p></Th>
+                        </Tr>
+                        {list.map(item => {
+                            return (
+                                <Tr>
+                                    <Td>{item.id} %</Td>
+                                    <Td>{item.id}</Td>
+                                    <Td><p>{item.title}</p></Td>
+                                </Tr>
+                            )
+                        })}
+                    </Table>
+                </Content>
 
                 <Box>
                     <span>نام و نام خانوادگی کاندیدها</span>
 
-
+                    {list.map((item, i) => (
+                        <p>{item.answerTitle}</p>
+                    ))}
                 </Box>
             </div>
         </div>
@@ -163,6 +167,34 @@ const SurveyDetails = (props) => {
 }
 
 
+const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    overflow-y: scroll;
+    width: 55%;
+    max-height: 250px;
+    height: 250px;
+    background: #2F3247;
+/* elevation 2 */
+
+box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+border-radius: 8px;
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #7B88FF; 
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #7B88FF; 
+    }
+`;
 
 const Box = styled.div`
     background: #2F3247;
@@ -170,18 +202,34 @@ const Box = styled.div`
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     width: 42%;
-    height: 100%;
+    height: 243px;
     padding: 10px;
 
-    overflow-y: 'scroll';
     display: flex;
     align-items: flex-end;
     flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #7B88FF; 
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #7B88FF; 
+    }
 `;
 
 const View = styled.div`
     margin-right: 5px;
-    height: 414px;
+    height: 400px;
+    margin-top: 40px;
+    transform: rotate(180deg);
 `;
 
 const ChartView = styled.div`
@@ -245,13 +293,8 @@ const Table = styled.table`
 
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    /* width: 80%; */
-    width: 922px;
-    height: 243px;
-    margin-top: 20px;
-    padding: 10px;
 
-    overflow-y: 'scroll'
+    padding: 10px;
 `;
 
 

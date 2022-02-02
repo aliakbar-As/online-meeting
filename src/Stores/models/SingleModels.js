@@ -62,11 +62,22 @@ export const SingleSurveyList = types.model({
     surveyStatus: types.maybeNull(types.number),
     surveyType: types.maybeNull(types.number),
     countOfVotes: types.maybeNull(types.number),
-    
+
 });
 
 
 export const SingleDuty = types.model({
     userId: types.maybeNull(types.string),
     dutyId: types.maybeNull(types.number),
+});
+
+
+
+export const SingleChart = types.model({
+    answerTitle: types.maybeNull(types.string),
+    questionTitle: types.maybeNull(types.string),
+    optionRank: types.maybeNull(types.number),
+    percentageNumberAnswer: types.maybeNull(types.number),
+    percentageSharesAnswer: types.maybeNull(types.number),
+    questionRank: types.maybeNull(types.number),
 });

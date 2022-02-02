@@ -11,29 +11,6 @@ import moment from 'moment-jalaali';
 
 import StoreContext from '../../../../../Stores';
 
-let chartItems = [
-    {
-        id: 0,
-        title: 'نفر اول',
-        percent: 20,
-    },
-    {
-        id: 2,
-        title: 'نفر دوم',
-        percent: 10,
-    },
-    {
-        id: 3,
-        title: 'نفر سوم',
-        percent: 5,
-    },
-    {
-        id: 3,
-        title: 'نفر چهارم',
-        percent: 75,
-    },
-];
-
 let tableItems = [
     {
         id: 1,
@@ -69,6 +46,8 @@ const ElectionDetails = (props) => {
 
     const { MeetingProfileStore } = useContext(StoreContext);
 
+    const [list, setList] = useState([]);
+
 
     const [survey, setSurvey] = useState({
         description: "",
@@ -94,7 +73,7 @@ const ElectionDetails = (props) => {
 
     const getSurveyDetails = () => {
         MeetingProfileStore.showSurveyDetails().then(res => {
-
+            setList(res);
         });
     };
 
@@ -120,17 +99,13 @@ const ElectionDetails = (props) => {
 
 
             <ChartView>
-                {chartItems.map((item, i) => {
+                {MeetingProfileStore.charts.map((item, i) => {
                     return (
                         <View key={i}>
-                            <span>{item.percent}%</span>
+                            <span>{item.percentageNumberAnswer}%</span>
 
-                            <div style={{ width: 100, height: `${item.percent}%`, backgroundColor: 'red' }}>
-
-                            </div>
-
-
-                            <span>{item.title}</span>
+                            <div style={{ marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }} />
+                            <span>{item.answerTitle}</span>
                         </View>
                     )
                 })}
@@ -139,27 +114,32 @@ const ElectionDetails = (props) => {
 
 
             <div className="table">
-                <Table>
-                    <Tr>
-                        <Th>تاثیرگذاری رای</Th>
-                        <Th>گزینه انتخابی</Th>
-                        <Th><p>نام و نام خانوادگی </p></Th>
-                    </Tr>
-                    {tableItems.map(item => {
-                        return (
-                            <Tr key={item.id}>
-                                <Td>{item.id} %</Td>
-                                <Td>{item.id}</Td>
-                                <Td><p>{item.title}</p></Td>
-                            </Tr>
-                        )
-                    })}
-                </Table>
+                <Content>
+                    <Table>
+                        <Tr>
+                            <Th>تاثیرگذاری رای</Th>
+                            <Th>گزینه انتخابی</Th>
+                            <Th><p>نام و نام خانوادگی </p></Th>
+                        </Tr>
+
+                        {list.map((item, i) => {
+                            return (
+                                <Tr key={i}>
+                                    <Td>{item.percentageShares} %</Td>
+                                    <Td>{item.optionRank}</Td>
+                                    <Td><p>{item.voterFullName}</p></Td>
+                                </Tr>
+                            )
+                        })}
+                    </Table>
+                </Content>
 
                 <Box>
                     <span>نام و نام خانوادگی کاندیدها</span>
 
-
+                    {list.map((item, i) => (
+                        <p key={i}>{item.answerTitle}</p>
+                    ))}
                 </Box>
             </div>
 
@@ -167,43 +147,43 @@ const ElectionDetails = (props) => {
     )
 };
 
-const Box = styled.div`
+const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    overflow-y: scroll;
+    width: 55%;
+    max-height: 250px;
+    height: 250px;
     background: #2F3247;
 
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    width: 42%;
-    height: 100%;
-    padding: 10px;
 
-    overflow-y: 'scroll';
-    display: flex;
-    align-items: flex-end;
-    flex-direction: column;
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #7B88FF; 
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #7B88FF; 
+    }
 `;
 
 const View = styled.div`
     margin-right: 5px;
-    height: 414px;
-
-    /* -webkit-transform:rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg); */
-  transform: rotate(180deg);
-
-    span {
-        -webkit-transform: rotateX(-180deg);
-    transform: rotateX(-180deg);
-    }
-
+    height: 400px;
+    margin-top: 40px;
+    transform: rotate(180deg);
 `;
 
 const ChartView = styled.div`
     background: #2F3247;
-    /* elevation 2 */
-
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     padding: 16px;
@@ -212,9 +192,7 @@ const ChartView = styled.div`
     align-items: center;
     display: flex;
     justify-content: center;
-    /* writing-mode: vertical-lr; */
 
-    
 `;
 
 
@@ -245,18 +223,42 @@ const Td = styled.td`
 `;
 
 
+const Box = styled.div`
+    background: #2F3247;
+
+    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
+    border-radius: 8px;
+    width: 42%;
+    height: 243px;
+    padding: 10px;
+
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    overflow-y: scroll;
+    position: relative;
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #7B88FF; 
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #7B88FF; 
+    }
+`;
+
 const Table = styled.table`
     background: #2F3247;
 
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
-    /* width: 80%; */
-    width: 55%;
-    height: 100%;
-    margin-top: 20px;
+    
     padding: 10px;
-
-    overflow-y: 'scroll'
 `;
 
 

@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { Button, Input } from '../../../../Commons';
+import { Button, Header, Input } from '../../../../Commons';
 
 
 import backArrow from '../../../../../assets/mainScreens/backArrow.png';
@@ -15,31 +15,38 @@ import clock from '../../../../../assets/mainScreens/clock.png';
 import './election.css';
 
 import { useNavigate } from 'react-router-dom';
+import StoreContext from '../../../../../Stores';
 
 const AddElection = (props) => {
     const infoFileRef = useRef(null);
 
     const navigate = useNavigate();
 
-    const bool = useRef(null);
+    const { MeetingStore } = useContext(StoreContext);
+
 
     const [companyCode, setCompanyCode] = useState('');
     const [infoFile, setInfoFile] = useState('');
     const [description, setDescription] = useState('');
+    const [meetingId, setMeetingId] = useState('');
+
+    const [meetingList, setMeetingList] = useState([]);
+
+    useEffect(() => {
+        getMeetingList();
+    }, []);
+
+
+    const getMeetingList = () => {
+        MeetingStore.getMeetingList().then(res => {
+            setMeetingList(res);
+        });
+    };
 
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back src={backArrow} alt="backArrow" />
-            </TopView>
-
+            <Header backOnclick={() => navigate(-1)} />
 
             <Info>
                 <span>مجمع ها / انتخابات / افزودن انتخاب</span>
@@ -53,73 +60,47 @@ const AddElection = (props) => {
 
 
 
+
             <CardSection>
-                <SelectView>
-                    <select name="cars" id="cars" ref={bool}>
-                        <option value="volvo">بله</option>
-                        <option value="saab">خیر</option>
-                    </select>
-                    {/* <img src={downArrow} alt={'down'} /> */}
-                    <span>گزینه‌ای بله / خیر</span>
-                </SelectView>
+                <select
+                    style={selectStyle}
+                    onChange={e => setMeetingId(e.target.value)}
+                    value={meetingId}>
+                    <option value=''>نام مجمع</option>
+                    {meetingList.map((item, index) => (
+                        <option key={index} value={item.meetingId}>{item.meetingTitle}</option>
+                    ))}
+                </select>
 
 
                 <Input
                     value={companyCode}
                     onChange={e => setCompanyCode(e.target.value)}
-                    placeholder={'موضوع انتخابات'}
+                    placeholder={'موضوع اننتخابات'}
                     type={"text"}
                 />
             </CardSection>
 
 
-            <CardSection>
-                <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
-                    placeholder={'کمترین تعداد نامزد'}
-                    type={"text"}
-                />
-
-
-                <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
-                    placeholder={'بیشترین تعداد نامزد'}
-                    type={"text"}
-                />
-            </CardSection>
-
-
-            <CardSection>
-                <SelectView>
-                    <select name="cars" id="cars" ref={bool}>
-                        <option value="volvo">بله</option>
-                        <option value="saab">خیر</option>
-                    </select>
-                    {/* <img src={downArrow} alt={'down'} /> */}
-                    <span>نام مجمع</span>
-                </SelectView>
-            </CardSection>
 
             <DateContainer>
                 <Date>
-                    <img src={clock} alt="calander"/>
+                    <img src={clock} alt="calander" />
                     <span>تاریخ شروع</span>
                 </Date>
 
                 <Date>
-                    <img src={calander} alt="calander"/>
+                    <img src={calander} alt="calander" />
                     <span>تاریخ شروع</span>
                 </Date>
 
                 <Date>
-                    <img src={clock} alt="calander"/>
+                    <img src={clock} alt="calander" />
                     <span>تاریخ شروع</span>
                 </Date>
 
                 <Date>
-                    <img src={calander} alt="calander"/>
+                    <img src={calander} alt="calander" />
                     <span>تاریخ شروع</span>
                 </Date>
             </DateContainer>
@@ -150,12 +131,29 @@ const AddElection = (props) => {
 
             <Footer>
                 <Add onClick={() => navigate('/admin/election')}>
-                    افزودن انتخابات
+                    تایید و ادامه
                 </Add>
 
             </Footer>
         </div>
     );
+};
+
+const selectStyle = {
+    background: 'transparent',
+    color: '#7F829F',
+    fontSize: 16,
+    width: 450,
+    borderRadius: 8,
+    flexDirection: 'row-reverse',
+    padding: 5,
+    textAlign: 'right',
+    direction: 'rtl',
+    marginLeft: 16,
+    height: 48,
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    display: 'flex',
 };
 
 const DateContainer = styled.div`

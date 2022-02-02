@@ -6,7 +6,7 @@ import { Header, ModalComponent } from "../../../../Commons";
 import left from '../../../../../assets/mainScreens/leftArrow.svg';
 import './form.css';
 import { useNavigate } from 'react-router-dom';
-    
+
 import StoreContext from '../../../../../Stores';
 
 import moment from 'moment-jalaali';
@@ -23,7 +23,10 @@ const Survey = (props) => {
 
     const seeElectionInfo = (id) => {
         MeetingProfileStore.setSurveyId(id);
-        navigate('/admin/survey/detail');
+
+        MeetingProfileStore.getElectionInfo(true).then(res => {
+            navigate('/admin/survey/detail');
+        });
     };
 
 

@@ -76,20 +76,22 @@ export const ModalComponent = ({
     }
 };
 
-const No = styled.button`
-    background: #545772;
-    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
-    border-radius: 16px;
+const No = styled.a`
+    border-radius: 8px;
     height: 48px;
     width: 215px;
     color: #fff;
     font-size: 18px;
     margin-right: 10px;
-     cursor: pointer;
+    cursor: pointer;
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 `;
 
-const Yes = styled.button`
-    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+const Yes = styled.a`
     border-radius: 8px;
     height: 48px;
     width: 215px;
@@ -97,6 +99,11 @@ const Yes = styled.button`
     font-size: 18px;
     margin-left: 10px;
     cursor: pointer;
+    background: #6070FF;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 `;
 
 const Footer = styled.div`
@@ -123,6 +130,7 @@ const Alert = styled.div`
 
     span {
         margin-top: 20px;
+        font-size: 20px;
     }
 `;
 

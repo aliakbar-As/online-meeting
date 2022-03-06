@@ -15,7 +15,7 @@ import moment from 'moment-jalaali';
 const Survey = (props) => {
     const navigate = useNavigate();
 
-    const { MeetingProfileStore } = useContext(StoreContext);
+    const { MeetingProfileStore, SurveyStore } = useContext(StoreContext);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
@@ -23,12 +23,14 @@ const Survey = (props) => {
 
     const seeElectionInfo = (id) => {
         MeetingProfileStore.setSurveyId(id);
-
-        MeetingProfileStore.getElectionInfo(true).then(res => {
-            navigate('/admin/survey/detail');
-        });
+        navigate('/admin/survey/detail');
     };
 
+
+    const editSurvey = (id) => {
+        SurveyStore.setSurveyId(id);
+        setShowAlert(true);
+    };
 
     return (
         <div className="main">
@@ -41,35 +43,45 @@ const Survey = (props) => {
 
             <div className="table">
                 <Table>
-                    <Tr>
-                        <Th>اقدامات</Th>
-                        <Th>وضعیت</Th>
-                        <Th>تاریخ</Th>
-                        <Th>تعداد آرا</Th>
-                        <Th>نام مجمع</Th>
-                        <Th><p>عنوان</p></Th>
-                    </Tr>
-                    {props.data.map(item => {
-                        return (
-                            <Tr key={item.surveyId}>
-                                <Td>
-                                    <SeeMore onClick={() => seeElectionInfo(item.surveyId)}>
-                                        <img src={left} alt="arrow" />
-                                        <span style={{ color: '#04DA9A' }}>مشاهده</span>
-                                    </SeeMore>
-                                    <SeeMore onClick={() => setShowAlert(true)}>
-                                        <img src={left} alt="arrow" />
-                                        <span>ویرایش</span>
-                                    </SeeMore>
-                                </Td>
-                                <Td>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</Td>
-                                <Td>{moment(item.startDatetime).format('jYYYY/jMM/jDD')}</Td>
-                                <Td>{item.countOfVotes}</Td>
-                                <Td>{item.meetingTitle}</Td>
-                                <Td><p>{item.title}</p></Td>
-                            </Tr>
-                        )
-                    })}
+                    <Body>
+                        <Tr>
+                            <Th>اقدامات</Th>
+                            <Th>وضعیت</Th>
+                            <Th>تاریخ</Th>
+                            <Th>تعداد آرا</Th>
+                            <Th>نام مجمع</Th>
+                            <Th><p>عنوان</p></Th>
+                        </Tr>
+                        {props.data.map(item => {
+                            return (
+                                <Tr key={item.surveyId}>
+                                    <Td>
+                                        <SeeMore onClick={() => seeElectionInfo(item.surveyId)}>
+                                            <img src={left} alt="arrow" />
+                                            <span style={{ color: '#04DA9A' }}>مشاهده</span>
+                                        </SeeMore>
+                                        <SeeMore onClick={() => editSurvey(item.surveyId)}>
+                                            <img src={left} alt="arrow" />
+                                            <span>ویرایش</span>
+                                        </SeeMore>
+                                    </Td>
+                                    <Td>
+
+                                        {item.surveyStatus === 1 ? 'ایجاد شده'
+                                            : 
+                                            item.surveyStatus === 2 ? 'در حال برگزاری'
+                                                :
+                                                "به پایان رسیده"}
+
+                                    </Td>
+                                    <Td>{moment(item.startDatetime).format('jYYYY/jMM/jDD')}</Td>
+                                    <Td>{item.countOfVotes}</Td>
+                                    <Td>{item.meetingTitle}</Td>
+                                    <Td><p>{item.title}</p></Td>
+                                </Tr>
+                            )
+                        })}
+                    </Body>
                 </Table>
             </div>
 
@@ -84,6 +96,17 @@ const Survey = (props) => {
                 modalVisible={modalVisible}
                 closeModal={() => setModalVisible(false)}
                 content={'انتخابات با موفقیت ثبت شد.'}
+            />
+
+            <ModalComponent
+                modalVisible={showAlert}
+                alert
+                cancelTitle={'ویرایش پرسشنامه'}
+                okTitle={'ویرایش اطلاعات'}
+                closeModal={() => setShowAlert(false)}
+                content={': لطفا یکی از گزینه های زیر را انتخاب کنید'}
+                okOnclick={() => navigate('/admin/survey/editInfo')}
+                cancelOnclick={() => navigate('/admin/survey/editQuestions')}
             />
         </div>
     )
@@ -122,6 +145,7 @@ const SeeMore = styled.div`
     }
 `;
 
+const Body = styled.tbody``;
 
 const Tr = styled.tr`
 /* background-color: red; */
@@ -156,7 +180,7 @@ const Table = styled.table`
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     /* width: 80%; */
-    width: 922px;
+    width: 100%;
     height: 243px;
     margin-top: 20px;
     padding: 10px;

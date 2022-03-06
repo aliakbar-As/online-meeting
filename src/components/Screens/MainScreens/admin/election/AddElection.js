@@ -2,35 +2,51 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { Button, Header, Input } from '../../../../Commons';
+import { DateModal, Header, Input } from '../../../../Commons';
 
 
-import backArrow from '../../../../../assets/mainScreens/backArrow.png';
-import user from '../../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../../assets/mainScreens/downArrow.png';
 import upload from '../../../../../assets/mainScreens/upload.png';
 import calander from '../../../../../assets/mainScreens/calender.png';
-import clock from '../../../../../assets/mainScreens/clock.png';
+import close from '../../../../../assets/mainScreens/close.svg';
 
 import './election.css';
 
 import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
+import jalaali from 'jalaali-js';
 
 const AddElection = (props) => {
     const infoFileRef = useRef(null);
 
     const navigate = useNavigate();
 
-    const { MeetingStore } = useContext(StoreContext);
+    const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
 
     const [companyCode, setCompanyCode] = useState('');
-    const [infoFile, setInfoFile] = useState('');
     const [description, setDescription] = useState('');
     const [meetingId, setMeetingId] = useState('');
 
     const [meetingList, setMeetingList] = useState([]);
+
+
+    const [startDateModal, setStartDateModal] = useState(false);
+    const [endDateModal, setEndDateModal] = useState(false);
+
+
+    const [startDay, setStartDay] = useState(1);
+    const [startMonth, setStartMonth] = useState(1);
+    const [startYear, setStartYear] = useState(1400);
+
+
+    const [endDay, setEndDay] = useState(1);
+    const [endMonth, setEndMonth] = useState(1);
+    const [endYear, setEndYear] = useState(1400);
+
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+
+    const [files, setFiles] = useState([]);
 
     useEffect(() => {
         getMeetingList();
@@ -41,6 +57,61 @@ const AddElection = (props) => {
         MeetingStore.getMeetingList().then(res => {
             setMeetingList(res);
         });
+    };
+
+
+
+    const confirmInfo = () => {
+        // 2022-01-25T10:07:36.004Z
+
+        const sDay = Number(startDay);
+        const sMonth = Number(startMonth);
+        const sYear = Number(startYear);
+
+        const date = jalaali.toGregorian(sYear, sMonth, sDay);
+
+
+        const dayConverted = date.gd.toString().length == 1 ? '0' + date.gd : date.gd;
+        const monthConverted = date.gm.toString().length == 1 ? '0' + date.gm : date.gm;
+
+
+        const convertedStartDate = `${date.gy}-${monthConverted}-${dayConverted}T${startTime}:36.004Z`;
+
+        const eDay = Number(endDay);
+        const eMonth = Number(endMonth);
+        const eYear = Number(endYear);
+
+        const endDate = jalaali.toGregorian(eYear, eMonth, eDay);
+
+
+        const eDayConverted = endDate.gd.toString().length == 1 ? '0' + endDate.gd : endDate.gd;
+        const eMonthConverted = endDate.gm.toString().length == 1 ? '0' + endDate.gm : endDate.gm;
+
+
+        const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
+
+
+        SurveyStore.setData(meetingId, 2, companyCode, 1, convertedStartDate, convertedEndDate, description);
+
+        navigate('/admin/election/add/addCondidate');
+    };
+
+
+
+    const deleteIcon = (name, id) => {
+        setFiles(files.filter(item => item.name !== name));
+
+    };
+
+    const uploadFiles = () => {
+        var formData = new FormData();
+        files.map(item => formData.append('files', item));
+
+        MeetingStore.uploadFiles(1, formData).then(files => {
+            SurveyStore.surveyFiles(files);
+        });
+
+        confirmInfo();
     };
 
     return (
@@ -84,38 +155,75 @@ const AddElection = (props) => {
 
 
             <DateContainer>
-                <Date>
-                    <img src={clock} alt="calander" />
-                    <span>تاریخ شروع</span>
-                </Date>
 
-                <Date>
+                <ClockView>
+                    <Clock
+                        type="time" id="appt" name="appt"
+                        min="09:00" max="18:00" required
+                        onChange={e => setEndTime(e.target.value)}
+                        type={'time'} />
+                    <span>ساعت پایان</span>
+                </ClockView>
+
+                <Date onClick={() => setEndDateModal(true)}>
                     <img src={calander} alt="calander" />
-                    <span>تاریخ شروع</span>
+                    <span>{`${endYear} / ${endMonth} / ${endDay}`} - تاریخ پایان</span>
                 </Date>
 
-                <Date>
-                    <img src={clock} alt="calander" />
-                    <span>تاریخ شروع</span>
-                </Date>
+                <ClockView>
+                    <Clock
+                        type="time" id="appt" name="appt"
+                        min="09:00" max="18:00" required
+                        onChange={e => setStartTime(e.target.value)}
+                        type={'time'} />
+                    <span>ساعت شروع</span>
+                </ClockView>
 
-                <Date>
+                <Date onClick={() => setStartDateModal(true)}>
                     <img src={calander} alt="calander" />
-                    <span>تاریخ شروع</span>
+                    <span>{`${startYear} / ${startMonth} / ${startDay}`} - تاریخ شروع</span>
                 </Date>
             </DateContainer>
 
 
             <CardSection>
                 <View>
-                    <input
-                        type={'file'}
-                        onChange={e => setInfoFile(e.target.files[0])}
-                        hidden
-                        ref={infoFileRef}
-                    />
+
+
+                    {files.length === 0 ?
+                        <input
+                            type={'file'}
+                            onChange={e => setFiles(files => [...files, e.target.files[0]])}
+                            hidden
+                            ref={infoFileRef}
+                        />
+                        :
+                        <>
+                            {files.map((item, i) => (
+                                <input
+                                    key={i}
+                                    type={'file'}
+                                    onChange={e => setFiles(files => [...files, e.target.files[0]])}
+                                    hidden
+                                    ref={infoFileRef}
+                                />
+                            ))}
+                        </>
+                    }
+
                     <img onClick={() => infoFileRef.current.click()} src={upload} alt="upload" />
-                    <span>{infoFile === '' ? 'بارگزاری پیوست های اطلاعیه' : infoFile.name}</span>
+
+                    {files.length === 0 ? <h5 style={{ color: '#7F829F' }}>بارگزاری فایل</h5> : null}
+
+                    {files.map((item, i) => {
+                        return (
+                            <Files key={i}>
+                                <img onClick={() => deleteIcon(item.name, 0)} src={close} alt='close' />
+
+                                <span>{files.length === 0 ? 'بارگزاری فایل اکسل' : item.name}</span>
+                            </Files>
+                        )
+                    })}
                 </View>
             </CardSection>
 
@@ -123,21 +231,98 @@ const AddElection = (props) => {
             <CardSection>
 
                 <TextInput
-                    placeholder={'توضیحات.....'}
+                    placeholder={'...توضیحات'}
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                 />
             </CardSection>
 
             <Footer>
-                <Add onClick={() => navigate('/admin/election')}>
+                <Add onClick={uploadFiles}>
                     تایید و ادامه
                 </Add>
 
             </Footer>
+
+
+            <DateModal
+                title={'تاریخ شروع'}
+                modalVisible={startDateModal}
+                closeModal={() => setStartDateModal(false)}
+                dayOnChange={e => setStartDay(e.target.value)}
+                monthOnChange={e => setStartMonth(e.target.value)}
+                yearOnChange={e => setStartYear(e.target.value)}
+                currentDate={`${startYear} / ${startMonth} / ${startDay}`}
+            />
+
+            <DateModal
+                title={'تاریخ پایان'}
+                modalVisible={endDateModal}
+                closeModal={() => setEndDateModal(false)}
+                dayOnChange={e => setEndDay(e.target.value)}
+                monthOnChange={e => setEndMonth(e.target.value)}
+                yearOnChange={e => setEndYear(e.target.value)}
+                currentDate={`${endYear} / ${endMonth} / ${endDay}`}
+            />
         </div>
     );
 };
+
+
+const Files = styled.div`
+    background: #B4BBFF;
+    border-radius: 8px;
+    padding-right: 3px;
+    padding-left: 3px;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    padding: 5px;
+
+
+    span {
+        font-size: 10px;
+        color: #545772;
+    }
+
+    img {
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+`;
+
+const Clock = styled.input`
+    width: 60%;
+    background: transparent;
+    direction: rtl;
+    text-align: right;
+    color: #fff;
+`;
+
+const ClockView = styled.div`
+    flex-direction: row;
+    display: flex;
+    height: 48px;
+    width: 23%;
+    border: 1px solid #7F829F;
+box-sizing: border-box;
+border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+
+    img {
+        width: 19px;
+        height: 19px;
+    }
+
+    span {
+        color: #A7AAC6;
+        font-size: 12px;
+    }
+`;
 
 const selectStyle = {
     background: 'transparent',
@@ -166,9 +351,10 @@ const DateContainer = styled.div`
 
 
 const Date = styled.div`
-    width: 23%;
+    width: 24%;
     height: 48px;
-    background: #545772;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -176,7 +362,8 @@ const Date = styled.div`
     padding: 16px;
 
     color: #A7AAC6;
-
+    cursor: pointer;
+    font-size: 13px;
     img {
         width: 16px;
         height: 18.67px;
@@ -198,16 +385,20 @@ const Add = styled.button`
 `;
 
 const TextInput = styled.textarea`
-    background: #545772;
-    border-radius: 8px;
     width: 100%;
     height: 120px;
     text-align: right;
-    color: #fff;
     padding: 10px;
     border: 0px;
     margin-left: 16px;
-    
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 20px;
 `;
 
 const SelectView = styled.div`
@@ -240,15 +431,17 @@ const View = styled.div`
     display: flex;
     height: 48px;
     width: 450px;
-    background: #545772;
-    border-radius: 8px;
     margin-left: 16px;
     justify-content: space-between;
     align-items: center;
     padding-right: 16px;
+
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
 cursor: pointer;
 
-    img {
+    /* img {
         width: 48px;
         height: 48px;
         cursor: pointer;
@@ -257,7 +450,7 @@ cursor: pointer;
     span {
         color: #A7AAC6;
         font-size: 16px;
-    }
+    } */
 `;
 
 
@@ -267,6 +460,7 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+    
 `;
 
 
@@ -300,13 +494,6 @@ const Footer = styled.div`
 `;
 
 
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
-`;
-
-
 
 const Info = styled.div`
     border-bottom: 1px solid #545772;
@@ -320,34 +507,6 @@ const Info = styled.div`
     }
 `;
 
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-`;
 
 
 export default AddElection;

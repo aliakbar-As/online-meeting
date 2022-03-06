@@ -19,10 +19,12 @@ const AdminSurveyTypes = (props) => {
     const { MeetingProfileStore } = useContext(StoreContext);
 
     const [surveyData, setSurveyData] = useState([]);
+    const [electionData, setElectionData] = useState([]);
 
     useEffect(() => {
-        console.log('list', MeetingProfileStore.surveyList.length)
-        console.log('list', surveyData.length)
+        MeetingProfileStore.getSurvey(true, 2, 'admin').then(res => {
+            setElectionData(res);
+        });
 
 
         MeetingProfileStore.getSurvey(false, 1, 'admin').then(res => {
@@ -49,7 +51,7 @@ const AdminSurveyTypes = (props) => {
                 <span>مجمع ها / نظرسنجی ها و انتخابات</span>
             </Info>
 
-            {MeetingProfileStore.surveyList.length !== 0 ? <Election /> : null}
+            {electionData !== 0 ? <Election data={electionData}/> : null}
 
 
             {surveyData.length !== 0 ? <Survey data={surveyData} /> : null}

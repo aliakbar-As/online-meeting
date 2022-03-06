@@ -8,59 +8,6 @@ import '../election/election.css';
 
 import StoreContext from '../../../../../Stores';
 import moment from 'moment-jalaali';
-
-let chartItems = [
-    {
-        id: 0,
-        title: 'نفر اول',
-        percent: 20,
-    },
-    {
-        id: 2,
-        title: 'نفر دوم',
-        percent: 10,
-    },
-    {
-        id: 3,
-        title: 'نفر سوم',
-        percent: 5,
-    },
-    {
-        id: 3,
-        title: 'نفر چهارم',
-        percent: 75,
-    },
-];
-
-let tableItems = [
-    {
-        id: 1,
-        title: 'عنوان انتخاب اول',
-        meeting: 'عنوان نام مجمع',
-        count: 1,
-        date: '1400/08/01',
-        status: 'در حال بارگزاری 1',
-    },
-    {
-        id: 2,
-        title: 'عنوان انتخاب دوم',
-        meeting: 'عنوان نام مجمع2',
-        count: 2,
-        date: '1400/08/02',
-        status: 'در حال بارگزاری 2',
-    },
-    {
-        id: 3,
-        title: 'عنوان انتخاب سوم',
-        meeting: 'عنوان نام مجمع3',
-        count: 3,
-        date: '1400/08/03',
-        status: 'در حال بارگزاری 3',
-    },
-
-];
-
-
 const SurveyDetails = (props) => {
 
     const navigate = useNavigate();
@@ -80,19 +27,20 @@ const SurveyDetails = (props) => {
         title: "",
     });
 
+    const [toggle , setToggle] = useState(false);
+
     useEffect(() => {
         getSurveyInfo();
-        getSurveyDetails();
     }, []);
 
     const getSurveyInfo = () => {
-        MeetingProfileStore.getElectionInfo().then(res => {
+        MeetingProfileStore.getElectionInfo(true).then(res => {
             setSurvey(res);
         });
     };
 
-    const getSurveyDetails = () => {
-        MeetingProfileStore.showSurveyDetails().then(res => {
+    const getSurveyDetails = (questionOptionId) => {
+        MeetingProfileStore.showSurveyDetails(questionOptionId).then(res => {
             setList(res);
         });
     };
@@ -116,25 +64,28 @@ const SurveyDetails = (props) => {
                 <span>{survey.title} | {survey.meetingTitle} <span style={{ fontSize: '12px', color: '#C6C9E0' }}> | در حال برگزاری</span></span>
             </SurveyView>
 
-
+            <label className="switch">
+                <input type="checkbox" value={toggle} onChange={e => setToggle(e.target.value)}/>
+                <span className="slider round"></span>
+            </label>
 
             <ChartView>
-                {chartItems.map(item => {
+                {MeetingProfileStore.charts.map((item, i) => {
                     return (
-                        <View>
-                            <span>{item.percent}%</span>
+                        <View key={i}>
+                            <span>{item.percentageNumberAnswer}%</span>
 
-                            <div style={{ width: 100, height: `${item.percent}%`, background: `rgb(255, 0, 0,${item.percent / 100})` }} />
-
-                            <span>{item.title}</span>
+                            <div
+                                onClick={() => getSurveyDetails(item.questionOptionId)}
+                                style={{ cursor: 'pointer', marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }} />
+                            <span>{item.answerTitle}</span>
                         </View>
                     )
                 })}
             </ChartView>
 
 
-
-            <div className="table">
+            {list.length === 0 ? null :
                 <Content>
                     <Table>
                         <Tr>
@@ -142,26 +93,18 @@ const SurveyDetails = (props) => {
                             <Th>گزینه انتخابی</Th>
                             <Th><p>نام و نام خانوادگی </p></Th>
                         </Tr>
-                        {list.map(item => {
+                        {list.map((item, i) => {
                             return (
-                                <Tr>
-                                    <Td>{item.id} %</Td>
-                                    <Td>{item.id}</Td>
-                                    <Td><p>{item.title}</p></Td>
+                                <Tr key={i}>
+                                    <Td>{item.percentageShares} %</Td>
+                                    <Td>{item.optionRank}</Td>
+                                    <Td><p>{item.voterFullName}</p></Td>
                                 </Tr>
                             )
                         })}
                     </Table>
-                </Content>
+                </Content>}
 
-                <Box>
-                    <span>نام و نام خانوادگی کاندیدها</span>
-
-                    {list.map((item, i) => (
-                        <p>{item.answerTitle}</p>
-                    ))}
-                </Box>
-            </div>
         </div>
     )
 }
@@ -173,10 +116,11 @@ const Content = styled.div`
     justify-content: space-between;
     width: 100%;
     overflow-y: scroll;
-    width: 55%;
     max-height: 250px;
     height: 250px;
     background: #2F3247;
+    align-self: center;
+    margin-top: 32px;
 /* elevation 2 */
 
 box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
@@ -291,7 +235,6 @@ const Td = styled.td`
 const Table = styled.table`
     background: #2F3247;
 
-    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
 
     padding: 10px;

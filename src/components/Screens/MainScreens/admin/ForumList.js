@@ -8,8 +8,6 @@ import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
 
 import left from '../../../../assets/mainScreens/left.png';
-import wSurvey from '../../../../assets/mainScreens/wSurvey.png';
-import election from '../../../../assets/mainScreens/election.png';
 
 
 import { useNavigate } from 'react-router-dom';
@@ -68,15 +66,18 @@ const ForumList = (props) => {
 
 
     const getSurveyList = () => {
-        MeetingProfileStore.getSurvey(true, 2, 'admin').then(() => {
-            navigate('/admin/surveyType');
-        });
+        navigate('/admin/surveyType');
+    };
+
+    const removeUser = () => {
+        localStorage.removeItem('@token');
+        navigate(-1);
     };
 
     return (
         <>
             <TopView>
-                <IconsDiv>
+                <IconsDiv onClick={removeUser}>
                     <UserIcon src={user} alt="user" />
 
                     <ArrowIcon src={downArrow} alt="downArrow" />

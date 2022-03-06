@@ -14,8 +14,26 @@ import '../election/election.css';
 import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 import jalaali from 'jalaali-js';
+import moment from 'moment-jalaali';
 
-const AddSurvey = (props) => {
+
+
+const surveyStatusItem = [
+    {
+        id: 1,
+        title: 'ایجاد شده',
+    },
+    {
+        id: 2,
+        title: 'در حال برگزاری'
+    },
+    {
+        id: 3,
+        title: 'به پایان رسید'
+    },
+];
+
+const SurveyInfoEdit = (props) => {
     const infoFileRef = useRef(null);
 
     const navigate = useNavigate();
@@ -23,7 +41,7 @@ const AddSurvey = (props) => {
     const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
 
-    const [companyCode, setCompanyCode] = useState('');
+    const [surveyTitle, setSurveyTitle] = useState('');
     const [description, setDescription] = useState('');
     const [meetingId, setMeetingId] = useState('');
 
@@ -45,13 +63,42 @@ const AddSurvey = (props) => {
 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
+    const [surveyStatus, setSurveyStatus] = useState('');
+    const [id, setId] = useState('');
 
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
+        getInfo();
         getMeetingList();
     }, []);
 
+    const getInfo = () => {
+        SurveyStore.getSurveyInfo().then(res => {
+            setSurveyTitle(res.title);
+            setDescription(res.description);
+            setFiles(res.surveyAttachments);
+            setMeetingId(res.meetingId);
+            setId(res.id);
+
+            const startDate = moment(res.startDatetime).format('jYYYY/jM/jD');
+            const startTime = moment(res.startDatetime).format('HH:mm');
+            const splitStartDate = startDate.split('/');
+            setStartDay(splitStartDate[2]);
+            setStartMonth(splitStartDate[1]);
+            setStartYear(splitStartDate[0]);
+            setStartTime(startTime);
+
+
+            const endDate = moment(res.endDatetime).format('jYYYY/jM/jD');
+            const endTimeConverted = moment(res.endDatetime).format('HH:mm');
+            const splitEndDate = endDate.split('/');
+            setEndDay(splitEndDate[2]);
+            setEndMonth(splitEndDate[1]);
+            setEndYear(splitEndDate[0]);
+            setEndTime(endTimeConverted);
+        });
+    };
 
     const getMeetingList = () => {
         MeetingStore.getMeetingList().then(res => {
@@ -91,9 +138,23 @@ const AddSurvey = (props) => {
         const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
 
-        SurveyStore.setData(meetingId, 1, companyCode, 1, convertedStartDate, convertedEndDate, description);
+        // SurveyStore.setData(meetingId, 1, companyCode, 1, convertedStartDate, convertedEndDate, description);
 
-        navigate('/admin/survey/add/question');
+        let newElement = {
+            id: id,
+            surveyType: 1,
+            meetingId: meetingId,
+            title: surveyTitle,
+            startDatetime: convertedStartDate,
+            endDatetime: convertedEndDate,
+            surveyStatus: Number(surveyStatus),
+            description: description,
+            surveyAttachments: files,
+        };
+
+        SurveyStore.putSurveyInfo(newElement).then(() => {
+            navigate('/admin/surveyType');
+        });
     };
 
 
@@ -104,14 +165,19 @@ const AddSurvey = (props) => {
     };
 
     const uploadFiles = () => {
+        if (files.length === 0) {
+            confirmInfo();
+            return;
+        };
+
         var formData = new FormData();
         files.map(item => formData.append('files', item));
 
         MeetingStore.uploadFiles(1, formData).then(files => {
             SurveyStore.surveyFiles(files);
         });
-
         confirmInfo();
+
     };
 
     return (
@@ -120,12 +186,12 @@ const AddSurvey = (props) => {
             <Header backOnclick={() => navigate(-1)} />
 
             <Info>
-                <span>مجمع ها / نظرسنجی / افزودن نظرسنجی</span>
+                <span>مجمع ها / نظرسنجی / ویرایش نظرسنجی</span>
             </Info>
 
 
             <SurveyView>
-                <span>افزودن نظرسنجی</span>
+                <span>ویرایش نظرسنجی</span>
             </SurveyView>
 
 
@@ -145,8 +211,8 @@ const AddSurvey = (props) => {
 
 
                 <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={surveyTitle}
+                    onChange={e => setSurveyTitle(e.target.value)}
                     placeholder={'موضوع نظرسنجی'}
                     type={"text"}
                 />
@@ -160,6 +226,7 @@ const AddSurvey = (props) => {
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
+                        value={endTime}
                         onChange={e => setEndTime(e.target.value)}
                         type={'time'} />
                     <span>ساعت پایان</span>
@@ -172,6 +239,7 @@ const AddSurvey = (props) => {
 
                 <ClockView>
                     <Clock
+                        value={startTime}
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
                         onChange={e => setStartTime(e.target.value)}
@@ -187,6 +255,15 @@ const AddSurvey = (props) => {
 
 
             <CardSection>
+                <select
+                    style={selectStyle}
+                    onChange={e => setSurveyStatus(e.target.value)}
+                    value={surveyStatus}>
+                    <option value=''>نوع نظرسنجی</option>
+                    {surveyStatusItem.map((item, index) => (
+                        <option key={index} value={item.id}>{item.title}</option>
+                    ))}
+                </select>
                 <View>
 
 
@@ -218,9 +295,9 @@ const AddSurvey = (props) => {
                     {files.map((item, i) => {
                         return (
                             <Files key={i}>
-                                <img onClick={() => deleteIcon(item.name, 0)} src={close} alt='close' />
+                                <img onClick={() => deleteIcon(item.surveyAttachmentTitle, 0)} src={close} alt='close' />
 
-                                <span>{files.length === 0 ? 'بارگزاری فایل اکسل' : item.name}</span>
+                                <span>{files.length === 0 ? 'بارگزاری فایل اکسل' : item.name === undefined ? item.title : item.name}</span>
                             </Files>
                         )
                     })}
@@ -239,7 +316,7 @@ const AddSurvey = (props) => {
 
             <Footer>
                 <Add onClick={uploadFiles}>
-                    تایید و ادامه
+                    ثبت اطلاعات
                 </Add>
 
             </Footer>
@@ -509,4 +586,4 @@ const Info = styled.div`
 
 
 
-export default AddSurvey;
+export default SurveyInfoEdit;

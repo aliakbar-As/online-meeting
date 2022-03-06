@@ -30,4 +30,5 @@ const TextInput = styled.input`
     border: 1px solid #7F829F;
     box-sizing: border-box;
     font-size: 18px;
+    margin-top: 10px;
 `;

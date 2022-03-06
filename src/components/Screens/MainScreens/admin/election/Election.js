@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from "styled-components"
 import { Header, ModalComponent } from "../../../../Commons";
 
@@ -15,19 +15,31 @@ import moment from 'moment-jalaali';
 const Election = (props) => {
     const navigate = useNavigate();
 
-    const { MeetingProfileStore } = useContext(StoreContext);
+    const { MeetingProfileStore, SurveyStore } = useContext(StoreContext);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+
 
     const seeElectionInfo = (id) => {
         MeetingProfileStore.setSurveyId(id);
 
         MeetingProfileStore.getElectionInfo(true).then(res => {
+            SurveyStore.resetSurveyInfo();
             navigate('/admin/election/detail');
         });
     };
 
+
+    const editSurvey = (id) => {
+        SurveyStore.setSurveyId(id);
+        setShowAlert(true);
+    };
+
+    const addElectionOnclick = () => {
+
+        navigate('/admin/election/add')
+    };
     return (
         <div className="main">
 
@@ -39,40 +51,42 @@ const Election = (props) => {
 
             <div className="table">
                 <Table>
-                    <Tr>
-                        <Th>اقدامات</Th>
-                        <Th>وضعیت</Th>
-                        <Th>تاریخ</Th>
-                        <Th>تعداد آرا</Th>
-                        <Th>نام مجمع</Th>
-                        <Th><p>عنوان</p></Th>
-                    </Tr>
-                    {MeetingProfileStore.surveyList.map(item => {
-                        return (
-                            <Tr key={item.surveyId}>
-                                <Td>
-                                    <SeeMore onClick={() => seeElectionInfo(item.surveyId)}>
-                                        <img src={left} alt="arrow" />
-                                        <span style={{ color: '#04DA9A' }}>مشاهده</span>
-                                    </SeeMore>
-                                    <SeeMore onClick={() => setShowAlert(true)}>
-                                        <img src={left} alt="arrow" />
-                                        <span>ویرایش</span>
-                                    </SeeMore>
-                                </Td>
-                                <Td>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</Td>
-                                <Td>{moment(item.startDatetime).format('jYYYY/jMM/jDD')}</Td>
-                                <Td>{item.countOfVotes}</Td>
-                                <Td>{item.meetingTitle}</Td>
-                                <Td><p>{item.title}</p></Td>
+                    <Body>
+                            <Tr>
+                                <Th>اقدامات</Th>
+                                <Th>وضعیت</Th>
+                                <Th>تاریخ</Th>
+                                <Th>تعداد آرا</Th>
+                                <Th>نام مجمع</Th>
+                                <Th><p>عنوان</p></Th>
                             </Tr>
-                        )
-                    })}
+                            {props.data.map(item => {
+                                return (
+                                    <Tr key={item.surveyId}>
+                                        <Td>
+                                            <SeeMore onClick={() => seeElectionInfo(item.surveyId)}>
+                                                <img src={left} alt="arrow" />
+                                                <span style={{ color: '#04DA9A' }}>مشاهده</span>
+                                            </SeeMore>
+                                            <SeeMore onClick={() => editSurvey(item.surveyId)}>
+                                                <img src={left} alt="arrow" />
+                                                <span>ویرایش</span>
+                                            </SeeMore>
+                                        </Td>
+                                        <Td>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</Td>
+                                        <Td>{moment(item.startDatetime).format('jYYYY/jMM/jDD')}</Td>
+                                        <Td>{item.countOfVotes}</Td>
+                                        <Td>{item.meetingTitle}</Td>
+                                        <Td><p>{item.title}</p></Td>
+                                    </Tr>
+                                )
+                            })}
+                    </Body>
                 </Table>
             </div>
 
             <div className="addButton">
-                <Add onClick={() => navigate('/admin/election/add')}>
+                <Add onClick={addElectionOnclick}>
                     افزودن انتخابات
                 </Add>
             </div>
@@ -90,7 +104,9 @@ const Election = (props) => {
                 cancelTitle={'ویرایش پرسشنامه'}
                 okTitle={'ویرایش اطلاعات'}
                 closeModal={() => setShowAlert(false)}
-                content={'لطفا یکی از گزینه های زیر را انتخاب کنید:'}
+                content={': لطفا یکی از گزینه های زیر را انتخاب کنید'}
+                okOnclick={() => navigate('/admin/election/editInfo')}
+                cancelOnclick={() => navigate('/admin/election/editCondidate')}
             />
         </div>
     )
@@ -129,6 +145,7 @@ const SeeMore = styled.div`
     }
 `;
 
+const Body = styled.tbody``;
 
 const Tr = styled.tr`
 /* background-color: red; */
@@ -163,7 +180,7 @@ const Table = styled.table`
     box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     /* width: 80%; */
-    width: 922px;
+    width: 100%;
     height: 243px;
     margin-top: 20px;
     padding: 10px;

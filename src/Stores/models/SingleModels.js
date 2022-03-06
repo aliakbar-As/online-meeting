@@ -74,10 +74,19 @@ export const SingleDuty = types.model({
 
 
 export const SingleChart = types.model({
+    questionOptionId: types.maybeNull(types.string),
     answerTitle: types.maybeNull(types.string),
     questionTitle: types.maybeNull(types.string),
     optionRank: types.maybeNull(types.number),
     percentageNumberAnswer: types.maybeNull(types.number),
     percentageSharesAnswer: types.maybeNull(types.number),
     questionRank: types.maybeNull(types.number),
+});
+
+
+
+export const SingleFile = types.model({
+    title: types.maybeNull(types.string),
+    description: types.maybeNull(types.string),
+    fileUrl: types.maybeNull(types.string),
 });

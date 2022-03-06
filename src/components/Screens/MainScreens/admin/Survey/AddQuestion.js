@@ -1,38 +1,93 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { Button, Input } from '../../../../Commons';
+import { Header, Input } from '../../../../Commons';
 
-
-import backArrow from '../../../../../assets/mainScreens/backArrow.png';
-import user from '../../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../../assets/mainScreens/downArrow.png';
 
 import '../election/election.css';
 
 import { useNavigate } from 'react-router-dom';
+import StoreContext from '../../../../../Stores';
 
-const AddQuestion = (props) => {
+const AddQuestions = (props) => {
 
     const navigate = useNavigate();
 
-    const bool = useRef(null);
+    const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
-    const [companyCode, setCompanyCode] = useState('');
+    const [question, setQuestion] = useState([]);
+
+    const [firstQuestion, setFirstQuestion] = useState('');
+
+    const [answer1, setAnswer1] = useState('');
+    const [answer2, setAnswer2] = useState('');
+    const [answer3, setAnswer3] = useState('');
+    const [answer4, setAnswer4] = useState('');
+
+    const [min, setMin] = useState('');
+    const [max, setMax] = useState('');
+
+    const [isActive, setIsActive] = useState(false);
+
+
+    const addQuery = () => {
+        let newElement = {
+            title: firstQuestion,
+            hasMultipleAnswers: isActive,
+            minAnswersCount: Number(min),
+            maxAnswersCount: Number(max),
+            surveyQuestionOptions: [
+                {
+                    title: answer1,
+                    rank: 1
+                },
+                {
+                    title: answer2,
+                    rank: 2
+                },
+                {
+                    title: answer3,
+                    rank: 3
+                },
+                {
+                    title: answer4,
+                    rank: 4
+                },
+            ],
+        };
+
+
+        setQuestion(question => [...question, newElement]);
+
+        resetInfo();
+    };
+
+
+    const resetInfo = () => {
+        setFirstQuestion('');
+        setAnswer1('');
+        setAnswer2('');
+        setAnswer3('');
+        setAnswer4('');
+        setMin('');
+        setMax('');
+        setIsActive(false);
+    };
+
+
+
+    const addSurveyOnclick = () => {
+
+        SurveyStore.addElection(question).then(() => {
+            navigate('/admin/surveyType');
+        });
+    };
 
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back src={backArrow} alt="backArrow" />
-            </TopView>
+            <Header backOnclick={() => navigate(-1)} />
 
 
             <Info>
@@ -44,41 +99,45 @@ const AddQuestion = (props) => {
                 <span>افزودن پرسش ها</span>
             </SurveyView>
 
+            {question.map((item, i) => {
+                return (
+                    <Wrap key={i}>
+                        <label>{i + 1}- {item.title}</label>
 
-            <Wrap>
-                <label>1- متن پرسش اول؟</label>
+                        <QContainer>
+                            <Answer>
+                                <label >{item.surveyQuestionOptions[1].title}</label>
+                                <Radio type="checkbox" />
+                            </Answer>
 
-                <QContainer>
-                    <Answer>
-                        <label for="contactChoice1">گزینه دوم</label>
-                        <Radio type="checkbox" />
-                    </Answer>
+                            <Answer>
+                                <label>{item.surveyQuestionOptions[0].title}</label>
+                                <Radio type="checkbox" />
+                            </Answer>
+                        </QContainer>
 
-                    <Answer>
-                        <label for="contactChoice1">گزینه اول</label>
-                        <Radio type="checkbox" />
-                    </Answer>
-                </QContainer>
+                        <QContainer>
+                            <Answer>
+                                <label>{item.surveyQuestionOptions[3].title}</label>
+                                <Radio type="checkbox" />
+                            </Answer>
 
-                <QContainer>
-                    <Answer>
-                        <label for="contactChoice1">گزینه چهارم</label>
-                        <Radio type="checkbox" />
-                    </Answer>
+                            <Answer>
+                                <label>{item.surveyQuestionOptions[2].title}</label>
+                                <Radio type="checkbox" />
+                            </Answer>
+                        </QContainer>
+                    </Wrap>
+                )
+            })}
 
-                    <Answer>
-                        <label for="contactChoice1">گزینه سوم</label>
-                        <Radio type="checkbox" />
-                    </Answer>
-                </QContainer>
-            </Wrap>
 
 
             <CardSection>
 
                 <Question
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={firstQuestion}
+                    onChange={e => setFirstQuestion(e.target.value)}
                     placeholder={'پرسش اول'}
                     type={"text"}
                 />
@@ -88,15 +147,15 @@ const AddQuestion = (props) => {
             <CardSection>
 
                 <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={answer2}
+                    onChange={e => setAnswer2(e.target.value)}
                     placeholder={'گزینه دوم'}
                     type={"text"}
                 />
 
                 <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={answer1}
+                    onChange={e => setAnswer1(e.target.value)}
                     placeholder={'گزینه اول'}
                     type={"text"}
                 />
@@ -105,35 +164,103 @@ const AddQuestion = (props) => {
             <CardSection>
 
                 <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={answer4}
+                    onChange={e => setAnswer4(e.target.value)}
                     placeholder={'گزینه چهارم'}
                     type={"text"}
                 />
 
                 <Input
-                    value={companyCode}
-                    onChange={e => setCompanyCode(e.target.value)}
+                    value={answer3}
+                    onChange={e => setAnswer3(e.target.value)}
                     placeholder={'گزینه سوم'}
                     type={"text"}
                 />
             </CardSection>
 
+            <MainRadio>
+                <span>.این پرسش دارای چند پاسخ می‌باشد</span>
 
-            <Footer>
-                <Button
-                    title={'افزودن و ادامه'}
-                    onPress={() => navigate('/admin/survey/add/question/more')}
+                <RadioButton
+                    onClick={() => setIsActive(!isActive)}
+                    isActive={isActive}
                 />
 
-                <Add onClick={() => navigate('/admin/survey/add')}>
-                    افزودن انتخابات
+            </MainRadio>
+
+            {isActive ?
+                <div className='input'>
+                    <Limit
+                        value={min}
+                        onChange={e => setMin(e.target.value)}
+                        placeholder={'حداقل تعداد انتخاب'}
+                    />
+
+                    <Limit
+                        value={max}
+                        onChange={e => setMax(e.target.value)}
+                        placeholder={'حداکثر تعداد انتخاب'}
+                    />
+                </div> : null}
+
+            <Footer>
+                <AddQuestion onClick={addQuery}>
+                    افزودن و ادامه
+                </AddQuestion>
+
+                <Add onClick={addSurveyOnclick}>
+                    افزودن نظرسنجی
                 </Add>
             </Footer>
         </div>
     );
 };
 
+
+const Limit = styled.input`
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: #232539;
+    width: 25%;
+    height: 45px;
+    text-align: right;
+    font-size: 16px;
+    padding: 10px;
+    margin-left: 16px;
+    color: #fff;
+`;
+const AddQuestion = styled.a`
+    border-radius: 8px;
+    background: transparent;
+    width: 215px;
+    height: 48px;
+    border: 1px solid #A17BF1;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    color: #A17BF1;
+    cursor: pointer;
+    margin-top: -16px;
+`;
+
+const RadioButton = styled.div`
+    width: 20px;
+    height: 20px;
+    background: ${props => props.isActive ? '#04DA9A' : 'transparent'};
+    border: 2px solid #04DA9A;
+    border-radius: 100%;
+    margin-left: 16px;
+`;
+
+const MainRadio = styled.div`
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    display: flex;
+    margin-top: 16px;
+    margin-bottom: 16px;
+`;
 
 const Radio = styled.input`
 background-color: red;
@@ -173,15 +300,18 @@ const QContainer = styled.div`
 
 
 const Question = styled.input`
-    background: #545772;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
     border-radius: 8px;
-    width: 69%;
+    background: transparent;
+    width: 100%;
     height: 48px;
     text-align: right;
     color: #fff;
     padding: 10px;
-    border: 0px;
     margin-left: 16px;
+    font-size: 16px;
+    font-weight: bold;
 `;
 
 
@@ -194,60 +324,12 @@ const Add = styled.button`
     text-align: center;
     color: #fff;
     font-size: 18px;
-    margin-top: 16px;
+    margin-top: 40px;
     cursor: pointer;
 `;
 
 
-const SelectView = styled.div`
-    flex-direction: row;
-    display: flex;
-    height: 48px;
-    width: 450px;
-    background: #545772;
-    border-radius: 8px;
-    margin-left: 16px;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    cursor: pointer;
 
-    img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    }
-`;
-
-const View = styled.div`
-    flex-direction: row;
-    display: flex;
-    height: 48px;
-    width: 450px;
-    background: #545772;
-    border-radius: 8px;
-    margin-left: 16px;
-    justify-content: space-between;
-    align-items: center;
-    padding-right: 16px;
-cursor: pointer;
-
-    img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    }
-`;
 
 
 const CardSection = styled.div`
@@ -287,14 +369,7 @@ const Footer = styled.div`
     align-items: flex-end;
     align-self: flex-end;
     display: flex;
-    margin-top: 10px;
-`;
-
-
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
+    margin-top: 40px;
 `;
 
 
@@ -311,34 +386,5 @@ const Info = styled.div`
     }
 `;
 
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
 
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-`;
-
-
-export default AddQuestion;
+export default AddQuestions;

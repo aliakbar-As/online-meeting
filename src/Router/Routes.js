@@ -30,6 +30,11 @@ import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuest
 import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
 import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
 import EditDuties from '../components/Screens/MainScreens/admin/addMeeting/EditDuties';
+import AddCondidate from '../components/Screens/MainScreens/admin/election/AddCondidate';
+import SurveyInfoEdit from '../components/Screens/MainScreens/admin/Survey/SurveyInfoEdit';
+import SurveyQuestionsEdit from '../components/Screens/MainScreens/admin/Survey/SurveyQuestionsEdit';
+import ElectionInfoEdit from '../components/Screens/MainScreens/admin/election/ElectionInfoEdit';
+import ElectionCondidateEdit from '../components/Screens/MainScreens/admin/election/ElectionCondidateEdit';
 
 function RouterComponent() {
     return (
@@ -101,13 +106,20 @@ function RouterComponent() {
             <Route path="/admin/election"
                 element={<Election />}
             />
-
             <Route path="/admin/election/detail"
                 element={<ElectionDetails />}
             />
-
             <Route path="/admin/election/add"
                 element={<AddElection />}
+            />
+            <Route path="/admin/election/add/addCondidate"
+                element={<AddCondidate />}
+            />
+            <Route path="/admin/election/editInfo"
+                element={<ElectionInfoEdit />}
+            />
+            <Route path="/admin/election/editCondidate"
+                element={<ElectionCondidateEdit />}
             />
 
 
@@ -119,19 +131,21 @@ function RouterComponent() {
             <Route path="/admin/survey"
                 element={<AdminSurvey />}
             />
-
             <Route path="/admin/survey/detail"
                 element={<SurveyDetails />}
             />
-
             <Route path="/admin/survey/add"
                 element={<AddSurvey />}
             />
-
             <Route path="/admin/survey/add/question"
                 element={<AddQuestion />}
             />
-
+            <Route path="/admin/survey/editInfo"
+                element={<SurveyInfoEdit />}
+            />
+            <Route path="/admin/survey/editQuestions"
+                element={<SurveyQuestionsEdit />}
+            />
         </Routes>
     );
 };

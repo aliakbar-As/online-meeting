@@ -11,34 +11,6 @@ import moment from 'moment-jalaali';
 
 import StoreContext from '../../../../../Stores';
 
-let tableItems = [
-    {
-        id: 1,
-        title: 'عنوان انتخاب اول',
-        meeting: 'عنوان نام مجمع',
-        count: 1,
-        date: '1400/08/01',
-        status: 'در حال بارگزاری 1',
-    },
-    {
-        id: 2,
-        title: 'عنوان انتخاب دوم',
-        meeting: 'عنوان نام مجمع2',
-        count: 2,
-        date: '1400/08/02',
-        status: 'در حال بارگزاری 2',
-    },
-    {
-        id: 3,
-        title: 'عنوان انتخاب سوم',
-        meeting: 'عنوان نام مجمع3',
-        count: 3,
-        date: '1400/08/03',
-        status: 'در حال بارگزاری 3',
-    },
-
-];
-
 
 const ElectionDetails = (props) => {
 
@@ -62,7 +34,6 @@ const ElectionDetails = (props) => {
 
     useEffect(() => {
         getSurveyInfo();
-        getSurveyDetails();
     }, []);
 
     const getSurveyInfo = () => {
@@ -71,8 +42,8 @@ const ElectionDetails = (props) => {
         });
     };
 
-    const getSurveyDetails = () => {
-        MeetingProfileStore.showSurveyDetails().then(res => {
+    const getSurveyDetails = (questionOptionId) => {
+        MeetingProfileStore.showSurveyDetails(questionOptionId).then(res => {
             setList(res);
         });
     };
@@ -104,7 +75,9 @@ const ElectionDetails = (props) => {
                         <View key={i}>
                             <span>{item.percentageNumberAnswer}%</span>
 
-                            <div style={{ marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }} />
+                            <div
+                                onClick={() => getSurveyDetails(item.questionOptionId)}
+                                style={{ cursor: 'pointer', marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }} />
                             <span>{item.answerTitle}</span>
                         </View>
                     )
@@ -112,40 +85,48 @@ const ElectionDetails = (props) => {
             </ChartView>
 
 
+            {list.length === 0 ? null :
+                <div className="table">
+                    <Content>
+                        <Table>
+                            <Tr>
+                                <Th>تاثیرگذاری رای</Th>
+                                <Th>گزینه انتخابی</Th>
+                                <Th><p>نام و نام خانوادگی </p></Th>
+                            </Tr>
 
-            <div className="table">
-                <Content>
-                    <Table>
-                        <Tr>
-                            <Th>تاثیرگذاری رای</Th>
-                            <Th>گزینه انتخابی</Th>
-                            <Th><p>نام و نام خانوادگی </p></Th>
-                        </Tr>
+                            {list.map((item, i) => {
+                                return (
+                                    <Tr key={i}>
+                                        <Td>{item.percentageShares} %</Td>
+                                        <Td>{item.optionRank}</Td>
+                                        <Td><p>{item.voterFullName}</p></Td>
+                                    </Tr>
+                                )
+                            })}
+                        </Table>
+                    </Content>
 
-                        {list.map((item, i) => {
-                            return (
-                                <Tr key={i}>
-                                    <Td>{item.percentageShares} %</Td>
-                                    <Td>{item.optionRank}</Td>
-                                    <Td><p>{item.voterFullName}</p></Td>
-                                </Tr>
-                            )
-                        })}
-                    </Table>
-                </Content>
+                    <Box>
+                        <span>نام و نام خانوادگی کاندیدها</span>
 
-                <Box>
-                    <span>نام و نام خانوادگی کاندیدها</span>
-
-                    {list.map((item, i) => (
-                        <p key={i}>{item.answerTitle}</p>
-                    ))}
-                </Box>
-            </div>
+                        {list.map((item, i) => (
+                            <p key={i}>{item.answerTitle}</p>
+                        ))}
+                    </Box>
+                </div>}
 
         </div>
     )
 };
+
+const ViewDetails = styled.div`
+    color: #23A9F2;
+    font-size: 20px;
+    margin-top: 32px;
+    cursor: pointer;
+
+`;
 
 const Content = styled.div`
     display: flex;
@@ -255,7 +236,6 @@ const Box = styled.div`
 const Table = styled.table`
     background: #2F3247;
 
-    box-shadow: 0px 0px 8px rgba(29, 29, 30, 0.8);
     border-radius: 8px;
     
     padding: 10px;

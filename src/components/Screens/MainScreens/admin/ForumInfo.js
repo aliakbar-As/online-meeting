@@ -56,11 +56,16 @@ const ForumInfo = (props) => {
         });
     };
 
+    const removeUser = () => {
+        localStorage.removeItem('@token');
+        navigate(-1)
+    };
+
     return (
         <div className="main">
 
             <TopView>
-                <IconsDiv>
+                <IconsDiv onClick={removeUser}>
                     <UserIcon src={user} alt="user" />
 
                     <ArrowIcon src={downArrow} alt="downArrow" />

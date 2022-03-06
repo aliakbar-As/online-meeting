@@ -345,7 +345,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                             return;
                         };
                         if (surveyType === 2) {
-                            this.fillSurveyList(data.data.list);
+                            resolve(data.data.list);
                             resolve(true);
                         } else {
                             resolve(data.data.list);
@@ -402,7 +402,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
 
 
 
-        getElectionInfo(clear = false,) {
+        getElectionInfo(clear = false) {
 
             return new Promise(async (resolve, reject) => {
 
@@ -415,6 +415,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 })
                     .then(({ data }) => {
                         Logger(data, 'ShowSurveyResultInfo');
+                        
                         if (clear) this.setChartInfo(data.data.showSurveyResults);
                         resolve(data.data.survey);
                     }).catch(err => {
@@ -424,11 +425,12 @@ const meetingProfileStore = types.model('meetingProfileStore', {
             });
         },
 
-        showSurveyDetails() {
+        showSurveyDetails(questionId) {
             return new Promise(async (resolve, reject) => {
                 request.get(`/SurveyQuestionAnswer/ShowSurveyResultDetail`, {
                     params: {
-                        id: self.surveyId
+                        surveyid: self.surveyId,
+                        QuestionOptionId: questionId
                     }
                 })
                     .then(({ data }) => {

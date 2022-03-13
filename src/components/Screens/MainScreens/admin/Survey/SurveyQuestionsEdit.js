@@ -10,13 +10,18 @@ import '../election/election.css';
 import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 
+
+import deleteIcon from '../../../../../assets/mainScreens/deleteIcon.svg';
+
+
 const SurveyQuestionsEdit = (props) => {
 
     const navigate = useNavigate();
 
     const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
-    const [question, setQuestion] = useState([]);
+    const [questionEdited, setQuestionEdited] = useState([]);
+    const [questions, setQuestions] = useState([]);
 
     const [firstQuestion, setFirstQuestion] = useState('');
 
@@ -27,13 +32,10 @@ const SurveyQuestionsEdit = (props) => {
 
     const [isActive, setIsActive] = useState(false);
 
-    const [data, setData] = useState({
-        surveyId: "",
-        surveyQuestions: [],
-        surveyStatus: 0,
-        surveyTitle: "",
-        surveyType: 1,
-    });
+    const [finalOption, setFinalOption] = useState([]);
+    const [finalQuestion, setFinalQuestion] = useState([]);
+
+    const [optionIdSelected, setOptionIdSelected] = useState(100);
 
     useEffect(() => {
         getQuestions();
@@ -42,7 +44,7 @@ const SurveyQuestionsEdit = (props) => {
 
     const getQuestions = () => {
         SurveyStore.getSurveyQuestions().then(res => {
-            setData(res);
+            setQuestions(res.surveyQuestions);
         });
     };
 
@@ -57,7 +59,7 @@ const SurveyQuestionsEdit = (props) => {
         };
 
 
-        setQuestion(question => [...question, newElement]);
+        setQuestionEdited(questionEdited => [...questionEdited, newElement]);
 
         resetInfo();
     };
@@ -72,33 +74,101 @@ const SurveyQuestionsEdit = (props) => {
 
 
 
-    const addSurveyOnclick = () => {
-        console.log('options', options)
 
-        return;
-        SurveyStore.putSurveyQuestion(question).then(() => {
-            navigate('/admin/surveyType');
-        });
+    const deleteOnclick = (id) => {
+        setQuestions(questions.filter(item => item.id !== id));
+    };
+
+    const deleteOptionOnclick = (id, index) => {
+        let options = questions.map(item => item.surveyQuestionOptions)[index];
+        let optionFiltered = options.filter(item => item.id != id);
+
+        console.log('filtered', optionFiltered)
+
+        let newElement = {
+
+        };
+        setQuestions(questions => [...questions, newElement]);
     };
 
 
-    const inputOnchange = (e) => {
-        let value = e.target.value;
-        setOptions(value);
-        let id = e.target.id;
-        let rank = e.target.name;
+    const confirmEditQuestion = (e,item) => {
+
+        let newElement = {
+            id: item.id,
+            surveyId: item.surveyId,
+            rank: item.questionRank,
+            title: e.target.value,
+            hasMultipleAnswers: item.hasMultipleAnswers,
+            minAnswersCount: item.minAnswersCount,
+            maxAnswersCount: item.maxAnswersCount,
+            isDeleted: false,
+            surveyQuestionOptions: item.surveyQuestionOptions,
+        };
+
+
+        setFinalQuestion(finalQuestion => [...finalQuestion, newElement]);
+        setFirstQuestion('');
+        setOptionIdSelected(100);
+    };
+
+
+    const confirmEditOption = (e, item, rank) => {
 
 
         let newElement = {
-            id: id,
-            isDeleted: false,
+            id: item.id,
+            title: e.target.value,
             rank: Number(rank),
-            title: value,
-        }
+            isDeleted: false,
+            surveyQuestionId: item.surveyQuestionId
+        };
 
 
-        console.log('new elemnt', newElement)
+        setFinalOption(finalOption => [...finalOption, newElement]);
 
+        setOptionIdSelected(100);
+    };
+
+
+
+    const updateSurveyOnclick = () => {
+        console.log('questions', finalQuestion)
+        console.log('options', finalOption)
+        let optionFiltered = [];
+        let questionFiltered = [];
+
+        questions.map(item => {
+            finalOption.map(data => {
+                if (item.id === data.surveyQuestionId) {
+                    optionFiltered.push(data);
+
+                    let newElement = {
+                        id: item.id,
+                        surveyId: item.surveyId,
+                        rank: item.questionRank,
+                        title: item.title,
+                        hasMultipleAnswers: item.hasMultipleAnswers,
+                        minAnswersCount: item.minAnswersCount,
+                        maxAnswersCount: item.maxAnswersCount,
+                        isDeleted: false,
+                        surveyQuestionOptions: optionFiltered,
+                    };
+
+                    questionFiltered.push(newElement);
+                };
+            });
+        });
+
+        let mergedQuestions = [...questionFiltered, ...finalQuestion];
+
+        SurveyStore.putSurveyQuestion(mergedQuestions).then(() => {
+            // navigate('/admin/surveyType');
+        });
+    };
+
+    const handleBlur = (e) => {
+        console.log('blur event', e.target.value)
     };
 
     return (
@@ -117,24 +187,41 @@ const SurveyQuestionsEdit = (props) => {
             </SurveyView>
 
 
-            {data.surveyQuestions.map(item => (
+            {questions.map((item, i) => (
                 <CardSection key={item.id}>
 
-                    <Question
-                        onChange={e => setFirstQuestion(e.target.value)}
-                        placeholder={item.title}
-                        type={"text"}
-                    />
+                    <Item>
+                        <QuestionOpration>
+                            <img src={deleteIcon} alt='' onClick={() => deleteOnclick(item.id)} />
+                        </QuestionOpration>
+
+                        <Question
+                            // onChange={e => setFirstQuestion(e.target.value)}
+                            placeholder={item.title}
+                            type={"text"}
+                            // value={item.title}
+                            onBlur={e => confirmEditQuestion(e,item)}
+                        />
+                    </Item>
 
                     {item.surveyQuestionOptions.map(data => (
-                        <TextInput
-                            key={data.id}
-                            onChange={e => inputOnchange(e)}
-                            id={data.id}
-                            name={data.rank}
-                            placeholder={data.title}
-                            type={"text"}
-                        />
+                        <Item key={data.id}>
+
+                            <QuestionOpration>
+                                <img src={deleteIcon} alt='' onClick={() => deleteOptionOnclick(data.id, i)} />
+                            </QuestionOpration>
+
+                            <TextInput
+                                // onChange={e => setOptions(e.target.value)}
+                                id={data.id}
+                                name={data.rank}
+                                placeholder={data.title}
+                                type={"text"}
+                                // value={data.title}
+                                onBlur={e => confirmEditOption(e, item, i + 1)}
+                                valueLink={item.title}
+                            />
+                        </Item>
                     ))}
 
                     <MainRadio>
@@ -175,7 +262,7 @@ const SurveyQuestionsEdit = (props) => {
                     افزودن و پرسش
                 </AddQuestion>
 
-                <Add onClick={addSurveyOnclick}>
+                <Add onClick={updateSurveyOnclick}>
                     افزودن نظرسنجی
                 </Add>
             </Footer>
@@ -183,6 +270,31 @@ const SurveyQuestionsEdit = (props) => {
     );
 };
 
+const QuestionOpration = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    color: #59A800;
+
+    img {
+        margin-right: 10px;
+    }
+
+    span {
+        cursor: pointer;
+    }
+`;
+
+const Item = styled.div`
+    
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    img {
+        cursor: pointer;
+    }
+`;
 
 const TextInput = styled.input`
     width: 90%;
@@ -216,6 +328,7 @@ const Limit = styled.input`
     color: #fff;
 `;
 const AddQuestion = styled.a`
+
     border-radius: 8px;
     background: transparent;
     width: 215px;
@@ -247,49 +360,13 @@ const MainRadio = styled.div`
     margin-bottom: 16px;
 `;
 
-const Radio = styled.input`
-background-color: red;
-margin-left: 10px;
-`;
-
-
-const Answer = styled.div`
-    margin-left: 16px;
-    margin-top: 10px;
-`;
-
-
-const Wrap = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-top: 16px;
-
-    border-bottom: 1px solid #545772;
-    /* transform: rotate(180deg); */
-
-    padding-bottom: 20px;
-    label {
-        color: #DDE0F3;
-        font-size: 16px;
-    }
-`;
-
-
-const QContainer = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-`;
-
 
 const Question = styled.input`
     border: 1px solid #7F829F;
     box-sizing: border-box;
     border-radius: 8px;
     background: transparent;
-    width: 100%;
+    width: 95%;
     height: 48px;
     text-align: right;
     color: #fff;

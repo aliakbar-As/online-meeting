@@ -8,8 +8,6 @@ import Register from '../components/Screens/AuthScreens/Register';
 
 import Form from '../components/Screens/MainScreens/form/Form';
 import FormInfo from '../components/Screens/MainScreens/form/FormInfo';
-import Survey from '../components/Screens/MainScreens/form/Survey';
-import Candidate from '../components/Screens/MainScreens/form/Candidate';
 
 
 
@@ -27,7 +25,6 @@ import AdminSurvey from '../components/Screens/MainScreens/admin/Survey/Survey';
 import SurveyDetails from '../components/Screens/MainScreens/admin/Survey/SurveyDetails';
 import AddSurvey from '../components/Screens/MainScreens/admin/Survey/AddSurvey';
 import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuestion';
-import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
 import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
 import EditDuties from '../components/Screens/MainScreens/admin/addMeeting/EditDuties';
 import AddCondidate from '../components/Screens/MainScreens/admin/election/AddCondidate';
@@ -35,6 +32,9 @@ import SurveyInfoEdit from '../components/Screens/MainScreens/admin/Survey/Surve
 import SurveyQuestionsEdit from '../components/Screens/MainScreens/admin/Survey/SurveyQuestionsEdit';
 import ElectionInfoEdit from '../components/Screens/MainScreens/admin/election/ElectionInfoEdit';
 import ElectionCondidateEdit from '../components/Screens/MainScreens/admin/election/ElectionCondidateEdit';
+import EditMeetingInfo from '../components/Screens/MainScreens/admin/EditMeetingInfo';
+import EditMeetingDate from '../components/Screens/MainScreens/admin/EditMeetingDate';
+import EditMeetingFiles from '../components/Screens/MainScreens/admin/EditMeetingFiles';
 
 function RouterComponent() {
     return (
@@ -67,9 +67,9 @@ function RouterComponent() {
                 element={<SurveyTypes />}
             />
 
-            {/* <Route path="/form/info/survey/surveys"
-                element={<SurveyQuestion />}
-            /> */}
+
+
+
 
 
 
@@ -98,6 +98,17 @@ function RouterComponent() {
 
             <Route path="/admin/add/nextstep/finalstep"
                 element={<FinalStep />}
+            />
+
+
+            <Route path="/admin/info/editInfo"
+                element={<EditMeetingInfo />}
+            />
+            <Route path="/admin/info/editDate"
+                element={<EditMeetingDate />}
+            />
+            <Route path="/admin/info/editFiles"
+                element={<EditMeetingFiles />}
             />
 
 

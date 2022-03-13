@@ -4,22 +4,23 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 
-import { Button, DateModal, Header, Input } from '../../../../Commons';
+import { Button, DateModal, Header, Input } from '../../../Commons';
 
-import StoreContext from '../../../../../Stores';
+import StoreContext from '../../../../Stores';
 
-import calander from '../../../../../assets/mainScreens/calender.png';
-import clock from '../../../../../assets/mainScreens/clock.png';
+import calander from '../../../../assets/mainScreens/calender.png';
+import clock from '../../../../assets/mainScreens/clock.png';
 
-import './meeting.css';
+import './addMeeting/meeting.css';
 import { useNavigate } from 'react-router-dom';
 
 import jalaali from 'jalaali-js';
+import moment from 'moment-jalaali';
 
-const StepTwo = (props) => {
+const EditMeetingDate = (props) => {
     const navigate = useNavigate();
 
-    const { MeetingStore } = useContext(StoreContext);
+    const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
 
 
     const [startDateModal, setStartDateModal] = useState(false);
@@ -37,6 +38,38 @@ const StepTwo = (props) => {
 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
+    const [id, setId] = useState('');
+
+
+    useEffect(() => {
+        getMeetingDates();
+    }, []);
+
+    const getMeetingDates = () => {
+        MeetingProfileStore.getMeetingDate().then(res => {
+            setId(res.id);
+            setTimeDufault(res);
+        });
+    };
+
+    const setTimeDufault = (res) => {
+        let startDate = moment(res.holdingDatetime).format('jYYYY/jMM/jDD');
+        let startTime = moment(res.holdingDatetime).format('HH:mm');
+        let startDateConverted = startDate.split('/');
+        setStartDay(startDateConverted[2]);
+        setStartMonth(startDateConverted[1]);
+        setStartYear(startDateConverted[0]);
+
+        let endDate = moment(res.endDatetime).format('jYYYY/jMM/jDD');
+        let endTime = moment(res.endDatetime).format('HH:mm');
+        let endDateConverted = endDate.split('/');
+        setEndDay(endDateConverted[2]);
+        setEndMonth(endDateConverted[1]);
+        setEndYear(endDateConverted[0]);
+
+        setStartTime(startTime);
+        setEndTime(endTime);
+    };
 
 
     const confirmDateData = () => {
@@ -68,8 +101,9 @@ const StepTwo = (props) => {
 
         const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
-        MeetingStore.setMeetingDate(convertedStartDate, convertedEndDate);
-        navigate('/admin/add/nextstep/finalstep');
+        MeetingStore.UpdateMeetingId(id, convertedStartDate, convertedEndDate).then(() => {
+            navigate('/admin');
+        });
     };
 
 
@@ -80,12 +114,12 @@ const StepTwo = (props) => {
 
 
             <Info>
-                <span>مجمع ها / افزودن مجمع</span>
+                <span>مجمع ها / ویرایش مجمع</span>
             </Info>
 
 
             <SurveyView>
-                <span>افزودن مجمع <span className="stepOne">| مرحله دوم</span></span>
+                <span>ویرایش مجمع <span className="stepOne">| مرحله دوم</span></span>
             </SurveyView>
 
 
@@ -96,8 +130,9 @@ const StepTwo = (props) => {
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
+                        value={startTime}
                         onChange={e => setStartTime(e.target.value)}
-                        />
+                    />
                     <span>ساعت شروع</span>
                 </View>
 
@@ -114,8 +149,12 @@ const StepTwo = (props) => {
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
-                        onChange={e => setEndTime(e.target.value)}
-                        />
+                        value={endTime}
+                        onChange={e => {
+                            console.log('e', e.target.value)
+                            setEndTime(e.target.value)
+                        }}
+                    />
                     <span>ساعت پایان</span>
                 </View>
 
@@ -131,7 +170,7 @@ const StepTwo = (props) => {
                 <Button
                     primary
                     onPress={confirmDateData}
-                    title={'تایید و ادامه'} />
+                    title={'تایید و ثبت'} />
 
             </Footer>
 
@@ -249,4 +288,4 @@ const Info = styled.div`
 
 
 
-export default StepTwo;
+export default EditMeetingDate;

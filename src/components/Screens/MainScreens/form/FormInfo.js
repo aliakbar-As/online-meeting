@@ -501,7 +501,7 @@ const View = styled.div`
 
 const CardSectionTwo = styled.div`
     width: 68.43%;
-    height: 337px;
+    height: 350px;
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
@@ -510,7 +510,7 @@ const CardSectionTwo = styled.div`
 
 const CardSectionOne = styled.div`
     width: 30%;
-    height: 337px;
+    height: 350px;
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;

@@ -34,25 +34,14 @@ const ForumInfo = (props) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
-        MeetingProfileStore.getAttendanceMeeting().then(res => {
-            setPercent(res.percentagAttendance);
-            setCount(res.countOfPresent);
-        });
-
+        getAttendanceMeeting();
     }, []);
 
 
-    const serveyOnclick = () => {
-        console.clear();
-        MeetingProfileStore.getSurvey(true, 2).then(res => {
-            navigate('/form/info/survey');
-        });
-    };
-
-
-    const leaveMeeting = () => {
-        MeetingProfileStore.leaveMeeting().then(() => {
-            navigate(-1);
+    const getAttendanceMeeting = () => {
+        MeetingProfileStore.getAttendanceMeeting().then(res => {
+            setPercent(res.percentagAttendance);
+            setCount(res.countOfPresent);
         });
     };
 
@@ -135,7 +124,7 @@ const ForumInfo = (props) => {
                         ))}
                     </View>
 
-                    <Edit onClick={() => navigate('/admin/editDuties')}>
+                    <Edit onClick={() => navigate('/admin/info/editInfo')}>
                         ویرایش
                     </Edit>
 
@@ -183,7 +172,7 @@ const ForumInfo = (props) => {
 
                     </DateView>
 
-                    <Edit>
+                    <Edit onClick={() => navigate('/admin/info/editDate')}>
                         ویرایش
                     </Edit>
                 </Date>
@@ -204,7 +193,7 @@ const ForumInfo = (props) => {
                         </InnerView>
                     ))}
 
-                    <Edit>
+                    <Edit onClick={() => navigate('/admin/info/editFiles')}>
                         ویرایش
                     </Edit>
                 </Links>
@@ -276,7 +265,7 @@ const Edit = styled.button`
     font-size: 23px;
     border-radius: 8px;
     align-self: flex-end;
-    margin-top: 16px;
+    margin-top: 32px;
     cursor: pointer;
 `;
 
@@ -573,7 +562,7 @@ const View = styled.div`
 
 const CardSectionTwo = styled.div`
     width: 68.43%;
-    /* height: 337px; */
+    height: 350px;
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
@@ -582,7 +571,7 @@ const CardSectionTwo = styled.div`
 
 const CardSectionOne = styled.div`
     width: 30%;
-    /* height: 337px; */
+    height: 350px;
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;

@@ -59,12 +59,6 @@ const ForumList = (props) => {
         });
     };
 
-    const handleTabSelected = (id) => {
-        setTabSelectedId(id);
-        requestMeetingData(id);
-    };
-
-
     const getSurveyList = () => {
         navigate('/admin/surveyType');
     };

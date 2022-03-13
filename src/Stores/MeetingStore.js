@@ -114,6 +114,20 @@ const meetingStore = types.model('meetingStore', {
 
         },
 
+        updateFiles(data) {
+            return new Promise(async (resolve, reject) => {
+                request.put(`/MeetingDocument/UpdateDocuments`, data)
+                    .then(({ data }) => {
+                        Logger(data, 'UpdateDocuments');
+                        resolve(data.data.value);
+
+                    }).catch(err => {
+                        console.log('UpdateDocuments', err);
+                        resolve(false);
+                    });
+            });
+        },
+
         addMeeting(files) {
 
             return new Promise(async (resolve, reject) => {
@@ -161,7 +175,22 @@ const meetingStore = types.model('meetingStore', {
             });
         },
 
+        UpdateMeetingId(id, startDate, endDate) {
+            return new Promise(async (resolve, reject) => {
+                request.put(`/Meeting/UpdateMeetingDate`, {
+                    id: id,
+                    holdingDatetime: startDate,
+                    endDatetime: endDate,
+                }).then(({ data }) => {
+                    Logger(data, 'UpdateMeetingDate');
+                    resolve();
 
+                }).catch(err => {
+                    console.log('Company', err);
+                    resolve(false);
+                });
+            });
+        },
         resetMettingData() {
             self.meetingType = null;
             self.holderCompanyId = null;
@@ -415,7 +444,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 })
                     .then(({ data }) => {
                         Logger(data, 'ShowSurveyResultInfo');
-                        
+
                         if (clear) this.setChartInfo(data.data.showSurveyResults);
                         resolve(data.data.survey);
                     }).catch(err => {
@@ -443,6 +472,62 @@ const meetingProfileStore = types.model('meetingProfileStore', {
             });
         },
 
+        getMeetingInfo() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/Meeting/${self.meetingId}/MeetingDuties`)
+                    .then(({ data }) => {
+                        Logger(data, 'MeetingDuties');
+                        resolve(data.data);
+
+                    }).catch(err => {
+                        console.log('MeetingDuties', err);
+                        resolve(false);
+                    });
+            });
+        },
+
+
+        getMeetingDate() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/Meeting/MeetingDate/${self.meetingId}`)
+                    .then(({ data }) => {
+                        Logger(data, 'MeetingDate');
+                        resolve(data.data);
+
+                    }).catch(err => {
+                        console.log('MeetingDate', err);
+                        resolve(false);
+                    });
+            });
+        },
+
+        getMeetingFiles() {
+            return new Promise(async (resolve, reject) => {
+                request.get(`/MeetingDocument`)
+                    .then(({ data }) => {
+                        Logger(data, 'MeetingDocument');
+                        resolve(data.data.list);
+
+                    }).catch(err => {
+                        console.log('MeetingDocument', err);
+                        resolve(false);
+                    });
+            });
+        },
+
+        updateDuties(data) {
+            return new Promise(async (resolve, reject) => {
+                request.put(`/Meeting/UpdateMeetingDuties`, data)
+                    .then(({ data }) => {
+                        Logger(data, 'UpdateMeetingDuties');
+                        resolve(data.data);
+
+                    }).catch(err => {
+                        console.log('UpdateMeetingDuties', err);
+                        resolve(false);
+                    });
+            });
+        },
 
         setChartInfo(data) {
             if (data.length === 0) {

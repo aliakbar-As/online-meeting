@@ -6,12 +6,13 @@ import styled from 'styled-components';
 
 import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
-
+import menu from '../../../../assets/mainScreens/menu.svg';
 import left from '../../../../assets/mainScreens/left.png';
+import election from '../../../../assets/mainScreens/election.png';
 
 
 import { useNavigate } from 'react-router-dom';
-import { ModalComponent } from '../../../Commons';
+import { ModalComponent, Loading } from '../../../Commons';
 
 
 import StoreContext from '../../../../Stores';
@@ -40,7 +41,7 @@ let tabs = [
 const ForumList = (props) => {
     const navigate = useNavigate();
 
-    const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
+    const { MeetingStore } = useContext(StoreContext);
 
     const [tabSelectedId, setTabSelectedId] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
@@ -65,7 +66,7 @@ const ForumList = (props) => {
 
     const removeUser = () => {
         localStorage.removeItem('@token');
-        navigate(-1);
+        navigate('/login');
     };
 
     return (
@@ -83,13 +84,18 @@ const ForumList = (props) => {
                             <Tab
                                 key={index}
                                 style={{ borderBottom: tabSelectedId === item.id ? '4px solid #97A1FF' : '1px solid #fff' }}
-                                onClick={() => setTabSelectedId(item.id)}>
+                                onClick={() => {
+                                    setTabSelectedId(item.id)
+                                    requestMeetingData(item.id)
+                                }}>
                                 <span style={{ color: tabSelectedId === item.id ? '#97A1FF' : '#fff' }}>
                                     {item.title}
                                 </span>
                             </Tab>
                         )
                     })}
+
+                    <img src={menu} alt='' />
                 </TabContainer>
 
             </TopView>
@@ -102,11 +108,15 @@ const ForumList = (props) => {
                     />
 
                     <Footer>
+
                         <Survey onClick={getSurveyList}>
                             <Left src={left} alt="left arrow" />
                             <span>انتخابات و نظرسنجی</span>
                         </Survey>
+
                     </Footer>
+
+
                 </>
                 :
                 <NullData>
@@ -120,9 +130,22 @@ const ForumList = (props) => {
                 closeModal={() => setModalVisible(false)}
                 content={'مجتمع با موفقیت ثبت شد.'}
             />
+
+            {loading ? <Loading /> : null}
         </>
     );
 };
+
+const View = styled.div`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    display: none;
+
+    @media(max-width: 768px) {
+        display: flex;
+    }
+`;
 
 const NullData = styled.div`
     font-size: 23px;
@@ -158,9 +181,13 @@ const Survey = styled.button`
         font-size: 20px;
         color: #fff;
         text-align: center;
-        margin: 0px 50px 0px 50px;
+        /* margin: 0px 50px 0px 50px; */
+        margin-left: 50px;
     }
 
+    @media(max-width: 768px) {
+        width: 70%;
+    }
 `;
 
 const Election = styled.button`
@@ -190,6 +217,7 @@ const Footer = styled.div`
     justify-content: flex-end;
     margin-bottom: 5%;
     margin-right: 3%;
+    
 `;
 
 
@@ -199,6 +227,11 @@ const Tab = styled.div`
     text-align: center;
     padding: 10px;
     font-size: 14px;
+
+    
+    @media(max-width: 768px) {
+        display: none;
+    }
 `;
 
 
@@ -209,6 +242,15 @@ const TabContainer = styled.div`
     width: 85%;
     display: flex;
     /* background-color: red; */
+
+ img {
+     width: 25px;
+     height: 25px;
+
+     @media(min-width: 768px) {
+         display: none;
+     }
+ }
 `;
 
 const ArrowIcon = styled.img`
@@ -239,6 +281,7 @@ const TopView = styled.div`
     justify-content: space-between;
     margin: 3%;
 
+    
 `;
 
 const styles = {

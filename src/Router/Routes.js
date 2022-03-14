@@ -42,7 +42,7 @@ function RouterComponent() {
 
             {/* FORUM SCREENS */}
 
-            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
 
             <Route path="/code"
                 element={<VerificationCode />}

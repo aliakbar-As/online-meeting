@@ -119,15 +119,22 @@ const SignIn = styled.button`
             transform:rotate(360deg); 
         } 
     }
+
+    @media(max-width: 768px) {
+        right: 10px;
+        top: 55%
+    }
 `;
 
 
 const Input = styled.input`
     padding: 0.5em;
     color: #ABAEC8;
-    border: none;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
 
-    background: #545772;
+    background: transparent;
     border-radius: 8px;
     text-align: right;
 
@@ -139,6 +146,11 @@ const Input = styled.input`
     right: 34.51%;
     top: 35%;
     bottom: 41.5%;
+
+    @media(max-width: 768px) {
+        right: 10px;
+        width: 95%;
+    }
 `;
 
 
@@ -186,12 +198,36 @@ const Content = styled.main`
         top: 20%;
         bottom: 41.5%;
     }
+
+
+    @media (max-width: 768px) {
+       position: absolute;
+       right: 0;
+       top: 40%;
+        width: 100%;
+
+        p {
+            right: 10px;
+            font-size: 25px;
+        }
+
+        span {
+            font-size: 14px;
+            right: 10px;
+            color: #eee
+        }
+    }
 `;
 
 const Icon = styled.img`
  width: 446px;
  height: 388px;
  
+ @media(max-width: 768px) {
+        width: 250px;
+        height: 250px;
+        margin-top: 30px;
+    }
 `;
 
 export default VerificationCode;

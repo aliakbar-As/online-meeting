@@ -25,25 +25,11 @@ function Login() {
 
     useEffect(() => {
 
-        const timer = setInterval(() => {
-            setTime(time - 1);
-        }, 1000);
-
-
         let token = localStorage.getItem('@token')
         if (token !== null) {
             Logger(token, 'token');
-            // navigate('/form');
             navigate('/admin');
         };
-
-
-        return () => {
-            if (time === 0) {
-                clearInterval(timer);
-                return;
-            };
-        }
 
     }, []);
 
@@ -88,15 +74,6 @@ function Login() {
                     maxLength={11}
                 />
 
-                <div className="footerContainer">
-                    <h4 style={{ cursor: 'pointer' }} className="send-again-title" onClick={() => console.log('send again')}>ارسال مجدد</h4>
-
-                    <div className="footerContainer innerFooterContainer">
-                        <h4 className="send-again-title time-title">00:{time}</h4>
-                        <img src={clock} className="clockIcon" alt="" />
-                    </div>
-                </div>
-
                 <SignIn disabled={loading} onClick={loginUser}>
                     {loading ? <img src={spinner} alt='' /> : 'ورود'}
                 </SignIn>
@@ -133,6 +110,7 @@ const SignIn = styled.button`
 
     color: #fff;
     font-size: 20px;
+    
     &:hover {
         transition: opacity 0.2s ease 0s;
     }
@@ -143,17 +121,25 @@ const SignIn = styled.button`
 
         animation:spin 4s linear infinite;
     }
+
     @-moz-keyframes spin { 
     100% { -moz-transform: rotate(360deg); } 
     }
+
     @-webkit-keyframes spin { 
         100% { -webkit-transform: rotate(360deg); } 
     }
+
     @keyframes spin { 
         100% { 
             -webkit-transform: rotate(360deg); 
             transform:rotate(360deg); 
         } 
+    }
+
+    @media(max-width: 768px) {
+        right: 10px;
+        top: 55%
     }
 `;
 
@@ -161,9 +147,11 @@ const SignIn = styled.button`
 const Input = styled.input`
     padding: 0.5em;
     color: #ABAEC8;
-    border: none;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
 
-    background: #545772;
+    background: transparent;
     border-radius: 8px;
     text-align: right;
 
@@ -175,6 +163,11 @@ const Input = styled.input`
     right: 34.51%;
     top: 35%;
     bottom: 41.5%;
+
+    @media(max-width: 768px) {
+        right: 10px;
+        width: 95%;
+    }
 `;
 
 
@@ -186,7 +179,6 @@ const Content = styled.main`
     display: block;
     top: 10px;
     padding: 0 calc(3.5vw + 5px);
-
     text-align: right;
     align-items: center;
     justify-content: center;
@@ -222,12 +214,36 @@ const Content = styled.main`
         top: 20%;
         bottom: 41.5%;
     }
+
+
+    @media (max-width: 768px) {
+       position: absolute;
+       right: 0;
+       top: 40%;
+        width: 100%;
+
+        p {
+            right: 10px;
+            font-size: 25px;
+        }
+
+        span {
+            font-size: 16px;
+            right: 10px;
+            color: #eee
+        }
+    }
 `;
 
 const Icon = styled.img`
  width: 446px;
  height: 388px;
- 
+    
+    @media(max-width: 768px) {
+        width: 250px;
+        height: 250px;
+        margin-top: 30px;
+    }
 `;
 
 export default Login;

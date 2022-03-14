@@ -133,8 +133,6 @@ const SurveyQuestionsEdit = (props) => {
 
 
     const updateSurveyOnclick = () => {
-        console.log('questions', finalQuestion)
-        console.log('options', finalOption)
         let optionFiltered = [];
         let questionFiltered = [];
 
@@ -163,7 +161,7 @@ const SurveyQuestionsEdit = (props) => {
         let mergedQuestions = [...questionFiltered, ...finalQuestion];
 
         SurveyStore.putSurveyQuestion(mergedQuestions).then(() => {
-            // navigate('/admin/surveyType');
+            navigate('/admin/surveyType');
         });
     };
 

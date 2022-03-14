@@ -6,7 +6,7 @@ import downArrow from '../../../../assets/mainScreens/downArrow.png';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-import { Button } from '../../../../components/Commons';
+import { Button, Header } from '../../../../components/Commons';
 
 import './admin.css';
 
@@ -45,24 +45,11 @@ const ForumInfo = (props) => {
         });
     };
 
-    const removeUser = () => {
-        localStorage.removeItem('@token');
-        navigate(-1)
-    };
 
     return (
         <div className="main">
 
-            <TopView>
-                <IconsDiv onClick={removeUser}>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back onClick={() => navigate(-1)} src={backArrow} alt="backArrow" />
-
-            </TopView>
+            <Header backOnclick={() => navigate(-1) }/>
 
 
             <Info>
@@ -245,6 +232,11 @@ const FooterCard = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 20px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        justify-content: space-between;
+    }
 `;
 
 const InnerPercent = styled.div`
@@ -299,6 +291,10 @@ const CardTwo = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 10px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 
@@ -308,7 +304,7 @@ const CardSection = styled.div`
     
     border-radius: 8px;
     position: relative;
-    padding: 10px;
+    padding-top: 10px;
 
     /* margin-left: 10px; */
     span {
@@ -347,6 +343,12 @@ const Date = styled.div`
     margin-right: 16px;
     padding-right: 16px;
     padding-left: 16px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+        margin-right: 0;
+    }
 `;
 
 
@@ -406,6 +408,10 @@ const Percent = styled.div`
         opacity: 1;
         transition: opacity 0.2s ease 0s;
     }
+
+    @media(max-width: 768px) {
+        width: 50%;
+    }
 `;
 
 
@@ -457,6 +463,10 @@ const Count = styled.div`
         opacity: 1;
         transition: opacity 0.2s ease 0s;
     }
+
+    @media(max-width: 768px) {
+        width: 50%;
+    }
 `;
 
 const Links = styled.div`
@@ -488,6 +498,11 @@ const Links = styled.div`
         transition: opacity 0.2s ease 0s;
     }
 
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
 `;
 
 const InnerView = styled.a`
@@ -541,6 +556,7 @@ const InfoView = styled.div`
     align-items: center;
     justify-content: space-between;
     display: flex;
+
 `;
 
 
@@ -557,6 +573,7 @@ const View = styled.div`
     span {
         margin-top: 20px;
     }
+
 `;
 
 
@@ -567,6 +584,10 @@ const CardSectionTwo = styled.div`
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
     padding: 10px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const CardSectionOne = styled.div`
@@ -578,6 +599,15 @@ const CardSectionOne = styled.div`
     padding: 10px;
     display: flex;
     flex-direction: column;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        height: auto;
+    }
 `;
 
 const Card = styled.div`
@@ -586,6 +616,11 @@ const Card = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 10px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+
+    }
 `;
 
 const CardSectionInfo = styled.div`

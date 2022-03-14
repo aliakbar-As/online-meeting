@@ -177,7 +177,7 @@ const StepOne = (props) => {
                     ))}
                 </select>
 
-                <Input
+                <MeetingTitle
                     placeholder={'نام مجمع'}
                     type={'text'}
                     value={meetingName}
@@ -205,6 +205,26 @@ const StepOne = (props) => {
         </div>
     );
 };
+
+
+const MeetingTitle = styled.input`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16;
+    width: 50%;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
+    flex-direction: 'row-reverse';
+    padding: 5px;
+    text-align:right;
+    direction: rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: flex-end;
+    display: flex;
+`;
 
 const Description = styled.textarea`
     background: transparent;

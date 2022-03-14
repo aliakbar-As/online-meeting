@@ -1,5 +1,19 @@
+body {
+  background-color: #040714;
+  color: #f9f9f9;
+  font-family: Vazir, sans-serif !important;
+  font-weight: normal;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+:root,
+body,
 html {
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 * {
@@ -29,15 +43,6 @@ html {
    }
 
 
-body {
-  background-color: #040714;
-  color: #f9f9f9;
-  font-family: Vazir, sans-serif !important;
-  font-weight: normal;
-
-  margin: 0;
-  padding: 0;
-}
 
 
 a {

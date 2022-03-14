@@ -72,7 +72,7 @@ function Register() {
 
 
                 <LoginText>
-                    قبلا ثبت نام کرده‌ام <span onClick={() => navigate('/')}>ورود</span>
+                    قبلا ثبت نام کرده‌ام <span onClick={() => navigate('/login')}>ورود</span>
                 </LoginText>
 
             </Content>
@@ -95,6 +95,11 @@ const LoginText = styled.span`
         margin-right: 10px;
         text-decoration: underline;
         cursor: pointer
+    }
+
+    @media(max-width: 768px) {
+        right: 10px;
+        bottom: 30%;
     }
 `;
 
@@ -147,6 +152,11 @@ const SignIn = styled.button`
             transform:rotate(360deg); 
         } 
     }
+
+    @media(max-width: 768px) {
+        right: 10px;
+        top: 65%
+    }
 `;
 
 
@@ -155,7 +165,11 @@ const InputThree = styled.input`
     color: #ABAEC8;
     border: none;
 
-    background: #545772;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
+
+    background: transparent;
     border-radius: 8px;
     text-align: right;
 
@@ -167,6 +181,12 @@ const InputThree = styled.input`
     right: 34.51%;
     top: 55%;
     bottom: 41.5%;
+
+    @media(max-width: 768px) {
+        right: 10px;
+    top: 50%;
+        width: 95%;
+    }
 `;
 
 
@@ -175,7 +195,11 @@ const InputTwo = styled.input`
     color: #ABAEC8;
     border: none;
 
-    background: #545772;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
+
+    background: transparent;
     border-radius: 8px;
     text-align: right;
 
@@ -187,15 +211,24 @@ const InputTwo = styled.input`
     right: 34.51%;
     top: 40%;
     bottom: 41.5%;
+
+    @media(max-width: 768px) {
+        right: 10px;
+        width: 95%;
+    top: 35%;
+
+    }
 `;
 
 
 const InputOne = styled.input`
     padding: 0.5em;
     color: #ABAEC8;
-    border: none;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    border-radius: 8px;
 
-    background: #545772;
+    background: transparent;
     border-radius: 8px;
     text-align: right;
 
@@ -207,6 +240,12 @@ const InputOne = styled.input`
     right: 34.51%;
     top: 25%;
     bottom: 41.5%;
+
+    @media(max-width: 768px) {
+    top: 20%;
+        right: 10px;
+        width: 95%;
+    }
 `;
 
 
@@ -239,12 +278,27 @@ const Content = styled.main`
         bottom: 41.5%;
     }
 
+    @media (max-width: 768px) {
+       position: absolute;
+       right: 0;
+       top: 40%;
+        width: 100%;
+
+        p {
+            right: 10px;
+            font-size: 25px;
+        }
+    }
 `;
 
 const Icon = styled.img`
  width: 446px;
  height: 388px;
- 
+ @media(max-width: 768px) {
+        width: 250px;
+        height: 250px;
+        margin-top: 30px;
+    }
 `;
 
 

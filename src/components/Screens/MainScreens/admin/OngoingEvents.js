@@ -1,20 +1,24 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import moment from 'moment-jalaali';
 
 import StoreContext from '../../../../Stores';
 import { useNavigate } from 'react-router-dom';
+import { Loading } from '../../../Commons';
 
 const OngoingEvents = (props) => {
     const { MeetingStore, MeetingProfileStore } = useContext(StoreContext);
 
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
 
     const handleMeetingDetails = (id) => {
+        setLoading(true);
         MeetingProfileStore.setMettingId(id);
         MeetingProfileStore.getMeetingDetails(id).then(() => {
             navigate('/admin/info');
+            setLoading(false);
         });
     };
 
@@ -26,12 +30,13 @@ const OngoingEvents = (props) => {
 
                 return (
                     <Table key={index}>
-                        <Logo src={item.companyImageUrl} alt={item.id} />
-                        <span style={{ color: '#EBEEFF', fontSize: 14 }}>{item.title}</span>
-                        <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.holderCompanyTitle}</span>
-                        <span style={{ color: '#A7AAC6', fontSize: 13 }}>{item.tickerSymbol} : کد</span>
-                        <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
-
+                        <Wrap>
+                            <Logo src={item.companyImageUrl} alt={item.id} />
+                            <span style={{ color: '#EBEEFF', fontSize: 14 }}>{item.title}</span>
+                            <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.holderCompanyTitle}</span>
+                            <span style={{ color: '#A7AAC6', fontSize: 13 }}>{item.tickerSymbol} : کد</span>
+                            <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
+                        </Wrap>
 
                         <Button onClick={() => handleMeetingDetails(item.id)}>
                             مشاهده و ویرایش
@@ -44,10 +49,23 @@ const OngoingEvents = (props) => {
             <AddMeeting onClick={() => navigate('/admin/add')}>
                 افزودن مجمع
             </AddMeeting>
+
+            {loading ? <Loading /> : null}
         </Main>
     );
 };
 
+const Wrap = styled.div`
+    flex-direction: row-reverse;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+
+    @media(min-width: 768px) {
+        padding-left: 20px;
+    }
+`;
 
 const AddMeeting = styled.div`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
@@ -75,12 +93,22 @@ const Button = styled.button`
     height: 48px;
     font-size: 20px;
     cursor: pointer;
+
+    @media(max-width: 768px) {
+        margin-top: 32px;
+        width: 148px;
+    }
 `;
 
 const Logo = styled.img`
     width: 60px;
     height: 60px;
     border-radius: 100%;
+
+    @media(max-width: 768px) {
+        width: 30px;
+        height: 30px;
+    }
 `;
 
 const Table = styled.div`
@@ -91,8 +119,13 @@ const Table = styled.div`
     border-bottom: 1px solid #545772;
     padding-bottom: 10px;
     padding-top: 10px;
-    padding: 10px
+    padding: 10px;
 
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-end;
+    }
 `;
 
 const Main = styled.main`

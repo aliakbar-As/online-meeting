@@ -4,13 +4,20 @@ import styled from 'styled-components';
 import backArrow from '../../assets/mainScreens/backArrow.png';
 import user from '../../assets/mainScreens/user.png';
 import downArrow from '../../assets/mainScreens/downArrow.png';
+import { useNavigate } from 'react-router-dom';
 
 
-export const Header = ({
-    backOnclick
-}) => {
+export const Header = ({ backOnclick }) => {
+    const navigate = useNavigate();
+
+    
+    const removeUser = () => {
+        localStorage.removeItem('@token');
+        navigate('/login')
+    };
+
     return (
-        <TopView onClick={() => console.log('user')}>
+        <TopView onClick={() => removeUser()}>
             <IconsDiv>
                 <UserIcon src={user} alt="user" />
 

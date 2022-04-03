@@ -8,7 +8,8 @@ import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
 import menu from '../../../../assets/mainScreens/menu.svg';
 import left from '../../../../assets/mainScreens/left.png';
-import election from '../../../../assets/mainScreens/election.png';
+import surveyIcon from '../../../../assets/mainScreens/survey.png';
+import electionIcon from '../../../../assets/mainScreens/election.png';
 
 
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +17,7 @@ import { ModalComponent, Loading } from '../../../Commons';
 
 
 import StoreContext from '../../../../Stores';
+import useWindowDimensions from '../../../../Utils/Dimension';
 
 
 let tabs = [
@@ -40,6 +42,7 @@ let tabs = [
 
 const ForumList = (props) => {
     const navigate = useNavigate();
+    const { width, height } = useWindowDimensions();
 
     const { MeetingStore } = useContext(StoreContext);
 
@@ -66,7 +69,7 @@ const ForumList = (props) => {
 
     const removeUser = () => {
         localStorage.removeItem('@token');
-        navigate('/login');
+        navigate('/');
     };
 
     return (
@@ -77,6 +80,7 @@ const ForumList = (props) => {
 
                     <ArrowIcon src={downArrow} alt="downArrow" />
                 </IconsDiv>
+
 
                 <TabContainer>
                     {tabs.map((item, index) => {
@@ -108,11 +112,31 @@ const ForumList = (props) => {
                     />
 
                     <Footer>
+                        {width > 768 ?
+                            <Survey onClick={getSurveyList}>
+                                <Left src={left} alt="left arrow" />
+                                <span>انتخابات و نظرسنجی</span>
+                            </Survey>
+                            :
 
-                        <Survey onClick={getSurveyList}>
-                            <Left src={left} alt="left arrow" />
-                            <span>انتخابات و نظرسنجی</span>
-                        </Survey>
+                            <>
+                                <SurveyButton onClick={() => navigate('/admin/surveyMobile')}>
+                                    <img src={left} alt="left arrow" />
+
+                                    <p>نظرسنجی</p>
+
+                                    <img src={electionIcon} alt="" />
+                                </SurveyButton>
+
+                                <ElectionButton onClick={() => navigate('/admin/electionMobile')}>
+                                    <img src={left} alt="left arrow" />
+
+                                    <p>انتخابات</p>
+
+                                    <img src={surveyIcon} alt="" />
+                                </ElectionButton>
+                            </>
+                        }
 
                     </Footer>
 
@@ -136,16 +160,44 @@ const ForumList = (props) => {
     );
 };
 
-const View = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    display: none;
 
-    @media(max-width: 768px) {
-        display: flex;
+const ElectionButton = styled.a`
+    justify-content: space-evenly;
+    align-items: center;
+    width: 45%;
+    background-color: #5A69EB;
+    display: flex;
+    border-radius: 10px;
+    height: 45px;
+    
+    flex-direction: row;
+
+    img {
+        margin-right: 10px;
+        height: 15px;
+        width: 15px;
     }
 `;
+
+const SurveyButton = styled.a`
+    justify-content: space-evenly;
+    align-items: center;
+    width: 45%;
+    height: 45px;
+    border-radius: 10px;
+    background-color: #9B75EB;
+    display: flex;
+    margin-right: 5%;
+    flex-direction: row;
+
+
+    img {
+        margin-right: 10px;
+        height: 15px;
+        width: 15px;
+    }
+`;
+
 
 const NullData = styled.div`
     font-size: 23px;
@@ -164,7 +216,7 @@ const Left = styled.img`
     height: 21.33px;
 `;
 
-const Survey = styled.button`
+const Survey = styled.a`
     border-radius: 16px;
     width: 50%;
     height: 120px;

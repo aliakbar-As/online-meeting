@@ -16,7 +16,7 @@ import StoreContext from '../../../../../Stores';
 
 import close from '../../../../../assets/mainScreens/close.svg';
 import check from '../../../../../assets/mainScreens/check.svg';
-import { ModalComponent } from '../../../../Commons';
+import { Header, Loading, ModalComponent } from '../../../../Commons';
 
 const FinalStep = (props) => {
     const navigate = useNavigate();
@@ -37,12 +37,8 @@ const FinalStep = (props) => {
 
     const [successVisible, setSuccessVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-
-    useEffect(() => {
-        console.log('start', MeetingStore.holdingDatetime);
-        console.log('end', MeetingStore.endDatetime);
-    }, []);
 
     const changeHandler = (event, id) => {
         setFiles(files => [...files, event.target.files[0]]);
@@ -99,20 +95,24 @@ const FinalStep = (props) => {
 
     const handleConditions = (id) => {
         setModalVisible(false);
+        setLoading(true);
 
         if (id === 0) {
             MeetingStore.addMeeting(uploadedFiles).then(res => {
                 setModalVisible(true);
-                navigate('/admin')
+                navigate('/admin');
+                setLoading(false);
             });
         } else {
 
             var formData = new FormData();
             files.map(item => formData.append('files', item));
 
+
             MeetingStore.uploadFiles(1, formData).then(files => {
                 setSuccessVisible(true);
                 setUploadedFiles(files);
+                setLoading(false);
             });
         };
     };
@@ -120,15 +120,7 @@ const FinalStep = (props) => {
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back src={backArrow} alt="backArrow" />
-            </TopView>
+            <Header backOnclick={() => navigate(-1)} />
 
 
             <Info>
@@ -166,6 +158,7 @@ const FinalStep = (props) => {
                         <>
                             {excelFiles.map((item, i) => (
                                 <input
+                                    key={i}
                                     type={'file'}
                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                     onChange={(e) => changeHandler(e, 0)}
@@ -247,6 +240,7 @@ const FinalStep = (props) => {
                         <>
                             {infoFiles.map((item, i) => (
                                 <input
+                                    key={i}
                                     type={'file'}
                                     onChange={(e) => changeHandler(e, 2)}
                                     hidden
@@ -278,7 +272,6 @@ const FinalStep = (props) => {
                         {files.length === 0 || successVisible ? 'افزودن مجمع' : 'بارگزاری فایل ها'}
                     </span>
                 </Button>
-
             </Footer>
 
 
@@ -288,6 +281,8 @@ const FinalStep = (props) => {
                 closeModal={() => setModalVisible(false)}
                 hasError={false}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
@@ -300,7 +295,7 @@ const Title = styled.section`
     display: flex;
     padding-right: 10px;
     margin-top: 10px;
-
+    color: #fff;
 
     span {
         color: #fff;
@@ -331,7 +326,7 @@ const Success = styled.div`
     margin-top: 16px;
 `;
 
-const Button = styled.button`
+const Button = styled.a`
     width: 50%;
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px; 
@@ -339,10 +334,20 @@ const Button = styled.button`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    display: flex;
+
     span {
         color: #fff;
         font-size: 20px;
 
+    }
+
+
+    @media(max-width: 768px) {
+        width: 100%;
+        position: sticky;
+        bottom: 0;
+        left: 0;
     }
 `;
 
@@ -355,13 +360,19 @@ const Files = styled.div`
     flex-direction: row;
     display: flex;
     padding: 5px;
+    width: 20%;
 
 
     span {
         font-size: 10px;
         color: #545772;
-        
-        
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
     }
 
     img {
@@ -385,7 +396,11 @@ const View = styled.div`
     align-items: center;
     padding-right: 16px;
 
-    
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+        margin-left: 0px;
+    }
 `;
 
 
@@ -395,6 +410,11 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin: 0;
+    }
 `;
 
 

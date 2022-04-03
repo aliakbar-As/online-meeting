@@ -25,11 +25,11 @@ function VerificationCode() {
             setLoading(true);
             AuthStore.onLoginRole(code).then(res => {
                 if (res === 'registered') {
-                    if (AuthStore.roleId !== 1) {
-                        navigate('/form');
-                        setLoading(false);
-                    } else {
+                    if (AuthStore.roleId === 1) {
                         navigate('/admin');
+                        setLoading(false);
+                    } else if (AuthStore.roleId === 2) {
+                        navigate('/form');
                         setLoading(false);
                     };
 

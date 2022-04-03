@@ -25,7 +25,8 @@ function Login() {
 
     useEffect(() => {
 
-        let token = localStorage.getItem('@token')
+        let token = localStorage.getItem('@token');
+        
         if (token !== null) {
             Logger(token, 'token');
             navigate('/admin');

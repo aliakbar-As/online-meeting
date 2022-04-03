@@ -35,6 +35,8 @@ import ElectionCondidateEdit from '../components/Screens/MainScreens/admin/elect
 import EditMeetingInfo from '../components/Screens/MainScreens/admin/EditMeetingInfo';
 import EditMeetingDate from '../components/Screens/MainScreens/admin/EditMeetingDate';
 import EditMeetingFiles from '../components/Screens/MainScreens/admin/EditMeetingFiles';
+import SurveyMobile from '../components/Screens/MainScreens/admin/Survey/SurveyMobile';
+import ElectionMobile from '../components/Screens/MainScreens/admin/election/ElectionMobile';
 
 function RouterComponent() {
     return (
@@ -42,7 +44,7 @@ function RouterComponent() {
 
             {/* FORUM SCREENS */}
 
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
 
             <Route path="/code"
                 element={<VerificationCode />}
@@ -138,6 +140,12 @@ function RouterComponent() {
 
             <Route path="/admin/surveyType"
                 element={<AdminSurveyType />}
+            />
+            <Route path="/admin/surveyMobile"
+                element={<SurveyMobile />}
+            />
+            <Route path="/admin/electionMobile"
+                element={<ElectionMobile />}
             />
             <Route path="/admin/survey"
                 element={<AdminSurvey />}

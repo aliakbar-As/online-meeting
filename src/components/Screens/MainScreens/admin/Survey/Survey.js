@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import styled from "styled-components"
-import { Header, ModalComponent } from "../../../../Commons";
+import { ModalComponent } from "../../../../Commons";
 
 
 import left from '../../../../../assets/mainScreens/leftArrow.svg';
@@ -10,10 +10,12 @@ import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 
 import moment from 'moment-jalaali';
+import useWindowDimensions from '../../../../../Utils/Dimension';
 
 
 const Survey = (props) => {
     const navigate = useNavigate();
+    const { width } = useWindowDimensions();
 
     const { MeetingProfileStore, SurveyStore } = useContext(StoreContext);
 
@@ -33,12 +35,12 @@ const Survey = (props) => {
     };
 
     return (
+
         <div className="main">
 
             <SurveyView>
                 <span>نظرسنجی ها</span>
             </SurveyView>
-
 
 
             <div className="table">
@@ -68,7 +70,7 @@ const Survey = (props) => {
                                     <Td>
 
                                         {item.surveyStatus === 1 ? 'ایجاد شده'
-                                            : 
+                                            :
                                             item.surveyStatus === 2 ? 'در حال برگزاری'
                                                 :
                                                 "به پایان رسیده"}
@@ -85,11 +87,13 @@ const Survey = (props) => {
                 </Table>
             </div>
 
+
             <div className="addButton">
                 <Add onClick={() => navigate('/admin/survey/add')}>
                     افزودن نظرسنجی
                 </Add>
             </div>
+
 
 
             <ModalComponent
@@ -108,11 +112,13 @@ const Survey = (props) => {
                 okOnclick={() => navigate('/admin/survey/editInfo')}
                 cancelOnclick={() => navigate('/admin/survey/editQuestions')}
             />
-        </div>
+        </div >
     )
 }
 
-const Add = styled.button`
+
+
+const Add = styled.a`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px;
     width: 450px;
@@ -123,6 +129,9 @@ const Add = styled.button`
     font-size: 18px;
     margin-top: 16px;
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 `;
 
 
@@ -210,17 +219,4 @@ const SurveyView = styled.div`
     }
 `;
 
-const Info = styled.div`
-    border-bottom: 1px solid #545772;
-    text-align: right;
-    margin-top: 16px;
-    padding: 10px;
-    /* margin-right: 20%; */
-    /* margin-left: 20%; */
-
-    span {
-        color: #545772;
-        font-size: 14px;
-    }
-`;
 export default Survey;

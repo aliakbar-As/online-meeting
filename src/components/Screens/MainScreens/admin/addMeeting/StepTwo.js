@@ -92,7 +92,7 @@ const StepTwo = (props) => {
 
 
             <CardSection>
-                <View >
+                <View>
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
@@ -144,6 +144,7 @@ const StepTwo = (props) => {
                 monthOnChange={e => setStartMonth(e.target.value)}
                 yearOnChange={e => setStartYear(e.target.value)}
                 currentDate={`${startYear} / ${startMonth} / ${startDay}`}
+                onClick={() => setStartDateModal(false)}
             />
 
             <DateModal
@@ -154,6 +155,7 @@ const StepTwo = (props) => {
                 monthOnChange={e => setEndMonth(e.target.value)}
                 yearOnChange={e => setEndYear(e.target.value)}
                 currentDate={`${endYear} / ${endMonth} / ${endDay}`}
+                onClick={() => setEndDateModal(false)}
             />
         </div>
     );
@@ -190,6 +192,12 @@ const View = styled.div`
         color: #A7AAC6;
         font-size: 16px;
     }
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin: auto;
+        margin-top: 16px;
+    }
 `;
 
 
@@ -199,6 +207,10 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 

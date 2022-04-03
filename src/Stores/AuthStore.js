@@ -21,7 +21,7 @@ const authStore = types.model('authStore', {
                 }).then(({ data }) => {
 
                     Logger(data, 'Login');
-                    
+
                     if (data.hasError) {
                         this.setErrorMessage(data.error);
                         resolve(false);
@@ -101,7 +101,11 @@ const authStore = types.model('authStore', {
 
 
         setRoleId(data) {
-            self.roleId = data[0].roleId;
+            if (data.length !== 2) {
+                self.roleId = data[0].roleId;
+            } else {
+                self.roleId = 3;
+            }
         },
         setPhoneNumber(phone) {
             self.phoneNumber = phone;

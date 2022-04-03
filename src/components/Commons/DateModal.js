@@ -105,7 +105,7 @@ export const DateModal = ({
     content, alert,
     okOnclick,
     currentDate,
-    hasError,
+    onClick,
     dayOnChange,
     monthOnChange,
     yearOnChange,
@@ -127,36 +127,38 @@ export const DateModal = ({
                 </Top>
 
 
-                {/* <CardSection> */}
-
-                {/* <img src={down} alt='' /> */}
 
                 {renderDayDate(dayOnChange)}
                 {renderMonthDate(monthOnChange)}
                 {renderYearDate(yearOnChange)}
-                {/* </CardSection> */}
+
+                <div style={{justifyContent: 'flex-end', display: 'flex'}}>
+                    <Done onClick={onClick}>
+                        تایید
+                    </Done>
+                </div>
             </View>
         </Modal>
     )
 };
 
 
-const CardSection = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
 
-    border: 1px solid #A7AAC6;
-    box-sizing: border-box;
+const Done = styled.a`
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px;
-
-    width: 100%;
-    height: 40px;
-    align-self: center;
-    margin-top: 10px;
-    padding: 10px;
+    width: 148px;
+    margin-top: 16px;
+    border-radius: 1;
+    height: 45px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    align-self: flex-end;
+    direction: rtl;
+    font-size: 20px;
+    cursor: pointer;
 `;
-
 
 const Top = styled.div`
     align-items: center;

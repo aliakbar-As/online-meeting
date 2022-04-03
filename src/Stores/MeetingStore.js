@@ -96,12 +96,9 @@ const meetingStore = types.model('meetingStore', {
 
 
         uploadFiles(type, data) {
+            
             return new Promise(async (resolve, reject) => {
-                request.post(`/File/UploadFiles`, data, {
-                    params: {
-                        sectionType: type
-                    }
-                }, false, {})
+                request.post(`/File/UploadFiles?sectionType=${type}`, data)
                     .then(({ data }) => {
                         Logger(data, 'UploadFile');
                         resolve(data.data.value);
@@ -129,7 +126,6 @@ const meetingStore = types.model('meetingStore', {
         },
 
         addMeeting(files) {
-
             return new Promise(async (resolve, reject) => {
                 request.post(`/Meeting/Add`, {
                     meetingType: self.meetingType,

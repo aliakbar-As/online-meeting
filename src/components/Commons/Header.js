@@ -13,12 +13,12 @@ export const Header = ({ backOnclick }) => {
     
     const removeUser = () => {
         localStorage.removeItem('@token');
-        navigate('/login')
+        navigate('/')
     };
 
     return (
-        <TopView onClick={() => removeUser()}>
-            <IconsDiv>
+        <TopView>
+            <IconsDiv onClick={() => removeUser()}>
                 <UserIcon src={user} alt="user" />
 
                 <ArrowIcon src={downArrow} alt="downArrow" />
@@ -63,4 +63,10 @@ const TopView = styled.div`
     display: flex;
     justify-content: space-between;
     cursor: pointer;
+
+    /* @media(max-width: 768px) {
+        padding-right: 10px;
+        padding-top: 10px;
+    } */
+
 `;

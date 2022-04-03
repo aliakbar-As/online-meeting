@@ -9,10 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import Election from './election/Election';
 import Survey from './Survey/Survey';
 
-import backArrow from '../../../../assets/mainScreens/backArrow.png';
 import empty from '../../../../assets/mainScreens/Exclude.png';
-import user from '../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../assets/mainScreens/downArrow.png';
+import { Header, Loading } from '../../../Commons';
 
 const AdminSurveyTypes = (props) => {
     const navigate = useNavigate();
@@ -20,10 +18,13 @@ const AdminSurveyTypes = (props) => {
 
     const [surveyData, setSurveyData] = useState([]);
     const [electionData, setElectionData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         MeetingProfileStore.getSurvey(true, 2, 'admin').then(res => {
             setElectionData(res);
+            setLoading(false);
         });
 
 
@@ -35,23 +36,13 @@ const AdminSurveyTypes = (props) => {
 
     return (
         <div style={{ padding: 16 }}>
-
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back onClick={() => navigate(-1)} src={backArrow} alt="backArrow" />
-
-            </TopView>
+            <Header backOnclick={() => navigate(-1)} />
 
             <Info>
                 <span>مجمع ها / نظرسنجی ها و انتخابات</span>
             </Info>
 
-            {electionData !== 0 ? <Election data={electionData}/> : null}
+            {electionData !== 0 ? <Election data={electionData} /> : null}
 
 
             {surveyData.length !== 0 ? <Survey data={surveyData} /> : null}
@@ -67,6 +58,8 @@ const AdminSurveyTypes = (props) => {
                     <img src={empty} alt="empty" />
                 </Empty> : null}
 
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
@@ -86,21 +79,6 @@ const Empty = styled.div`
     }
 `;
 
-const Exit = styled.div`
-    font-size: 20px;
-
-    text-align: right;
-    text-decoration: underline;
-    color: #FF4651;
-    margin-top: 3%;
-    cursor: pointer;
-`;
-
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
-`;
 
 const Info = styled.div`
     border-bottom: 1px solid #545772;
@@ -112,35 +90,6 @@ const Info = styled.div`
         color: #545772;
         font-size: 14px;
     }
-`;
-
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
 `;
 
 export default AdminSurveyTypes;

@@ -6,7 +6,7 @@ import downArrow from '../../../../../assets/mainScreens/downArrow.png';
 import styled from 'styled-components';
 
 
-import { Button, Input } from '../../../../Commons';
+import { Button, Header, Input, Loading } from '../../../../Commons';
 
 
 import backArrow from '../../../../../assets/mainScreens/backArrow.png';
@@ -53,6 +53,7 @@ const StepOne = (props) => {
     const [supervisor, setSupervisor] = useState('');
     const [meetingType, setMeetingType] = useState('');
 
+
     useEffect(() => {
         addCompany();
     }, []);
@@ -95,15 +96,7 @@ const StepOne = (props) => {
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back onClick={() => navigate(-1)} src={backArrow} alt="backArrow" />
-            </TopView>
+            <Header backOnclick={() => navigate(-1)} />
 
 
             <Info>
@@ -117,8 +110,8 @@ const StepOne = (props) => {
 
 
             <View>
-                <select
-                    style={selectStyle}
+                <Select
+                    // style={selectStyle}
                     onChange={e => setBossName(e.target.value)}
                     value={bossName}>
                     <option value=''>نام و نام خانوادگی رییس</option>
@@ -129,53 +122,49 @@ const StepOne = (props) => {
                             {item.stockholderName}
                         </option>
                     ))}
-                </select>
+                </Select>
 
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setCompanyId(e.target.value)}
                     value={companyId}>
                     <option value=''>نام و کد شرکت</option>
                     {companyList.map((item, index) => (
                         <option key={index} value={item.companyId}>{item.companyTitle}</option>
                     ))}
-                </select>
+                </Select>
             </View>
 
 
             <View>
-                <select
+                <Select
                     onChange={e => setSupervisor(e.target.value)}
-                    style={selectStyle}
                     value={supervisor}>
                     <option value=''>نام و نام خانوادگی ناظر</option>
                     {stockholder.map((item, index) => (
                         <option key={index} value={item.userId}>{item.stockholderName}</option>
                     ))}
-                </select>
+                </Select>
 
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setSecretary(e.target.value)}
                     value={secretary}>
                     <option value=''>نام و نام خانوادگی منشی</option>
                     {stockholder.map((item, index) => (
                         <option key={index} value={item.userId}>{item.stockholderName}</option>
                     ))}
-                </select>
+                </Select>
             </View>
 
 
             <View>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingType(e.target.value)}
                     value={meetingType}>
                     <option value=''>نوع مجمع</option>
                     {meetingtype.map((item, index) => (
                         <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </select>
+                </Select>
 
                 <MeetingTitle
                     placeholder={'نام مجمع'}
@@ -198,18 +187,39 @@ const StepOne = (props) => {
                 <Button
                     primary
                     onPress={confirmInfo}
-                    // onPress={() => console.log('data', duties)}
                     title={'تایید و ادامه'} />
 
             </Footer>
+
         </div>
     );
 };
 
+const Select = styled.select`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16px;
+    width: 450px;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+    padding: 5px;
+    text-align: right;
+    direction: rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: 'flex-end';
+    display: 'flex';
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin: auto;
+        margin-top: 16px;
+    }
+`;
 
 const MeetingTitle = styled.input`
     background: transparent;
-    color: #7F829F;
     font-size: 16;
     width: 50%;
     border: 1px solid #7F829F;
@@ -224,29 +234,45 @@ const MeetingTitle = styled.input`
     justify-content: flex-end;
     align-self: flex-end;
     display: flex;
+    color: white;
+
+    @media(max-width: 768px) {
+        margin-top: 16px;
+        width: 100%;
+    }
 `;
 
 const Description = styled.textarea`
     background: transparent;
     border-radius: 8px;
-    width: 95%;
+    width: 100%;
     height: 80px;
     text-align: right;
     color: #fff;
     padding: 10px;
     border: 0px;
-    margin-left: 16px;
     border: 1px solid #7F829F;
     box-sizing: border-box;
     font-size: 18px;
     margin-top: 20px;
     justify-content: flex-end;
+    
+
+    @media(max-width: 768px) {
+        margin-left: 0px;
+        width: 100%;
+    }
 `;
 
 const View = styled.div`
     display: flex;
     margin-top: 16px;
     justify-content: flex-end;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin: 0px
+    }
 `;
 
 

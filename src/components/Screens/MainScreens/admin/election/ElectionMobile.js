@@ -24,12 +24,17 @@ const ElectionMobile = (props) => {
     const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
+        getSurvey();
+    }, []);
+
+
+    const getSurvey = () => {
         setLoading(true);
         MeetingProfileStore.getSurvey(true, 2, 'admin').then(res => {
             setElectionData(res);
             setLoading(false);
         });
-    }, []);
+    };
 
 
     const seeElectionInfo = (id) => {
@@ -54,7 +59,7 @@ const ElectionMobile = (props) => {
             </Info>
 
             {electionData.map(item => (
-                <LittleCard key={item.surveyId} onClick={() => seeElectionInfo(item.surveyId)}>
+                <LittleCard key={item.surveyId} >
                     <Section>
                         <span>عنوان : </span>
                         <p> {item.title}</p>
@@ -80,14 +85,14 @@ const ElectionMobile = (props) => {
                         <p>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</p>
                     </Section>
 
-                    <SeeMore onClick={() => editSurvey(item.surveyId)}>
-                        <img src={left} alt="arrow" />
-                        <p>ویرایش</p>
+                    <SeeMore>
+                        <p onClick={() => editSurvey(item.surveyId)}>ویرایش</p>
+                        <p onClick={() => seeElectionInfo(item.surveyId)}>مشاهده</p>
                     </SeeMore>
                 </LittleCard>
             ))}
 
-            <Add onClick={() => navigate('/admin/survey/add')}>
+            <Add onClick={() => navigate('/admin/election/add')}>
                 افزودن انتخابات
             </Add>
 
@@ -105,8 +110,8 @@ const ElectionMobile = (props) => {
                 okTitle={'ویرایش اطلاعات'}
                 closeModal={() => setShowAlert(false)}
                 content={': لطفا یکی از گزینه های زیر را انتخاب کنید'}
-                okOnclick={() => navigate('/admin/survey/editInfo')}
-                cancelOnclick={() => navigate('/admin/survey/editQuestions')}
+                okOnclick={() => navigate('/admin/election/editInfo')}
+                cancelOnclick={() => navigate('/admin/election/editCondidate')}
             />
 
             {loading ? <Loading /> : null}
@@ -133,14 +138,16 @@ const Add = styled.a`
     bottom: 0;
 `;
 
-const SeeMore = styled.div`
+const SeeMore = styled.a`
     flex-direction: row;
     align-items: center;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     cursor: pointer;
     color: #97A1FF;
     font-size: 20px;
+    margin-top: -16px;
+width: 100%;
     p {
         margin-left: 10px;
     }
@@ -180,6 +187,8 @@ const LittleCard = styled.div`
     padding-right: 10px;
     border-radius: 10px;
     padding-bottom: 10px;
+
+    
 `;
 
 const Info = styled.div`

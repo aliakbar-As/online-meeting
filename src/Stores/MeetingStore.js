@@ -96,16 +96,20 @@ const meetingStore = types.model('meetingStore', {
 
 
         uploadFiles(type, data) {
-            
+
             return new Promise(async (resolve, reject) => {
-                request.post(`/File/UploadFiles?sectionType=${type}`, data)
+                request.post(`/File/UploadFiles`, data, {
+                    params: {
+                        sectionType: type,
+                    }
+                })
                     .then(({ data }) => {
                         Logger(data, 'UploadFile');
                         resolve(data.data.value);
 
                     }).catch(err => {
                         console.log('Company', err);
-                        resolve(false);
+                        reject();
                     });
             });
 
@@ -262,7 +266,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                         Logger(data, 'meeting details');
 
                         if (!data.hasError) {
-                            this.setMettingDetails(data.data)
+                            this.setMettingDetails(data.data);
                             resolve(data.isSuccess);
                         };
                     }).catch(err => {

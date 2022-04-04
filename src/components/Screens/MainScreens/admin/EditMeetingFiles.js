@@ -6,7 +6,7 @@ import upload from '../../../../assets/mainScreens/upload.png';
 
 import './addMeeting/meeting.css';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import StoreContext from '../../../../Stores';
 
@@ -30,7 +30,6 @@ const EditMeetingFiles = (props) => {
 
     const [files, setFiles] = useState([]);
     const [filesAdded, setFilesAdded] = useState([]);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
 
     const [successVisible, setSuccessVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -376,7 +375,7 @@ const Success = styled.div`
     margin-top: 16px;
 `;
 
-const Button = styled.button`
+const Button = styled.a`
     width: 50%;
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px; 
@@ -384,10 +383,16 @@ const Button = styled.button`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    display: flex;
+
     span {
         color: #fff;
-        font-size: 20px;
+        font-size: 18px;
 
+    }
+
+    @media(max-width: 768px) {
+        width: 100%;
     }
 `;
 
@@ -430,7 +435,11 @@ const View = styled.div`
     align-items: center;
     padding-right: 16px;
 
-    
+    @media(max-width: 768px) {
+        margin: 0;
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
 
@@ -440,6 +449,11 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 

@@ -9,10 +9,12 @@ import './election.css';
 
 import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
+import useWindowDimensions from '../../../../../Utils/Dimension';
 
 
 const AddCondidate = (props) => {
     const navigate = useNavigate();
+    const { width } = useWindowDimensions();
 
     const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
@@ -20,6 +22,7 @@ const AddCondidate = (props) => {
     const [min, setMin] = useState('');
     const [max, setMax] = useState('');
     const [isActive, setIsActive] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [data, setData] = useState([]);
 
@@ -33,6 +36,8 @@ const AddCondidate = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const addSurveyOnclick = () => {
+        setLoading(true);
+
         SurveyStore.setActive(isActive);
 
         let item = {
@@ -72,7 +77,12 @@ const AddCondidate = (props) => {
                     setModalVisible(true);
                 }, 2000);
 
-                navigate('/admin/surveyType');
+                if (width < 768) {
+                    navigate('/admin');
+                } else {
+                    navigate('/admin/surveyType');
+                }
+                setLoading(false);
             };
 
         });
@@ -126,12 +136,6 @@ const AddCondidate = (props) => {
             </View>
 
             <div className={'input'}>
-                {/* <TextInput
-                    value={question}
-                    onChange={question => setQuestion(question)}
-                    placeholder={'نامزد دوم'}
-                /> */}
-
                 <TextInput
                     value={condidate5}
                     onChange={e => setCondidate5(e.target.value)}
@@ -248,6 +252,11 @@ const TextInput = styled.input`
     font-size: 16px;
     padding: 10px;
     color: #fff;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
 const View = styled.div`
@@ -256,6 +265,11 @@ const View = styled.div`
     display: flex;
     margin-top: 16px;
     
+    @media(max-width: 768px) {
+        width: 100%;
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 

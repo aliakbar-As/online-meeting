@@ -4,10 +4,7 @@ import styled from 'styled-components';
 export const Button = ({
     onPress,
     title,
-    onChange,
-    type,
     primary,
-    extraStyles
 }) => {
     if(primary) {
         return (
@@ -26,7 +23,7 @@ export const Button = ({
     
 };
 
-const Normal = styled.button`
+const Normal = styled.a`
     width: 450px;
     height: 48px;
     
@@ -40,8 +37,9 @@ const Normal = styled.button`
     justify-content: center;
     align-items: center;
     color: #A87EFF;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
+    display: flex;
 
     margin-left: 10px;
     &:hover {
@@ -51,7 +49,7 @@ const Normal = styled.button`
 
 `;
 
-const Primary = styled.button`
+const Primary = styled.a`
     width: 215px;
     height: 48px;
     
@@ -65,11 +63,11 @@ const Primary = styled.button`
     justify-content: center;
     align-items: center;
     color: #fff;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
-
+    font-weight: bold;
     margin-left: 10px;
-
+    display: flex;
     &:hover {
         opacity: 1;
         transition: opacity 0.2s ease 0s;

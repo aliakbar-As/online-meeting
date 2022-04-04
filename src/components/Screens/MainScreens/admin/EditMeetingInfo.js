@@ -1,15 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 
-import user from '../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../assets/mainScreens/downArrow.png';
 import styled from 'styled-components';
 
 
-import { Button, Header, Input } from '../../../Commons';
-
-
-import backArrow from '../../../../assets/mainScreens/backArrow.png';
+import { Button, Header, Loading } from '../../../Commons';
 
 import './addMeeting/meeting.css';
 import { useNavigate } from 'react-router';
@@ -89,6 +84,9 @@ const EditMeetingInfo = (props) => {
     const [supervisorAdded, setSupervisorAdded] = useState(null);
     const [bossAdded, setBossAdded] = useState(null);
 
+
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         getMeetingInfo();
         addCompany();
@@ -109,6 +107,8 @@ const EditMeetingInfo = (props) => {
         setMeetingName(res.meetingTitle);
         setMeetingType(res.meetingType);
         setMeetingStatus(res.meetingStatus);
+
+
         let bossId = res.meetingUserDuties.filter(item => item.dutyId === 110);
         let secretaryId = res.meetingUserDuties.filter(item => item.dutyId === 111);
         let supervisorId = res.meetingUserDuties.filter(item => item.dutyId === 112);
@@ -118,6 +118,7 @@ const EditMeetingInfo = (props) => {
         setSupervisorId(supervisorId[0] === undefined ? null : supervisorId[0].id)
     };
 
+
     const setDutiesRoles = (res) => {
         let boss = res.meetingUserDuties.filter(item => item.dutyId === 110);
         let secretary = res.meetingUserDuties.filter(item => item.dutyId === 111);
@@ -126,6 +127,11 @@ const EditMeetingInfo = (props) => {
         setBossAdded(boss[0] === undefined ? null : boss[0]);
         setSecretaryAdded(secretary[0] === undefined ? null : secretary[0]);
         setSupervisorAdded(supervisor[0] === undefined ? null : supervisor[0]);
+
+        // set duties id
+        setBossName(boss[0] === undefined ? null : boss[0].userId);
+        setSecretary(secretary[0] === undefined ? null : secretary[0].userId);
+        setSupervisor(supervisor[0] === undefined ? null : supervisor[0].userId);
     };
 
     const addCompany = () => {
@@ -136,12 +142,16 @@ const EditMeetingInfo = (props) => {
 
 
     const confirmInfo = () => {
+        setLoading(true);
+
         const meetingId = MeetingProfileStore.meetingId;
 
         if (companyId === '' || meetingName === '' || meetingType === '') {
             alert('لطفا موارد را به صورت کامل پر کنید!');
+            setLoading(false);
             return;
         };
+
         let duties = [
             {
                 "id": bossNameId,
@@ -165,7 +175,7 @@ const EditMeetingInfo = (props) => {
 
         let newElement = {
             meetingId: MeetingProfileStore.meetingId,
-            meetingType: meetingType,
+            meetingType: Number(meetingType),
             holderCompanyId: companyId,
             meetingTitle: meetingName,
             meetingStatus: Number(meetingStatusSelected),
@@ -174,8 +184,8 @@ const EditMeetingInfo = (props) => {
         };
 
         MeetingProfileStore.updateDuties(newElement).then(res => {
-
-            // navigate('/admin/');
+            navigate(-2);
+            setLoading(false);
         });
     };
 
@@ -197,12 +207,11 @@ const EditMeetingInfo = (props) => {
 
 
             <View>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setBossName(e.target.value)}
                     value={bossName}>
 
-                    <option value=''>{bossAdded === null ? 'نام و نام خانوادگی رییس' : bossAdded.stockholderName}</option>
+                    <option value=''>نام و نام خانوادگی رییس</option>
                     {stockholder.map((item, index) => (
                         <option
                             key={index}
@@ -210,54 +219,52 @@ const EditMeetingInfo = (props) => {
                             {item.stockholderName}
                         </option>
                     ))}
-                </select>
+                </Select>
 
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setCompanyId(e.target.value)}
+                    disabled
                     value={companyId}>
                     <option value=''>نام و کد شرکت</option>
                     {companyList.map((item, index) => (
                         <option key={index} value={item.companyId}>{item.companyTitle}</option>
                     ))}
-                </select>
+                </Select>
             </View>
 
 
             <View>
-                <select
+                <Select
                     onChange={e => setSupervisor(e.target.value)}
-                    style={selectStyle}
                     value={supervisor}>
-                    <option value=''>{supervisorAdded === null ? 'نام و نام خانوادگی ناظر' : supervisorAdded.stockholderName}</option>
+                    <option value=''>نام و نام خانوادگی ناظر</option>
                     {stockholder.map((item, index) => (
                         <option key={index} value={item.userId}>{item.stockholderName}</option>
                     ))}
-                </select>
+                </Select>
 
-                <select
-                    style={selectStyle}
+
+                <Select
                     onChange={e => setSecretary(e.target.value)}
                     value={secretary}>
-                    <option value=''>{secretaryAdded === null ? 'نام و نام خانوادگی منشی' : secretaryAdded.stockholderName}</option>
+                    <option value=''>نام و نام خانوادگی منشی</option>
 
                     {stockholder.map((item, index) => (
                         <option key={index} value={item.userId}>{item.stockholderName}</option>
                     ))}
-                </select>
+                </Select>
             </View>
 
 
             <View>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingType(e.target.value)}
                     value={meetingType}>
                     <option value=''>نوع مجمع</option>
                     {meetingtype.map((item, index) => (
                         <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </select>
+                </Select>
 
                 <Input
                     placeholder={'نام مجمع'}
@@ -268,15 +275,14 @@ const EditMeetingInfo = (props) => {
             </View>
 
             <Wrap>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingStatus(e.target.value)}
                     value={meetingStatusSelected}>
                     <option value=''>وضعیت مجمع</option>
                     {meetingStatus.map((item, index) => (
                         <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </select>
+                </Select>
 
                 <Description
                     placeholder={'...توضیحات'}
@@ -294,9 +300,62 @@ const EditMeetingInfo = (props) => {
                     title={'تایید و ثبت'} />
 
             </Footer>
+
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
+
+const Input = styled.input`
+     background: transparent;
+    border-radius: 8px;
+    width: 50%;
+    height: 48px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 10px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        margin-bottom: -16px;
+    }
+`;
+
+const Select = styled.select`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16px;
+    width: 50%;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+    padding: 5px;
+    text-align: right;
+    direction: rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: flex-end;
+    display: flex;
+
+
+    option {
+        color: #2d2d2d;
+    }
+    @media(max-width: 768px) {
+        margin: auto;
+        width: 100%;
+        margin-top: 16px;
+    }
+`;
 
 const Wrap = styled.div`
     flex-direction: column;
@@ -309,7 +368,7 @@ const Wrap = styled.div`
 const Description = styled.textarea`
     background: transparent;
     border-radius: 8px;
-    width: 95%;
+    width: 100%;
     height: 80px;
     text-align: right;
     color: #fff;
@@ -328,8 +387,11 @@ const View = styled.div`
     margin-top: 16px;
     justify-content: flex-end;
 
-    select {
-        color: white;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin: auto;
+        margin-top: 0;
     }
 `;
 
@@ -364,13 +426,6 @@ const Footer = styled.div`
 `;
 
 
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
-`;
-
-
 
 const Info = styled.div`
     border-bottom: 1px solid #545772;
@@ -384,50 +439,5 @@ const Info = styled.div`
     }
 `;
 
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-`;
-
-const selectStyle = {
-    background: 'transparent',
-    color: '#7F829F',
-    fontSize: 16,
-    width: 450,
-    borderRadius: 8,
-    flexDirection: 'row-reverse',
-    padding: 5,
-    textAlign: 'right',
-    direction: 'rtl',
-    marginLeft: 16,
-    height: 48,
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    display: 'flex',
-};
 
 export default EditMeetingInfo;

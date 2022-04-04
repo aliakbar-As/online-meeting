@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { DateModal, Header, Input } from '../../../../Commons';
+import { DateModal, Header } from '../../../../Commons';
 
 
 import upload from '../../../../../assets/mainScreens/upload.png';
@@ -93,6 +93,7 @@ const AddElection = (props) => {
 
         SurveyStore.setData(meetingId, 2, companyCode, 1, convertedStartDate, convertedEndDate, description);
 
+        
         navigate('/admin/election/add/addCondidate');
     };
 
@@ -133,15 +134,14 @@ const AddElection = (props) => {
 
 
             <CardSection>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingId(e.target.value)}
                     value={meetingId}>
                     <option value=''>نام مجمع</option>
                     {meetingList.map((item, index) => (
                         <option key={index} value={item.meetingId}>{item.meetingTitle}</option>
                     ))}
-                </select>
+                </Select>
 
 
                 <Input
@@ -161,7 +161,7 @@ const AddElection = (props) => {
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
                         onChange={e => setEndTime(e.target.value)}
-                        type={'time'} />
+                    />
                     <span>ساعت پایان</span>
                 </ClockView>
 
@@ -175,7 +175,7 @@ const AddElection = (props) => {
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
                         onChange={e => setStartTime(e.target.value)}
-                        type={'time'} />
+                    />
                     <span>ساعت شروع</span>
                 </ClockView>
 
@@ -249,6 +249,7 @@ const AddElection = (props) => {
                 title={'تاریخ شروع'}
                 modalVisible={startDateModal}
                 closeModal={() => setStartDateModal(false)}
+                onClick={() => setStartDateModal(false)}
                 dayOnChange={e => setStartDay(e.target.value)}
                 monthOnChange={e => setStartMonth(e.target.value)}
                 yearOnChange={e => setStartYear(e.target.value)}
@@ -259,6 +260,7 @@ const AddElection = (props) => {
                 title={'تاریخ پایان'}
                 modalVisible={endDateModal}
                 closeModal={() => setEndDateModal(false)}
+                onClick={() => setEndDateModal(false)}
                 dayOnChange={e => setEndDay(e.target.value)}
                 monthOnChange={e => setEndMonth(e.target.value)}
                 yearOnChange={e => setEndYear(e.target.value)}
@@ -268,6 +270,48 @@ const AddElection = (props) => {
     );
 };
 
+
+const Input = styled.input`
+    background: transparent;
+    border-radius: 8px;
+    width: 450px;
+    height: 48px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 10px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+    }
+`;
+
+const Select = styled.select`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16px;
+    width: 450px;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+    padding: 5px;
+    text-align: right;
+    direction: rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: flex-end;
+    display: flex;
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
+`;
 
 const Files = styled.div`
     background: #B4BBFF;
@@ -307,11 +351,17 @@ const ClockView = styled.div`
     height: 48px;
     width: 23%;
     border: 1px solid #7F829F;
-box-sizing: border-box;
-border-radius: 8px;
+    box-sizing: border-box;
+    border-radius: 8px;
     justify-content: space-between;
     align-items: center;
     padding: 16px;
+
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
 
     img {
         width: 19px;
@@ -322,24 +372,10 @@ border-radius: 8px;
         color: #A7AAC6;
         font-size: 12px;
     }
+
+   
 `;
 
-const selectStyle = {
-    background: 'transparent',
-    color: '#7F829F',
-    fontSize: 16,
-    width: 450,
-    borderRadius: 8,
-    flexDirection: 'row-reverse',
-    padding: 5,
-    textAlign: 'right',
-    direction: 'rtl',
-    marginLeft: 16,
-    height: 48,
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    display: 'flex',
-};
 
 const DateContainer = styled.div`
     align-items: center;
@@ -347,6 +383,10 @@ const DateContainer = styled.div`
     flex-direction: row;
     display: flex;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column-reverse;
+    }
 `;
 
 
@@ -364,6 +404,11 @@ const Date = styled.div`
     color: #A7AAC6;
     cursor: pointer;
     font-size: 13px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
     img {
         width: 16px;
         height: 18.67px;
@@ -390,7 +435,6 @@ const TextInput = styled.textarea`
     text-align: right;
     padding: 10px;
     border: 0px;
-    margin-left: 16px;
     border: 1px solid #7F829F;
     box-sizing: border-box;
     border-radius: 8px;
@@ -399,6 +443,7 @@ const TextInput = styled.textarea`
     font-weight: bold;
     color: #ffffff;
     font-size: 20px;
+    margin-top: 16px;
 `;
 
 const SelectView = styled.div`
@@ -439,18 +484,12 @@ const View = styled.div`
     border: 1px solid #7F829F;
     box-sizing: border-box;
     border-radius: 8px;
-cursor: pointer;
+    cursor: pointer;
 
-    /* img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
     }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    } */
 `;
 
 
@@ -461,6 +500,11 @@ const CardSection = styled.div`
     justify-content: flex-end;
     margin-top: 16px;
     
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 
@@ -472,6 +516,7 @@ const SurveyView = styled.div`
     justify-content: flex-end;
 
     margin-top: 16px;
+    margin-bottom: 16px;
     img {
         width: 20px;
         height: 20px;

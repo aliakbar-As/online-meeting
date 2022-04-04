@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 
-import { Button, DateModal, Header, Input } from '../../../Commons';
+import { Button, DateModal, Header, Input, Loading } from '../../../Commons';
 
 import StoreContext from '../../../../Stores';
 
@@ -25,6 +25,7 @@ const EditMeetingDate = (props) => {
 
     const [startDateModal, setStartDateModal] = useState(false);
     const [endDateModal, setEndDateModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     const [startDay, setStartDay] = useState(1);
@@ -73,6 +74,8 @@ const EditMeetingDate = (props) => {
 
 
     const confirmDateData = () => {
+        setLoading(true);
+
         // 2022-01-25T10:07:36.004Z
 
         const sDay = Number(startDay);
@@ -102,7 +105,10 @@ const EditMeetingDate = (props) => {
         const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
         MeetingStore.UpdateMeetingId(id, convertedStartDate, convertedEndDate).then(() => {
-            navigate('/admin');
+            MeetingProfileStore.getMeetingDetails().then(() => {
+                navigate(-2);
+                setLoading(false);
+            });
         });
     };
 
@@ -126,7 +132,7 @@ const EditMeetingDate = (props) => {
 
 
             <CardSection>
-                <View >
+                <View>
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
@@ -183,6 +189,7 @@ const EditMeetingDate = (props) => {
                 monthOnChange={e => setStartMonth(e.target.value)}
                 yearOnChange={e => setStartYear(e.target.value)}
                 currentDate={`${startYear} / ${startMonth} / ${startDay}`}
+                onClick={() => setStartDateModal(false)}
             />
 
             <DateModal
@@ -193,7 +200,10 @@ const EditMeetingDate = (props) => {
                 monthOnChange={e => setEndMonth(e.target.value)}
                 yearOnChange={e => setEndYear(e.target.value)}
                 currentDate={`${endYear} / ${endMonth} / ${endDay}`}
+                onClick={() => setEndDateModal(false)}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
@@ -229,6 +239,12 @@ const View = styled.div`
         color: #A7AAC6;
         font-size: 16px;
     }
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+    }
 `;
 
 
@@ -238,6 +254,11 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 

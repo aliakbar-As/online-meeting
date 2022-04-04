@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import check from '../../assets/mainScreens/check.png';
 import error from '../../assets/mainScreens/error.png';
+import useWindowDimensions from '../../Utils/Dimension';
 
 
 const customStyles = {
@@ -22,6 +23,7 @@ const customStyles = {
     },
 };
 
+
 export const ModalComponent = ({
     modalVisible,
     afterOpenModal,
@@ -32,6 +34,8 @@ export const ModalComponent = ({
     cancelOnclick,
     hasError, okTitle, cancelTitle
 }) => {
+    const { width } = useWindowDimensions();
+
     if (alert) {
         return (
             <Modal
@@ -41,7 +45,7 @@ export const ModalComponent = ({
                 style={customStyles}
                 contentLabel={contentLabel}
             >
-                <Alert>
+                <Alert size={width}>
                     <span>{content}</span>
 
 
@@ -66,7 +70,7 @@ export const ModalComponent = ({
                 style={customStyles}
                 contentLabel={contentLabel}
             >
-                <View>
+                <View size={width}>
                     <img src={hasError ? error : check} alt="check" />
 
                     <span>{content}</span>
@@ -89,6 +93,11 @@ const No = styled.a`
     justify-content: center;
     align-items: center;
     display: flex;
+
+    @media(max-width: 768px) {
+         margin-right: 0;
+         margin-top: 16px;
+    }
 `;
 
 const Yes = styled.a`
@@ -104,6 +113,11 @@ const Yes = styled.a`
     justify-content: center;
     align-items: center;
     display: flex;
+
+    @media(max-width: 768px) {
+         margin-left: 0;
+         margin-top: 16px;
+    }
 `;
 
 const Footer = styled.div`
@@ -112,6 +126,11 @@ const Footer = styled.div`
     flex-direction: row;
     justify-content: center;
     margin-top: 10%;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 16px;
+    }
 `;
 
 
@@ -127,10 +146,16 @@ const Alert = styled.div`
     align-items: center;
     flex-direction: column;
     display: flex;
+    font-size: 20px;
+
+
+    @media(max-width: 768px) {
+        width: ${props => (props.size)};
+        font-size: 16px;
+    }
 
     span {
         margin-top: 20px;
-        font-size: 20px;
     }
 `;
 
@@ -147,6 +172,10 @@ const View = styled.div`
     flex-direction: column;
     display: flex;
 
+
+    @media(max-width: 768px) {
+        width: ${props => props.size};
+    }
     span {
         margin-top: 20px;
     }

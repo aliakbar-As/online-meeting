@@ -106,7 +106,11 @@ const FinalStep = (props) => {
         } else {
 
             var formData = new FormData();
-            files.map(item => formData.append('files', item));
+            // files.map(item => formData.append('files', item));
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+                
+            }
 
 
             MeetingStore.uploadFiles(1, formData).then(files => {

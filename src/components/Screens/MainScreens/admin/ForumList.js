@@ -22,37 +22,45 @@ import useWindowDimensions from '../../../../Utils/Dimension';
 
 let tabs = [
     {
-        id: 4,
-        title: 'رویداد های برگزار شده'
-    },
-    {
-        id: 3,
-        title: 'رویداد های لغو شده'
-    },
-    {
         id: 2,
-        title: 'رویداد های آینده'
+        title: 'در حال برگزاری'
     },
     {
         id: 1,
-        title: 'رویداد های در حال برگزاری'
+        title: 'برگزار خواهد شد',
+    },
+    {
+        id: 4,
+        title: 'لغو شده'
+    },
+    {
+        id: 3,
+        title: 'برگزار شده'
+    },
+    {
+        id: 5,
+        title: 'به تعویق افتاده'
+    },
+    {
+        id: 6,
+        title: 'به دور دوم رفته'
     },
 ];
 
 
 const ForumList = (props) => {
     const navigate = useNavigate();
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
 
     const { MeetingStore } = useContext(StoreContext);
 
-    const [tabSelectedId, setTabSelectedId] = useState(1);
+    const [tabSelectedId, setTabSelectedId] = useState(2);
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
-        requestMeetingData(1);
+        requestMeetingData(tabSelectedId);
     }, []);
 
     const requestMeetingData = (tabId) => {
@@ -72,6 +80,11 @@ const ForumList = (props) => {
         navigate('/');
     };
 
+    const setTabSelectedOnclick = (id) => {
+        setTabSelectedId(id);
+        requestMeetingData(id);
+    };
+
     return (
         <>
             <TopView>
@@ -87,11 +100,8 @@ const ForumList = (props) => {
                         return (
                             <Tab
                                 key={index}
-                                style={{ borderBottom: tabSelectedId === item.id ? '4px solid #97A1FF' : '1px solid #fff' }}
-                                onClick={() => {
-                                    setTabSelectedId(item.id)
-                                    requestMeetingData(item.id)
-                                }}>
+                                clicked={tabSelectedId === item.id}
+                                onClick={() => setTabSelectedOnclick(item.id)}>
                                 <span style={{ color: tabSelectedId === item.id ? '#97A1FF' : '#fff' }}>
                                     {item.title}
                                 </span>
@@ -279,8 +289,9 @@ const Tab = styled.div`
     text-align: center;
     padding: 10px;
     font-size: 14px;
+    border-bottom: ${props => props.clicked ? '4px solid #97A1FF' : '1px solid #fff'};
 
-    
+
     @media(max-width: 768px) {
         display: none;
     }
@@ -293,16 +304,20 @@ const TabContainer = styled.div`
     justify-content: flex-end;
     width: 85%;
     display: flex;
+    direction: rtl;
     /* background-color: red; */
 
- img {
-     width: 25px;
-     height: 25px;
-
-     @media(min-width: 768px) {
-         display: none;
-     }
- }
+    img {
+        width: 25px;
+        height: 25px;
+        @media(min-width: 768px) {
+            display: none;
+        }
+    }
+    
+    @media(max-width: 768px) {
+            justify-content: space-between;
+        }
 `;
 
 const ArrowIcon = styled.img`
@@ -323,6 +338,9 @@ const IconsDiv = styled.div`
     align-items: center;
     justify-content: flex-start;
     cursor: pointer;
+    display: flex;
+    
+
 `;
 
 
@@ -332,8 +350,6 @@ const TopView = styled.div`
     display: flex;
     justify-content: space-between;
     margin: 3%;
-
-    
 `;
 
 const styles = {

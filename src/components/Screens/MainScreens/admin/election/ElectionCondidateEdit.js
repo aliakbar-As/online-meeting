@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { DateModal, Header, Input, ModalComponent } from '../../../../Commons';
+import { DateModal, Header, Input, Loading, ModalComponent } from '../../../../Commons';
 
 
 import './election.css';
@@ -11,9 +11,12 @@ import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 
 import addQuestion from '../../../../../assets/mainScreens/addQuestion.svg';
+import deleteIcon from '../../../../../assets/mainScreens/deleteIcon.svg';
+import useWindowDimensions from '../../../../../Utils/Dimension';
 
 const ElectionCondidateEdit = (props) => {
     const navigate = useNavigate();
+    const { width } = useWindowDimensions();
 
     const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
@@ -29,7 +32,6 @@ const ElectionCondidateEdit = (props) => {
 
     const [question, setQuestion] = useState('');
     const [option, setOption] = useState('');
-    const [optionIdSelected, setOptionIdSelected] = useState(100);
     const [answer, setAnswer] = useState([]);
 
     const [min, setMin] = useState('');
@@ -39,6 +41,7 @@ const ElectionCondidateEdit = (props) => {
 
     const [showInput, setShowInput] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [finalOption, setFinalOption] = useState([]);
 
@@ -74,6 +77,7 @@ const ElectionCondidateEdit = (props) => {
 
 
     const addSurveyOnclick = () => {
+        setLoading(true);
 
         let newItem = {
             id: questionResult.questionId,
@@ -95,7 +99,13 @@ const ElectionCondidateEdit = (props) => {
                     setModalVisible(true);
                 }, 2000);
 
-                navigate('/admin/surveyType');
+                if (width < 768) {
+                    navigate('/admin');
+                } else {
+                    navigate('/admin/surveyType');
+                };
+                
+                setLoading(false);
             };
 
         });
@@ -116,7 +126,6 @@ const ElectionCondidateEdit = (props) => {
 
 
         setShowInput(false)
-        setOptionIdSelected(100);
     };
 
 
@@ -170,17 +179,12 @@ const ElectionCondidateEdit = (props) => {
 
             {answer.map((item, i) => {
                 return (
-                    <Main>
-                        <View onClick={() => setOptionIdSelected(item.rank)} key={item.id}>
-                            {item.rank === optionIdSelected ?
-                                <span onClick={() => confirmEditOption(item.id, i + 1)}>
-                                    تایید
-                                </span> :
-                                <span>
-                                    {/* null */}
-                                </span>
-                            }
+                    <Main key={i}>
+                        <img src={deleteIcon} alt='' onClick={() => deleteItem(item)} />
+
+                        <View key={item.id}>
                             <TextInput
+                                onBlur={() => confirmEditOption(item.id, i + 1)}
                                 onChange={e => setOption(e.target.value)}
                                 placeholder={item.title}
                                 name={item.title}
@@ -189,7 +193,6 @@ const ElectionCondidateEdit = (props) => {
                             />
 
                         </View>
-                        <span onClick={() => deleteItem(item)}>حذف {item.title}</span>
                     </Main>
                 )
             })}
@@ -236,6 +239,8 @@ const ElectionCondidateEdit = (props) => {
                 closeModal={() => setModalVisible(false)}
                 content={'.انتخابات با موفقیت ثبت شد'}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     )
 }
@@ -254,17 +259,22 @@ const AddImage = styled.div`
 
 
 const Main = styled.div`
-    align-items: flex-end;
+    align-items: center;
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
 
     span {
         color: red;
         margin-top: 10px;
         margin-bottom: 5px;
         cursor: pointer;
+    }
+
+    img {
+        margin-top: 16px;
+        margin-right: 10px;
     }
 `;
 
@@ -350,7 +360,7 @@ const MainRadio = styled.div`
 const TextInput = styled.input`
     border: 0;
     background: #232539;
-    width: 90%;
+    width: 100%;
     height: 40px;
     text-align: right;
     font-size: 16px;
@@ -364,11 +374,11 @@ const TextInput = styled.input`
 `;
 
 const View = styled.div`
-border: 1px solid #7F829F;
+    border: 1px solid #7F829F;
     box-sizing: border-box;
     border-radius: 8px;
     background: #232539;
-    width: 100%;
+    width: 95%;
     height: 45px;
     align-items: center;
     justify-content: space-between;

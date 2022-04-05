@@ -93,7 +93,7 @@ const AddElection = (props) => {
 
         SurveyStore.setData(meetingId, 2, companyCode, 1, convertedStartDate, convertedEndDate, description);
 
-        
+
         navigate('/admin/election/add/addCondidate');
     };
 
@@ -238,10 +238,7 @@ const AddElection = (props) => {
             </CardSection>
 
             <Footer>
-                <Add onClick={uploadFiles}>
-                    تایید و ادامه
-                </Add>
-
+                <Add onClick={uploadFiles}>تایید و ادامه</Add>
             </Footer>
 
 

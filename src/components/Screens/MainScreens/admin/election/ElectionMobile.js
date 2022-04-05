@@ -39,7 +39,7 @@ const ElectionMobile = (props) => {
 
     const seeElectionInfo = (id) => {
         MeetingProfileStore.setSurveyId(id);
-        navigate('/admin/survey/detail');
+        navigate('/admin/election/detail');
     };
 
 

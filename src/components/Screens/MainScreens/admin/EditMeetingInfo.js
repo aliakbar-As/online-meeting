@@ -223,7 +223,6 @@ const EditMeetingInfo = (props) => {
 
                 <Select
                     onChange={e => setCompanyId(e.target.value)}
-                    disabled
                     value={companyId}>
                     <option value=''>نام و کد شرکت</option>
                     {companyList.map((item, index) => (

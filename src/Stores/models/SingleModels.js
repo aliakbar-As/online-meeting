@@ -73,14 +73,22 @@ export const SingleDuty = types.model({
 
 
 
-export const SingleChart = types.model({
+
+
+const SingleSurveyResult = types.model({
     questionOptionId: types.maybeNull(types.string),
     answerTitle: types.maybeNull(types.string),
-    questionTitle: types.maybeNull(types.string),
     optionRank: types.maybeNull(types.number),
     percentageNumberAnswer: types.maybeNull(types.number),
     percentageSharesAnswer: types.maybeNull(types.number),
+    questionTitle: types.maybeNull(types.string),
     questionRank: types.maybeNull(types.number),
+});
+
+export const SingleChart = types.model({
+    questionRank: types.maybeNull(types.number),
+    questionTitle: types.maybeNull(types.string),
+    showSrvResults: types.optional(types.array(SingleSurveyResult), []),
 });
 
 

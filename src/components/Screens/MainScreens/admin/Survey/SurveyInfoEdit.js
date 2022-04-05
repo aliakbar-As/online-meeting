@@ -227,8 +227,7 @@ const SurveyInfoEdit = (props) => {
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
                         value={endTime}
-                        onChange={e => setEndTime(e.target.value)}
-                        type={'time'} />
+                        onChange={e => setEndTime(e.target.value)} />
                     <span>ساعت پایان</span>
                 </ClockView>
 
@@ -242,8 +241,7 @@ const SurveyInfoEdit = (props) => {
                         value={startTime}
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
-                        onChange={e => setStartTime(e.target.value)}
-                        type={'time'} />
+                        onChange={e => setStartTime(e.target.value)} />
                     <span>ساعت شروع</span>
                 </ClockView>
 

@@ -12,7 +12,7 @@ import StoreContext from '../../../../Stores';
 
 import close from '../../../../assets/mainScreens/close.svg';
 import check from '../../../../assets/mainScreens/check.svg';
-import { ModalComponent, Header } from '../../../Commons';
+import { ModalComponent, Header, Loading } from '../../../Commons';
 
 const EditMeetingFiles = (props) => {
     const navigate = useNavigate();
@@ -33,6 +33,7 @@ const EditMeetingFiles = (props) => {
 
     const [successVisible, setSuccessVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -87,7 +88,7 @@ const EditMeetingFiles = (props) => {
             id: item.id,
             meetingId: MeetingProfileStore.meetingId,
             documentType: id,
-            title: name,
+            title: name.substring(0, 49),
             description: '',
             fileUri: item.fileUri,
             isDeleted: true
@@ -122,23 +123,21 @@ const EditMeetingFiles = (props) => {
 
     const handleConditions = (id) => {
         setModalVisible(false);
-
-        if (id === 0) {
-            alert('فایل مورد نظر خود را اضافه کنید!')
-        } else {
-            if (filesAdded.length === 0) {
-                updateFiles([]);
-                return;
-            };
-            var formData = new FormData();
-            filesAdded.map(item => formData.append('files', item));
-
-            MeetingStore.uploadFiles(1, formData).then(files => {
-                setSuccessVisible(true);
-                updateFiles(files);
-            });
+        setLoading(true);
+        if (filesAdded.length === 0) {
+            updateFiles([]);
+            return;
         };
+        var formData = new FormData();
+        filesAdded.map(item => formData.append('files', item));
+
+        MeetingStore.uploadFiles(1, formData).then(files => {
+            setSuccessVisible(true);
+            updateFiles(files);
+            setLoading(false)
+        });
     };
+
 
     const updateFiles = (newFiles) => {
         let FinalFiles = [...newFiles, ...files];
@@ -146,13 +145,13 @@ const EditMeetingFiles = (props) => {
 
         let fileLists = FinalFiles.map(item => {
             let object = {
-                "id": item.id === undefined ? undefined : item.id,
-                "meetingId": MeetingProfileStore.meetingId,
-                "documentType": item.documentType,
-                "title": item.title,
-                "description": '',
-                "fileUri": item.fileUri,
-                "isDeleted": item.isDeleted === undefined ? false : item.isDeleted,
+                id: item.id === undefined ? null : item.id,
+                meetingId: MeetingProfileStore.meetingId,
+                documentType: item.documentType,
+                title: item.title,
+                description: '',
+                fileUri: item.fileUri,
+                isDeleted: item.isDeleted === undefined ? false : item.isDeleted,
             };
 
             return object;
@@ -161,6 +160,7 @@ const EditMeetingFiles = (props) => {
 
         MeetingStore.updateFiles(fileLists).then(() => {
             navigate('/admin');
+            setLoading(false);
         });
 
     };
@@ -332,6 +332,8 @@ const EditMeetingFiles = (props) => {
                 closeModal={() => setModalVisible(false)}
                 hasError={false}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
@@ -405,12 +407,18 @@ const Files = styled.div`
     flex-direction: row;
     display: flex;
     padding: 5px;
-
+    width: 30%;
 
     span {
         font-size: 10px;
         color: #545772;
-        
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
         
     }
 

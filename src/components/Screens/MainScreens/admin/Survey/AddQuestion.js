@@ -14,7 +14,7 @@ const AddQuestions = (props) => {
 
     const navigate = useNavigate();
 
-    const { MeetingStore, SurveyStore } = useContext(StoreContext);
+    const { SurveyStore } = useContext(StoreContext);
 
     const [question, setQuestion] = useState([]);
 

@@ -359,7 +359,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 request.get(url, {
                     params: {
                         count: 50,
-                        orderBy: 'surveyType',
+                        orderBy: 'startDatetime desc',
                         skip: 0,
                         surveyType: surveyType,
                         meetingId: userType === 'admin' ? undefined : self.meetingId,
@@ -503,7 +503,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
 
         getMeetingFiles() {
             return new Promise(async (resolve, reject) => {
-                request.get(`/MeetingDocument`)
+                request.get(`/MeetingDocument?meetingId=${self.meetingId}`)
                     .then(({ data }) => {
                         Logger(data, 'MeetingDocument');
                         resolve(data.data.list);

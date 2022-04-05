@@ -33,11 +33,12 @@ const ElectionDetails = (props) => {
     });
 
     useEffect(() => {
+        console.log('hrere', MeetingProfileStore.charts)
         getSurveyInfo();
     }, []);
 
     const getSurveyInfo = () => {
-        MeetingProfileStore.getElectionInfo().then(res => {
+        MeetingProfileStore.getElectionInfo(true).then(res => {
             setSurvey(res);
         });
     };
@@ -68,25 +69,35 @@ const ElectionDetails = (props) => {
             </SurveyView>
 
 
+            {MeetingProfileStore.charts.length !== 0 ?
+                <ChartView>
+                    {MeetingProfileStore.charts.map((item, i) => {
+                        return (
+                            <Chart>
+                                <p>{item.questionRank}_{item.questionTitle}</p>
+                                {item.showSrvResults.map(item => (
+                                    <View key={i}>
+                                        <span>{item.percentageNumberAnswer}%</span>
 
-            <ChartView>
-                {MeetingProfileStore.charts.map((item, i) => {
-                    return (
-                        <View key={i}>
-                            <span>{item.percentageNumberAnswer}%</span>
+                                        <ChartTheme
+                                            percent={item.percentageNumberAnswer}
+                                            onClick={() => getSurveyDetails(item.questionOptionId)}
+                                            style={{ cursor: 'pointer', marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }}
+                                            />
+                                        <span>{item.answerTitle}</span>
+                                    </View>
+                                ))}
 
-                            <div
-                                onClick={() => getSurveyDetails(item.questionOptionId)}
-                                style={{ cursor: 'pointer', marginLeft: 10, width: 100, height: `${item.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${item.percentageNumberAnswer / 100})` }} />
-                            <span>{item.answerTitle}</span>
-                        </View>
-                    )
-                })}
-            </ChartView>
+                            </Chart>
+                        )
+                    })}
+                </ChartView> :
+                <Empty>در حال حاظر نظرسنجی موجود نمیباشد</Empty>
+            }
 
 
             {list.length === 0 ? null :
-                <div className="table">
+                <Footer className="table">
                     <Content>
                         <Table>
                             <Tr>
@@ -114,18 +125,57 @@ const ElectionDetails = (props) => {
                             <p key={i}>{item.answerTitle}</p>
                         ))}
                     </Box>
-                </div>}
+                </Footer>
+            }
 
         </div>
     )
 };
 
-const ViewDetails = styled.div`
-    color: #23A9F2;
-    font-size: 20px;
-    margin-top: 32px;
+const ChartTheme = styled.div`
     cursor: pointer;
+    margin-left: 10px;
+    width: 100px;
+    height: ${props => props.percent * 100}px;
+    /* background: rgb(255, 0, 0,${props => props.percent}); */
+    background: red;
+    transform: rotate(180deg);
+    
+    
+`;
 
+const Footer = styled.div`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        width: 100%;
+    }
+`;
+
+const Chart = styled.div`
+    /* background-color: green; */
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    direction: rtl;
+    
+    p {
+        font-weight: bold;
+        font-size: 16px;
+    }
+`;
+
+const Empty = styled.div`
+    width: 100%;
+    margin-top: 50%;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
 `;
 
 const Content = styled.div`
@@ -154,13 +204,20 @@ const Content = styled.div`
     ::-webkit-scrollbar-thumb:hover {
         background: #7B88FF; 
     }
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const View = styled.div`
     margin-right: 5px;
     height: 400px;
     margin-top: 40px;
-    transform: rotate(180deg);
+    /* transform: rotate(180deg); */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 `;
 
 const ChartView = styled.div`
@@ -231,6 +288,11 @@ const Box = styled.div`
     ::-webkit-scrollbar-thumb:hover {
         background: #7B88FF; 
     }
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
 const Table = styled.table`
@@ -239,6 +301,8 @@ const Table = styled.table`
     border-radius: 8px;
     
     padding: 10px;
+
+    
 `;
 
 
@@ -256,6 +320,13 @@ const SurveyView = styled.div`
         color: #97A1FF;
         text-align: right;
 
+        @media(max-width: 768px) {
+            margin-bottom: 16px;
+        }
+    }
+
+    @media(max-width: 768px) {
+        flex-direction: column-reverse;
     }
 `;
 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { DateModal, Header, Input, ModalComponent } from '../../../../Commons';
+import { Loading, Header, ModalComponent } from '../../../../Commons';
 
 
 import './election.css';
@@ -11,12 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 import useWindowDimensions from '../../../../../Utils/Dimension';
 
+import addQuestion from '../../../../../assets/mainScreens/addQuestion.svg';
 
 const AddCondidate = (props) => {
     const navigate = useNavigate();
     const { width } = useWindowDimensions();
 
-    const { MeetingStore, SurveyStore } = useContext(StoreContext);
+    const { SurveyStore } = useContext(StoreContext);
 
     const [question, setQuestion] = useState('');
     const [min, setMin] = useState('');
@@ -24,18 +25,19 @@ const AddCondidate = (props) => {
     const [isActive, setIsActive] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const [data, setData] = useState([]);
-
-
-    const [condidate1, setCondidate1] = useState('');
-    const [condidate2, setCondidate2] = useState('');
-    const [condidate3, setCondidate3] = useState('');
-    const [condidate4, setCondidate4] = useState('');
-    const [condidate5, setCondidate5] = useState('');
+    const [answer, setAnswer] = useState([]);
+    const [condidate, setCondidate] = useState('');
+    const [finalOption, setFinalOption] = useState([]);
 
     const [modalVisible, setModalVisible] = useState(false);
 
     const addSurveyOnclick = () => {
+
+        if(question === '' || answer.length === 0) {
+            alert('لطفا موارد ضروری را پر کنید');
+            return;
+        };
+
         setLoading(true);
 
         SurveyStore.setActive(isActive);
@@ -45,28 +47,7 @@ const AddCondidate = (props) => {
             hasMultipleAnswers: isActive === 'true' ? true : false,
             minAnswersCount: Number(min),
             maxAnswersCount: Number(max),
-            surveyQuestionOptions: [
-                {
-                    title: condidate1,
-                    rank: 1
-                },
-                {
-                    title: condidate2,
-                    rank: 2
-                },
-                {
-                    title: condidate3,
-                    rank: 3
-                },
-                {
-                    title: condidate4,
-                    rank: 4
-                },
-                {
-                    title: condidate5,
-                    rank: 5
-                },
-            ],
+            surveyQuestionOptions: finalOption,
         };
 
 
@@ -88,6 +69,42 @@ const AddCondidate = (props) => {
         });
     };
 
+    const addOptionOnclick = () => {
+
+        const newElements = {
+            title: condidate,
+            rank: answer.length + 1,
+        };
+
+        setAnswer(answer => [...answer, newElements]);
+
+    };
+
+    const confirmEditOption = (rank) => {
+        let rankNumber = Number(rank);
+
+        let newElement = {
+            title: condidate,
+            rank: rankNumber,
+        };
+
+        if (finalOption.length === 0) {
+            setFinalOption(finalOption => [...finalOption, newElement]);
+            return
+        };
+
+        finalOption.filter(item => {
+            if (item.rank === rankNumber) {
+                let newArr = [...finalOption];
+                newArr[rankNumber - 1] = newElement;
+
+                setFinalOption(newArr);
+            } else {
+                setFinalOption(finalOption => [...finalOption, newElement]);
+            }
+        })
+    };
+
     return (
         <div className="main">
             <Header backOnclick={() => navigate(-1)} />
@@ -106,43 +123,22 @@ const AddCondidate = (props) => {
                 onChange={e => setQuestion(e.target.value)}
                 placeholder={'پرسش انتخابات'}
             />
+            {answer.map((item, index) => {
+                return (
+                    <View key={index}>
+                        <TextInput
+                            onChange={e => setCondidate(e.target.value)}
+                            placeholder={`نامزد ${index + 1}`}
+                            onBlur={() => confirmEditOption(index + 1)}
+                        />
+                    </View>
+                )
+            })}
 
-            <View>
-                <TextInput
-                    value={condidate2}
-                    onChange={e => setCondidate2(e.target.value)}
-                    placeholder={'نامزد دوم'}
-                />
 
-                <TextInput
-                    value={condidate1}
-                    onChange={e => setCondidate1(e.target.value)}
-                    placeholder={'نامزد اول'}
-                />
-            </View>
-
-            <View>
-                <TextInput
-                    value={condidate4}
-                    onChange={e => setCondidate4(e.target.value)}
-                    placeholder={'نامزد چهارم'}
-                />
-
-                <TextInput
-                    value={condidate3}
-                    onChange={e => setCondidate3(e.target.value)}
-                    placeholder={'نامزد سوم'}
-                />
-            </View>
-
-            <div className={'input'}>
-                <TextInput
-                    value={condidate5}
-                    onChange={e => setCondidate5(e.target.value)}
-                    placeholder={'نامزد پنجم'}
-                />
-            </div>
-
+            <AddImage>
+                <img onClick={addOptionOnclick} src={addQuestion} alt="" />
+            </AddImage>
 
 
             <Radio>
@@ -186,10 +182,24 @@ const AddCondidate = (props) => {
                 closeModal={() => setModalVisible(false)}
                 content={'.انتخابات با موفقیت ثبت شد'}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     )
 }
 
+
+const AddImage = styled.div`
+    justify-content: flex-end;
+    align-items: flex-end;
+    display: flex;
+    margin-top: 20px;
+
+    img {
+        width: 48px;
+        height: 48px;
+    }
+`;
 
 const Add = styled.button`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);

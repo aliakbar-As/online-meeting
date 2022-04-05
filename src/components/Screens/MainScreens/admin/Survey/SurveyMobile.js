@@ -80,16 +80,14 @@ const SurveyMobile = (props) => {
                         <p>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</p>
                     </Section>
 
-                        <SeeMore onClick={() => editSurvey(item.surveyId)}>
-                            <img src={left} alt="arrow" />
-                            <p>ویرایش</p>
-                        </SeeMore>
+                    <SeeMore>
+                        <p onClick={() => editSurvey(item.surveyId)}>ویرایش</p>
+                        <p onClick={() => seeElectionInfo(item.surveyId)}>مشاهده</p>
+                    </SeeMore>
                 </LittleCard>
             ))}
 
-                <Add onClick={() => navigate('/admin/survey/add')}>
-                    افزودن نظرسنجی
-                </Add>
+                <Add onClick={() => navigate('/admin/survey/add')}>افزودن نظرسنجی</Add>
 
 
             <ModalComponent
@@ -137,10 +135,12 @@ const SeeMore = styled.div`
     flex-direction: row;
     align-items: center;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     cursor: pointer;
     color: #97A1FF;
     font-size: 20px;
+    margin-top: -16px;
+width: 100%;
     p {
         margin-left: 10px;
     }

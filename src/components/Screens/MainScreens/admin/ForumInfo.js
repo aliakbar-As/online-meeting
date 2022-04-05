@@ -111,9 +111,7 @@ const ForumInfo = (props) => {
                         ))}
                     </View>
 
-                    <Edit onClick={() => navigate('/admin/info/editInfo')}>
-                        ویرایش
-                    </Edit>
+                    <Edit onClick={() => navigate('/admin/info/editInfo')}>ویرایش</Edit>
 
                 </CardSectionOne>
 
@@ -274,16 +272,6 @@ const Online = styled.button`
     cursor: pointer;
 `;
 
-const Election = styled.button`
-    background: #6070FF;
-    border-radius: 8px;
-    width: 215px;
-    height: 48px;
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-
-`;
 
 const CardTwo = styled.div`
     align-items: center;
@@ -303,10 +291,12 @@ const CardSection = styled.div`
     height: 150px;
     
     border-radius: 8px;
-    position: relative;
-    padding-top: 10px;
-
-    /* margin-left: 10px; */
+    padding-top: 16px;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    
     span {
         font-size: 15px;
         color: #B4BBFF;
@@ -356,6 +346,7 @@ const DateView = styled.div`
     flex-direction: row;
     align-items: center;
     display: flex;
+    justify-content: space-evenly;
 `;
 
 const Footer = styled.div`

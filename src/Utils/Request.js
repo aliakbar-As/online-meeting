@@ -1,10 +1,19 @@
-// import NetInfo from '@react-native-community/netinfo';
+import React from 'react';
 import { Axios } from './Api';
 
 import { Logger } from '../Utils';
 
+
+// const GoBack = () => {
+//     const navigate = useNavigate();
+//     localStorage.removeItem('@token');
+//     navigate('/');
+// };
+
 class Request {
-    constructor() {
+
+    constructor(props) {
+        console.log('prosp', props)
         // before send requests
         this.pendingQueue = [];
 
@@ -20,7 +29,6 @@ class Request {
          */
         this.timeout = 2000;
     }
-
 
     /**
      * =============
@@ -184,13 +192,9 @@ class Request {
     //     this.runQueue();
     // }
 
-    
+
     async expiredToken() {
-
         localStorage.removeItem('@token');
-        // this.props.navigate('/')
-
-        // AuthStore.refreshToken();
     };
 
     removeDuplicate(url, data) {

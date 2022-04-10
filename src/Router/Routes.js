@@ -8,6 +8,7 @@ import Register from '../components/Screens/AuthScreens/Register';
 
 import Form from '../components/Screens/MainScreens/form/Form';
 import FormInfo from '../components/Screens/MainScreens/form/FormInfo';
+import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
 
 
 
@@ -25,7 +26,6 @@ import AdminSurvey from '../components/Screens/MainScreens/admin/Survey/Survey';
 import SurveyDetails from '../components/Screens/MainScreens/admin/Survey/SurveyDetails';
 import AddSurvey from '../components/Screens/MainScreens/admin/Survey/AddSurvey';
 import AddQuestion from '../components/Screens/MainScreens/admin/Survey/AddQuestion';
-import SurveyTypes from '../components/Screens/MainScreens/form/SurveyTypes';
 import EditDuties from '../components/Screens/MainScreens/admin/addMeeting/EditDuties';
 import AddCondidate from '../components/Screens/MainScreens/admin/election/AddCondidate';
 import SurveyInfoEdit from '../components/Screens/MainScreens/admin/Survey/SurveyInfoEdit';
@@ -37,6 +37,8 @@ import EditMeetingDate from '../components/Screens/MainScreens/admin/EditMeeting
 import EditMeetingFiles from '../components/Screens/MainScreens/admin/EditMeetingFiles';
 import SurveyMobile from '../components/Screens/MainScreens/admin/Survey/SurveyMobile';
 import ElectionMobile from '../components/Screens/MainScreens/admin/election/ElectionMobile';
+import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
+import CondidateQuestion from '../components/Screens/MainScreens/form/CondidateQuestion';
 
 function RouterComponent() {
     return (
@@ -69,7 +71,13 @@ function RouterComponent() {
                 element={<SurveyTypes />}
             />
 
+            <Route path="/form/info/survey/SurveyQuestion"
+                element={<SurveyQuestion />}
+            />
 
+            <Route path="/form/info/election/SurveyQuestion"
+                element={<CondidateQuestion />}
+            />ّ
 
 
 

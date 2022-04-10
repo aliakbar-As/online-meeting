@@ -170,10 +170,7 @@ const AddCondidate = (props) => {
 
 
             <Footer>
-                <Add onClick={addSurveyOnclick}>
-                    افزودن انتخابات
-                </Add>
-
+                <Add onClick={addSurveyOnclick}>افزودن انتخابات</Add>
             </Footer>
 
             <ModalComponent

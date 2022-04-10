@@ -327,18 +327,18 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 })
                     .then(({ data }) => {
                         Logger(data, 'Surveys');
+                        resolve(data.data.list);
 
-                        if (data.hasError) {
-                            resolve(false);
-                            this.setErrorMessage(data.data.exception);
-                            return;
-                        };
-                        if (surveyType === 2) {
-                            this.fillSurveyList(data.data.list);
-                            resolve(true);
-                        } else {
-                            resolve(data.data.list);
-                        }
+                        // if (data.hasError) {
+                        //     resolve(false);
+                        //     this.setErrorMessage(data.data.exception);
+                        //     return;
+                        // };
+                        // if (surveyType === 2) {
+                        //     this.fillSurveyList(data.data.list);
+                        //     resolve(true);
+                        // } else {
+                        // }
                     }).catch(err => {
                         console.log('surveyType err', err);
                         resolve(false);

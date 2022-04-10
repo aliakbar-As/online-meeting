@@ -2,20 +2,21 @@ import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { Header, Input } from '../../../../Commons';
+import { Header, Loading } from '../../../../Commons';
 
 
 import '../election/election.css';
 
 import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
+import useWindowDimensions from '../../../../../Utils/Dimension';
 
 const AddQuestions = (props) => {
 
     const navigate = useNavigate();
 
     const { SurveyStore } = useContext(StoreContext);
-
+    const { width } = useWindowDimensions();
     const [question, setQuestion] = useState([]);
 
     const [firstQuestion, setFirstQuestion] = useState('');
@@ -29,6 +30,7 @@ const AddQuestions = (props) => {
     const [max, setMax] = useState('');
 
     const [isActive, setIsActive] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     const addQuery = () => {
@@ -78,9 +80,14 @@ const AddQuestions = (props) => {
 
 
     const addSurveyOnclick = () => {
-
+        setLoading(true);
         SurveyStore.addElection(question).then(() => {
-            navigate('/admin/surveyType');
+            if (width > 768) {
+                navigate('/admin/surveyType');
+            } else {
+                navigate('/admin');
+            };
+            setLoading(false);
         });
     };
 
@@ -204,19 +211,37 @@ const AddQuestions = (props) => {
                 </div> : null}
 
             <Footer>
-                <AddQuestion onClick={addQuery}>
-                    افزودن و ادامه
-                </AddQuestion>
+                <AddQuestion onClick={addQuery}>افزودن و ادامه</AddQuestion>
 
-                <Add onClick={addSurveyOnclick}>
-                    افزودن نظرسنجی
-                </Add>
+                <Add onClick={addSurveyOnclick}>افزودن نظرسنجی</Add>
             </Footer>
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
 
+const Input = styled.input`
+    background: transparent;
+    border-radius: 8px;
+    width: 450px;
+    height: 48px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 10px;
 
+    @media(max-width: 768px) {
+        width: 100%;
+    margin-left: 0;
+    margin-top: 16px;
+    }
+`;
 const Limit = styled.input`
     border: 1px solid #7F829F;
     box-sizing: border-box;
@@ -312,10 +337,15 @@ const Question = styled.input`
     margin-left: 16px;
     font-size: 16px;
     font-weight: bold;
+
+    @media(max-width: 768px) {
+        margin-left: 0;
+        margin-top: 16px;
+    }
 `;
 
 
-const Add = styled.button`
+const Add = styled.a`
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     border-radius: 8px;
     width: 450px;
@@ -326,6 +356,12 @@ const Add = styled.button`
     font-size: 18px;
     margin-top: 40px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media(max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 
@@ -338,6 +374,12 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
+
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 

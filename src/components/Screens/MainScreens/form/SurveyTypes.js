@@ -17,19 +17,20 @@ import calender from '../../../../assets/mainScreens/calender.png';
 import empty from '../../../../assets/mainScreens/Exclude.png';
 import user from '../../../../assets/mainScreens/user.png';
 import downArrow from '../../../../assets/mainScreens/downArrow.png';
+import { Header } from '../../../Commons';
 
 const SurveyTypes = (props) => {
     const navigate = useNavigate();
     const { MeetingProfileStore } = useContext(StoreContext);
 
     const [surveyData, setSurveyData] = useState([]);
+    const [condidateData, setCondidateData] = useState([]);
 
     useEffect(() => {
-        console.log('list', MeetingProfileStore.surveyList.length)
-        console.log('list', surveyData.length)
+        // console.log('list', MeetingProfileStore.surveyList.length)
+        // console.log('list', surveyData.length)
 
-
-        MeetingProfileStore.getSurvey(false, 1).then(res => {
+        MeetingProfileStore.getSurvey(false, undefined).then(res => {
             setSurveyData(res);
         });
     }, []);
@@ -45,27 +46,18 @@ const SurveyTypes = (props) => {
     return (
         <div className="main">
 
-            <TopView onClick={() => console.log('user')}>
-                <IconsDiv>
-                    <UserIcon src={user} alt="user" />
-
-                    <ArrowIcon src={downArrow} alt="downArrow" />
-                </IconsDiv>
-
-                <Back onClick={() => navigate(-1)} src={backArrow} alt="backArrow" />
-
-            </TopView>
+            <Header backOnclick={() => navigate(-1)} />
 
             <Info>
                 <span>مجمع ها / نظرسنجی ها و انتخابات</span>
             </Info>
 
-            {MeetingProfileStore.surveyList.map(item => (
-                <Candidate data={item} />
+            {surveyData.filter(item => item.surveyType === 2).map((item, i) => (
+                <Candidate data={item} key={i} />
             ))}
 
-            {surveyData.map(item => (
-                <Survey data={item} />
+            {surveyData.filter(item => item.surveyType === 1).map((item, i) => (
+                <Survey data={item} key={i} />
             ))}
 
 
@@ -78,9 +70,7 @@ const SurveyTypes = (props) => {
                     <img src={empty} alt="empty" />
                 </Empty>
                 :
-                <Exit onClick={leaveMeeting}>
-                    خروج
-                </Exit>
+                <Exit onClick={leaveMeeting}>خروج</Exit>
             }
 
         </div>

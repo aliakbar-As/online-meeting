@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Header, Loading, ModalComponent } from '../../../Commons';
 
 
-const SurveyQuestion = (props) => {
+const CondidateQuestion = (props) => {
     const navigate = useNavigate();
     const { MeetingProfileStore } = useContext(StoreContext);
 
@@ -139,7 +139,6 @@ const SurveyQuestion = (props) => {
             />
 
             {loading ? <Loading /> : null}
-
         </div>
     );
 };
@@ -263,4 +262,4 @@ const TopView = styled.div`
                 cursor: pointer;
                 `;
 
-export default SurveyQuestion;
+export default CondidateQuestion;

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { DateModal, Header, Input } from '../../../../Commons';
+import { DateModal, Header, Loading } from '../../../../Commons';
 
 
 import upload from '../../../../../assets/mainScreens/upload.png';
@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import StoreContext from '../../../../../Stores';
 import jalaali from 'jalaali-js';
 import moment from 'moment-jalaali';
+import useWindowDimensions from '../../../../../Utils/Dimension';
 
 
 
@@ -37,7 +38,7 @@ const SurveyInfoEdit = (props) => {
     const infoFileRef = useRef(null);
 
     const navigate = useNavigate();
-
+    const { width } = useWindowDimensions();
     const { MeetingStore, SurveyStore } = useContext(StoreContext);
 
 
@@ -51,6 +52,7 @@ const SurveyInfoEdit = (props) => {
     const [startDateModal, setStartDateModal] = useState(false);
     const [endDateModal, setEndDateModal] = useState(false);
 
+    const [loading, setLoading] = useState(false);
 
     const [startDay, setStartDay] = useState(1);
     const [startMonth, setStartMonth] = useState(1);
@@ -65,8 +67,10 @@ const SurveyInfoEdit = (props) => {
     const [endTime, setEndTime] = useState('');
     const [surveyStatus, setSurveyStatus] = useState('');
     const [id, setId] = useState('');
+    const [surveyType, setSurveyType] = useState(2);
 
     const [files, setFiles] = useState([]);
+    const [deleteFiles, setDeleteFiles] = useState([]);
 
     useEffect(() => {
         getInfo();
@@ -80,6 +84,8 @@ const SurveyInfoEdit = (props) => {
             setFiles(res.surveyAttachments);
             setMeetingId(res.meetingId);
             setId(res.id);
+            setSurveyType(res.surveyType);
+            setSurveyStatus(res.surveyStatus);
 
             const startDate = moment(res.startDatetime).format('jYYYY/jM/jD');
             const startTime = moment(res.startDatetime).format('HH:mm');
@@ -108,7 +114,7 @@ const SurveyInfoEdit = (props) => {
 
 
 
-    const confirmInfo = () => {
+    const confirmInfo = (filesUploaded) => {
         // 2022-01-25T10:07:36.004Z
 
         const sDay = Number(startDay);
@@ -137,46 +143,77 @@ const SurveyInfoEdit = (props) => {
 
         const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
-
-        // SurveyStore.setData(meetingId, 1, companyCode, 1, convertedStartDate, convertedEndDate, description);
-
+        let mergedFiles = [...filesUploaded, ...deleteFiles];
         let newElement = {
             id: id,
-            surveyType: 1,
+            surveyType: surveyType,
             meetingId: meetingId,
             title: surveyTitle,
             startDatetime: convertedStartDate,
             endDatetime: convertedEndDate,
             surveyStatus: Number(surveyStatus),
             description: description,
-            surveyAttachments: files,
+            surveyAttachments: mergedFiles,
         };
 
         SurveyStore.putSurveyInfo(newElement).then(() => {
-            navigate('/admin/surveyType');
+            if (width > 768) {
+                navigate('/admin/surveyType');
+            } else {
+                navigate('/admin');
+            };
+            setLoading(false);
         });
     };
 
 
 
-    const deleteIcon = (name, id) => {
-        setFiles(files.filter(item => item.name !== name));
+    const deleteIcon = (data) => {
+        setFiles(files.filter(item => item.id !== data.id));
 
+
+        let newElement = {
+            id: data.id === undefined ? undefined : data.id,
+            surveyId: data.surveyId,
+            title: data.title.substring(0, 49),
+            fileUrl: data.fileUrl,
+            isDeleted: true,
+        };
+
+        setDeleteFiles(deleteFiles => [...deleteFiles, newElement]);
     };
+
 
     const uploadFiles = () => {
         if (files.length === 0) {
-            confirmInfo();
+            confirmInfo([]);
             return;
         };
+        setLoading(true);
 
         var formData = new FormData();
-        files.map(item => formData.append('files', item));
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        };
+
 
         MeetingStore.uploadFiles(1, formData).then(files => {
             SurveyStore.surveyFiles(files);
+
+            let fileUploaded = files.map(item => {
+                let newElement = {
+                    id: item.id === undefined ? undefined : item.id,
+                    surveyId: SurveyStore.surveyId,
+                    title: item.title.substring(0, 49),
+                    fileUrl: item.fileUri,
+                    isDeleted: false
+                };
+                return newElement;
+            });
+
+            confirmInfo(fileUploaded);
+            setLoading(false);
         });
-        confirmInfo();
 
     };
 
@@ -199,15 +236,14 @@ const SurveyInfoEdit = (props) => {
 
 
             <CardSection>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingId(e.target.value)}
                     value={meetingId}>
                     <option value=''>نام مجمع</option>
                     {meetingList.map((item, index) => (
                         <option key={index} value={item.meetingId}>{item.meetingTitle}</option>
                     ))}
-                </select>
+                </Select>
 
 
                 <Input
@@ -253,18 +289,17 @@ const SurveyInfoEdit = (props) => {
 
 
             <CardSection>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setSurveyStatus(e.target.value)}
                     value={surveyStatus}>
                     <option value=''>نوع نظرسنجی</option>
                     {surveyStatusItem.map((item, index) => (
                         <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </select>
+                </Select>
+
+
                 <View>
-
-
                     {files.length === 0 ?
                         <input
                             type={'file'}
@@ -293,7 +328,7 @@ const SurveyInfoEdit = (props) => {
                     {files.map((item, i) => {
                         return (
                             <Files key={i}>
-                                <img onClick={() => deleteIcon(item.surveyAttachmentTitle, 0)} src={close} alt='close' />
+                                <img onClick={() => deleteIcon(item)} src={close} alt='close' />
 
                                 <span>{files.length === 0 ? 'بارگزاری فایل اکسل' : item.name === undefined ? item.title : item.name}</span>
                             </Files>
@@ -304,7 +339,6 @@ const SurveyInfoEdit = (props) => {
 
 
             <CardSection>
-
                 <TextInput
                     placeholder={'...توضیحات'}
                     value={description}
@@ -313,10 +347,7 @@ const SurveyInfoEdit = (props) => {
             </CardSection>
 
             <Footer>
-                <Add onClick={uploadFiles}>
-                    ثبت اطلاعات
-                </Add>
-
+                <Add onClick={uploadFiles}>ثبت اطلاعات</Add>
             </Footer>
 
 
@@ -324,6 +355,7 @@ const SurveyInfoEdit = (props) => {
                 title={'تاریخ شروع'}
                 modalVisible={startDateModal}
                 closeModal={() => setStartDateModal(false)}
+                onClick={() => setStartDateModal(false)}
                 dayOnChange={e => setStartDay(e.target.value)}
                 monthOnChange={e => setStartMonth(e.target.value)}
                 yearOnChange={e => setStartYear(e.target.value)}
@@ -334,15 +366,60 @@ const SurveyInfoEdit = (props) => {
                 title={'تاریخ پایان'}
                 modalVisible={endDateModal}
                 closeModal={() => setEndDateModal(false)}
+                onClick={() => setEndDateModal(false)}
                 dayOnChange={e => setEndDay(e.target.value)}
                 monthOnChange={e => setEndMonth(e.target.value)}
                 yearOnChange={e => setEndYear(e.target.value)}
                 currentDate={`${endYear} / ${endMonth} / ${endDay}`}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
 
+const Input = styled.input`
+    background: transparent;
+    border-radius: 8px;
+    width: 450px;
+    height: 48px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 10px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+    }
+`;
+
+const Select = styled.select`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16px;
+    width: 450px;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+    padding: 5px;
+    text-align: right;
+    direction:rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: flex-end;
+    display: flex;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+    }
+`;
 
 const Files = styled.div`
     background: #B4BBFF;
@@ -353,11 +430,19 @@ const Files = styled.div`
     flex-direction: row;
     display: flex;
     padding: 5px;
+    width: 20%;
 
 
     span {
         font-size: 10px;
         color: #545772;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
     }
 
     img {
@@ -374,6 +459,8 @@ const Clock = styled.input`
     direction: rtl;
     text-align: right;
     color: #fff;
+
+    
 `;
 
 const ClockView = styled.div`
@@ -397,24 +484,13 @@ border-radius: 8px;
         color: #A7AAC6;
         font-size: 12px;
     }
+
+    @media(max-width: 768px) {
+        margin-bottom: 16px;
+        width: 100%;
+    }
 `;
 
-const selectStyle = {
-    background: 'transparent',
-    color: '#7F829F',
-    fontSize: 16,
-    width: 450,
-    borderRadius: 8,
-    flexDirection: 'row-reverse',
-    padding: 5,
-    textAlign: 'right',
-    direction: 'rtl',
-    marginLeft: 16,
-    height: 48,
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    display: 'flex',
-};
 
 const DateContainer = styled.div`
     align-items: center;
@@ -422,6 +498,10 @@ const DateContainer = styled.div`
     flex-direction: row;
     display: flex;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 
@@ -444,6 +524,10 @@ const Date = styled.div`
         height: 18.67px;
     }
 
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
 `;
 
 const Add = styled.button`
@@ -474,32 +558,12 @@ const TextInput = styled.textarea`
     font-weight: bold;
     color: #ffffff;
     font-size: 20px;
-`;
 
-const SelectView = styled.div`
-    flex-direction: row;
-    display: flex;
-    height: 48px;
-    width: 450px;
-    background: #545772;
-    border-radius: 8px;
-    margin-left: 16px;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    cursor: pointer;
-
-    img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
+    @media(max-width: 768px) {
+        margin-left: 0;
     }
 `;
+
 
 const View = styled.div`
     flex-direction: row;
@@ -514,18 +578,14 @@ const View = styled.div`
     border: 1px solid #7F829F;
     box-sizing: border-box;
     border-radius: 8px;
-cursor: pointer;
+    cursor: pointer;
 
-    /* img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        margin-bottom: 16px;
     }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    } */
 `;
 
 
@@ -536,6 +596,10 @@ const CardSection = styled.div`
     justify-content: flex-end;
     margin-top: 16px;
     
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 
@@ -547,6 +611,8 @@ const SurveyView = styled.div`
     justify-content: flex-end;
 
     margin-top: 16px;
+    margin-bottom: 16px;
+
     img {
         width: 20px;
         height: 20px;

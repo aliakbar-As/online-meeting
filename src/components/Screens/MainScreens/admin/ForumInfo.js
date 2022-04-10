@@ -45,15 +45,18 @@ const ForumInfo = (props) => {
         });
     };
 
+    const serveyOnclick = () => {
+        navigate('/admin/surveyType');
+    };
 
     return (
         <div className="main">
 
-            <Header backOnclick={() => navigate(-1) }/>
+            <Header backOnclick={() => navigate(-1)} />
 
 
             <Info>
-                <span>مجمع ها / مجمع تست</span>
+                <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
             </Info>
 
             <ShortDescription>
@@ -208,13 +211,11 @@ const ForumInfo = (props) => {
 
 
             <Footer>
-                <Online>
-                    مشاهده آنلاین
-                </Online>
+                <Online>مشاهده آنلاین</Online>
 
                 <Button
                     primary
-                    onPress={() => console.log('survey')}
+                    onPress={serveyOnclick}
                     title={'انتخابات و نظرسنجی'} />
 
             </Footer>
@@ -655,34 +656,5 @@ const Info = styled.div`
     }
 `;
 
-
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-    cursor: pointer;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    /* cursor: pointer; */
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-`;
 
 export default ForumInfo;

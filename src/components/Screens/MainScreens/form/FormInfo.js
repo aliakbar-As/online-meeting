@@ -18,7 +18,7 @@ import excel from '../../../../assets/mainScreens/excel.png';
 import info from '../../../../assets/mainScreens/info2.png';
 import users from '../../../../assets/mainScreens/users.png';
 import pin from '../../../../assets/mainScreens/pin.png';
-import { Button } from '../../../../components/Commons';
+import { Button, Header } from '../../../../components/Commons';
 
 import clock from '../../../../assets/mainScreens/clock.png';
 import calender from '../../../../assets/mainScreens/calender.png';
@@ -41,9 +41,7 @@ const FormInfo = (props) => {
 
 
     const serveyOnclick = () => {
-        MeetingProfileStore.getSurvey(true, 2, 'user').then(res => {
-            navigate('/form/info/survey');
-        });
+        navigate('/form/info/survey');
     };
 
 
@@ -57,9 +55,16 @@ const FormInfo = (props) => {
     return (
         <div className="main">
 
+            <Header backOnclick={() => navigate(-1)} />
+
+            <Info>
+                <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
+            </Info>
+
             <ShortDescription>
                 {MeetingProfileStore.meetingDetails.description}
             </ShortDescription>
+
 
             <Card>
                 <CardSectionTwo>
@@ -117,42 +122,44 @@ const FormInfo = (props) => {
 
 
             <Card>
+                <Date>
 
-                <DateView>
-                    <CardSection>
-                        <span>تاریخ و ساعت پایان</span>
+                    <DateView>
+                        <CardSection>
+                            <span>تاریخ و ساعت پایان</span>
 
-                        <div>
-                            <img src={calender} alt="calender" />
+                            <div>
+                                <img src={calender} alt="calender" />
 
-                            <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
-                        </div>
+                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
+                            </div>
 
-                        <div>
-                            <img src={clock} alt="clock" />
+                            <div>
+                                <img src={clock} alt="clock" />
 
-                            <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
-                        </div>
-                    </CardSection>
+                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
+                            </div>
+                        </CardSection>
 
 
-                    <CardSection>
-                        <span>تاریخ و ساعت فروش</span>
+                        <CardSection>
+                            <span>تاریخ و ساعت فروش</span>
 
-                        <div>
-                            <img src={calender} alt="calender" />
+                            <div>
+                                <img src={calender} alt="calender" />
 
-                            <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
-                        </div>
+                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
+                            </div>
 
-                        <div>
-                            <img src={clock} alt="clock" />
+                            <div>
+                                <img src={clock} alt="clock" />
 
-                            <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
-                        </div>
-                    </CardSection>
+                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
+                            </div>
+                        </CardSection>
 
-                </DateView>
+                    </DateView>
+                </Date>
 
 
                 <Links>
@@ -197,25 +204,84 @@ const FormInfo = (props) => {
 
 
             <Footer>
-                <Button
-                    onPress={() => console.log('online meeting')}
-                    title={'مشاهده آنلاین'} />
+                <Online>مشاهده آنلاین</Online>
 
-                <Button
-                    primary
-                    onPress={serveyOnclick}
-                    title={'انتخابات و نظرسنجی'} />
+                <SurveyOnclick onClick={serveyOnclick}>انتخابات و نظرسنجی                </SurveyOnclick>
 
             </Footer>
 
 
-            <Exit onClick={leaveMeeting}>
-                خروج
-            </Exit>
+            <Exit onClick={leaveMeeting}>خروج</Exit>
         </div>
     );
 };
 
+
+const SurveyOnclick = styled.a`
+width: 215px;
+    height: 48px;
+    
+    border: 1px solid transparent;
+
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px;
+
+
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    display: flex;
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+
+    @media(max-width: 768px) {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 5%;
+    }
+`;
+
+const Online = styled.button`
+    border-radius: 8px;
+    border: 1px solid #7B88FF;
+    background-color: transparent;
+
+    color: #A87EFF;
+    font-size: 20px;
+    height: 48px;
+    width: 40%;
+    cursor: pointer;
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const Date = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    padding-bottom: 16px;
+    background: #2F3247;
+    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
+    border-radius: 8px;
+    margin-right: 16px;
+    padding-right: 16px;
+    padding-left: 16px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+        margin-right: 0;
+    }
+`;
 
 const FooterCard = styled.div`
     align-items: center;
@@ -223,6 +289,11 @@ const FooterCard = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 20px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        justify-content: space-between;
+    }
 `;
 
 
@@ -264,13 +335,7 @@ const DateView = styled.div`
     flex-direction: row;
     align-items: center;
     display: flex;
-
-    width: 45%;
-    height: 150px;
-    background: #2F3247;
-    box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
-    border-radius: 8px;
-
+    justify-content: space-evenly;
 `;
 
 
@@ -299,14 +364,12 @@ const Footer = styled.div`
     align-items: center;
     justify-content: flex-end;
     display: flex;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
-
-const Back = styled.img`
-    width: 48px;
-    height: 48px;
-    align-self: flex-end;
-`;
 
 const Percent = styled.div`
     height: 130px;
@@ -340,6 +403,10 @@ const Percent = styled.div`
     &:hover {
         opacity: 1;
         transition: opacity 0.2s ease 0s;
+    }
+
+    @media(max-width: 768px) {
+        width: 50%;
     }
 `;
 
@@ -390,6 +457,10 @@ const Count = styled.div`
         opacity: 1;
         transition: opacity 0.2s ease 0s;
     }
+
+    @media(max-width: 768px) {
+        width: 50%;
+    }
 `;
 
 const Links = styled.div`
@@ -421,6 +492,10 @@ const Links = styled.div`
         transition: opacity 0.2s ease 0s;
     }
 
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
 `;
 
 const InnerView = styled.a`
@@ -505,7 +580,11 @@ const CardSectionTwo = styled.div`
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
-    padding: 10px
+    padding: 10px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 const CardSectionOne = styled.div`
@@ -514,6 +593,15 @@ const CardSectionOne = styled.div`
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        height: auto;
+    }
 `;
 
 const Card = styled.div`
@@ -522,6 +610,11 @@ const Card = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 10px;
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+
+    }
 `;
 
 const CardSectionInfo = styled.div`
@@ -565,41 +658,5 @@ const Info = styled.div`
     }
 `;
 
-
-const Tab = styled.div`
-    width: 28.3%;   
-    cursor: pointer;
-    text-align: center;
-    padding: 10px;
-`;
-
-
-const ArrowIcon = styled.img`
-    width: 13.33px;
-    height: 8.23px;
-    margin-left: 5px;
-`;
-
-const UserIcon = styled.img`
-    width: 21.33px;
-    height: 21.33px;
-    margin-left: 10px;
-`;
-
-
-const IconsDiv = styled.div`
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-`;
-
-
-const TopView = styled.div`
-    flex-direction: row;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-`;
 
 export default FormInfo;

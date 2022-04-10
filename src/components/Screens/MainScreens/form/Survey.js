@@ -26,12 +26,9 @@ const Survey = (props) => {
     const [modalVisible, setModalVisible] = useState(0);
 
 
-    useEffect(() => {
-        console.log('data', props.data)
-    }, []);
-
     const getQuestionSurvey = () => {
-        navigate('/form/info/survey/surveys');
+        MeetingProfileStore.setSurveyId(props.data.surveyId);
+        navigate('/form/info/survey/SurveyQuestion');
     };
 
 
@@ -49,7 +46,7 @@ const Survey = (props) => {
 
 
     return (
-        <div className="main">
+        <div>
 
 
             <SurveyView>
@@ -58,9 +55,7 @@ const Survey = (props) => {
             </SurveyView>
 
 
-            <ShortDescription>
-                موضوع نظرسنجی : <span>{props.data.title}</span>
-            </ShortDescription>
+            <ShortDescription> موضوع نظرسنجی : <span>{props.data.title}</span></ShortDescription>
 
             <Card>
 
@@ -118,15 +113,9 @@ const Survey = (props) => {
             </Describtion>
 
             <Footer>
-                <Button
-                    onPress={() => console.log('online meeting')}
-                    title={'مشاهده آنلاین'} />
+                <Online>مشاهده آنلاین</Online>
 
-                <Button
-                    primary
-                    onPress={onTakeSurvey}
-                    title={'شرکت در نظرسنجی'} />
-
+                <SurveyOnclick onClick={onTakeSurvey}>شرکت در نظرسنجی</SurveyOnclick>
             </Footer>
 
             <ModalComponent
@@ -142,6 +131,53 @@ const Survey = (props) => {
     );
 };
 
+
+const SurveyOnclick = styled.a`
+    width: 215px;
+    height: 48px;
+    
+    border: 1px solid transparent;
+
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px;
+
+
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    display: flex;
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+
+    @media(max-width: 768px) {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 5%;
+    }
+`;
+
+const Online = styled.button`
+    border-radius: 8px;
+    border: 1px solid #7B88FF;
+    background-color: transparent;
+
+    color: #A87EFF;
+    font-size: 20px;
+    height: 48px;
+    width: 40%;
+    cursor: pointer;
+
+    @media(max-width: 768px) {
+        width: 100%;
+    }
+`;
 
 const Exit = styled.div`
     font-size: 20px;
@@ -196,6 +232,11 @@ const CardSection = styled.div`
         margin-left: 10px;
         text-align: center;
     }
+
+    
+    @media(max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 
@@ -218,6 +259,7 @@ const SurveyView = styled.div`
         text-align: right;
 
     }
+
 `;
 
 const Footer = styled.div`
@@ -227,6 +269,9 @@ const Footer = styled.div`
     display: flex;
     margin-top: 50px;
     
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 
@@ -237,6 +282,8 @@ const Card = styled.div`
     flex-direction: row;
     display: flex;
     margin-bottom: 10px;
+
+    
 `;
 
 

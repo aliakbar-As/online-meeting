@@ -153,9 +153,7 @@ const ForumList = (props) => {
 
                 </>
                 :
-                <NullData>
-                    ! موردی یافت نشد
-                </NullData>}
+                <NullData>! موردی یافت نشد</NullData>}
 
 
 
@@ -290,7 +288,7 @@ const Tab = styled.div`
     padding: 10px;
     font-size: 14px;
     border-bottom: ${props => props.clicked ? '4px solid #97A1FF' : '1px solid #fff'};
-
+    display: flex;
 
     @media(max-width: 768px) {
         display: none;
@@ -310,6 +308,7 @@ const TabContainer = styled.div`
     img {
         width: 25px;
         height: 25px;
+
         @media(min-width: 768px) {
             display: none;
         }

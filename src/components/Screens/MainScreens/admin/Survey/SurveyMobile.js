@@ -47,14 +47,17 @@ const SurveyMobile = (props) => {
 
     return (
         <div>
-            <Header backOnclick={() => navigate(-1)} />
+
+            <div style={{ padding: 10 }}>
+                <Header backOnclick={() => navigate(-1)} />
+            </div>
 
             <Info>
                 <span>مجمع ها / نظرسنجی ها</span>
             </Info>
 
             {surveyData.map(item => (
-                <LittleCard key={item.surveyId} onClick={() => seeElectionInfo(item.surveyId)}>
+                <LittleCard key={item.surveyId}>
                     <Section>
                         <span>عنوان : </span>
                         <p> {item.title}</p>
@@ -80,14 +83,15 @@ const SurveyMobile = (props) => {
                         <p>{item.surveyStatus === 1 ? 'ایجاد شده' : item.surveyStatus === 2 ? 'در حال برگزاری' : "به پایان رسیده"}</p>
                     </Section>
 
-                    <SeeMore>
-                        <p onClick={() => editSurvey(item.surveyId)}>ویرایش</p>
+                    <SeeMore onClick={() => editSurvey(item.surveyId)}>
+                        <p >ویرایش</p>
+
                         <p onClick={() => seeElectionInfo(item.surveyId)}>مشاهده</p>
                     </SeeMore>
                 </LittleCard>
             ))}
 
-                <Add onClick={() => navigate('/admin/survey/add')}>افزودن نظرسنجی</Add>
+            <Add onClick={() => navigate('/admin/survey/add')}>افزودن نظرسنجی</Add>
 
 
             <ModalComponent
@@ -106,7 +110,7 @@ const SurveyMobile = (props) => {
                 okOnclick={() => navigate('/admin/survey/editInfo')}
                 cancelOnclick={() => navigate('/admin/survey/editQuestions')}
             />
-            
+
             {loading ? <Loading /> : null}
         </div>
     );
@@ -140,7 +144,9 @@ const SeeMore = styled.div`
     color: #97A1FF;
     font-size: 20px;
     margin-top: -16px;
-width: 100%;
+    width: 100%;
+    z-index: 0;
+
     p {
         margin-left: 10px;
     }

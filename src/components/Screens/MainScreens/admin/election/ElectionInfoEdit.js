@@ -67,10 +67,11 @@ const ElectionInfoEdit = (props) => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [surveyStatus, setSurveyStatus] = useState('');
+    const [surveyType, setSurveyType] = useState(2);
     const [id, setId] = useState('');
 
     const [files, setFiles] = useState([]);
-    const [finalFiles, setFinalFiles] = useState([]);
+    const [deleteFiles, setDeleteFiles] = useState([]);
 
     useEffect(() => {
         getInfo();
@@ -84,7 +85,10 @@ const ElectionInfoEdit = (props) => {
             setFiles(res.surveyAttachments);
             setMeetingId(res.meetingId);
             setId(res.id);
+            setSurveyType(res.surveyType);
             setSurveyStatus(res.surveyStatus);
+
+
             const startDate = moment(res.startDatetime).format('jYYYY/jM/jD');
             const startTime = moment(res.startDatetime).format('HH:mm');
             const splitStartDate = startDate.split('/');
@@ -142,18 +146,17 @@ const ElectionInfoEdit = (props) => {
         const convertedEndDate = `${endDate.gy}-${eMonthConverted}-${eDayConverted}T${endTime}:36.004Z`;
 
 
-        // SurveyStore.setData(meetingId, 1, companyCode, 1, convertedStartDate, convertedEndDate, description);
-
+        let mergedFiles = [...filesUploaded, ...deleteFiles];
         let newElement = {
             id: id,
-            surveyType: 2,
+            surveyType: surveyType,
             meetingId: meetingId,
             title: surveyTitle,
             startDatetime: convertedStartDate,
             endDatetime: convertedEndDate,
             surveyStatus: Number(surveyStatus),
             description: description,
-            surveyAttachments: filesUploaded,
+            surveyAttachments: mergedFiles,
         };
 
         SurveyStore.putSurveyInfo(newElement).then(() => {
@@ -169,7 +172,7 @@ const ElectionInfoEdit = (props) => {
 
 
     const deleteIcon = (data) => {
-        setFiles(files.filter(item => item.title !== data.title));
+        setFiles(files.filter(item => item.id !== data.id));
 
 
         let newElement = {
@@ -180,7 +183,7 @@ const ElectionInfoEdit = (props) => {
             isDeleted: true,
         };
 
-        setFinalFiles(finalFiles => [...finalFiles, newElement]);
+        setDeleteFiles(deleteFiles => [...deleteFiles, newElement]);
 
     };
 
@@ -347,10 +350,7 @@ const ElectionInfoEdit = (props) => {
             </CardSection>
 
             <Footer>
-                <Add onClick={uploadFiles}>
-                    ثبت اطلاعات
-                </Add>
-
+                <Add onClick={uploadFiles}>ثبت اطلاعات</Add>
             </Footer>
 
 

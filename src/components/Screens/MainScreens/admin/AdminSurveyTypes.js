@@ -11,10 +11,12 @@ import Survey from './Survey/Survey';
 
 import empty from '../../../../assets/mainScreens/Exclude.png';
 import { Header, Loading } from '../../../Commons';
+import useWindowDimensions from '../../../../Utils/Dimension';
 
 const AdminSurveyTypes = (props) => {
     const navigate = useNavigate();
     const { MeetingProfileStore } = useContext(StoreContext);
+    const { width } = useWindowDimensions();
 
     const [surveyData, setSurveyData] = useState([]);
     const [electionData, setElectionData] = useState([]);
@@ -42,7 +44,7 @@ const AdminSurveyTypes = (props) => {
                 <span>مجمع ها / نظرسنجی ها و انتخابات</span>
             </Info>
 
-            {electionData !== 0 ? <Election data={electionData} /> : null}
+            {electionData.length !== 0 ? <Election data={electionData} /> : null}
 
 
             {surveyData.length !== 0 ? <Survey data={surveyData} /> : null}

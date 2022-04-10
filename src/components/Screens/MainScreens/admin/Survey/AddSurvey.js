@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 
 
-import { DateModal, Header, Input } from '../../../../Commons';
+import { DateModal, Header, Loading } from '../../../../Commons';
 
 
 import upload from '../../../../../assets/mainScreens/upload.png';
@@ -28,6 +28,7 @@ const AddSurvey = (props) => {
     const [meetingId, setMeetingId] = useState('');
 
     const [meetingList, setMeetingList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
 
     const [startDateModal, setStartDateModal] = useState(false);
@@ -133,15 +134,14 @@ const AddSurvey = (props) => {
 
 
             <CardSection>
-                <select
-                    style={selectStyle}
+                <Select
                     onChange={e => setMeetingId(e.target.value)}
                     value={meetingId}>
                     <option value=''>نام مجمع</option>
                     {meetingList.map((item, index) => (
                         <option key={index} value={item.meetingId}>{item.meetingTitle}</option>
                     ))}
-                </select>
+                </Select>
 
 
                 <Input
@@ -160,8 +160,7 @@ const AddSurvey = (props) => {
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
-                        onChange={e => setEndTime(e.target.value)}
-                        type={'time'} />
+                        onChange={e => setEndTime(e.target.value)} />
                     <span>ساعت پایان</span>
                 </ClockView>
 
@@ -174,8 +173,7 @@ const AddSurvey = (props) => {
                     <Clock
                         type="time" id="appt" name="appt"
                         min="09:00" max="18:00" required
-                        onChange={e => setStartTime(e.target.value)}
-                        type={'time'} />
+                        onChange={e => setStartTime(e.target.value)} />
                     <span>ساعت شروع</span>
                 </ClockView>
 
@@ -238,10 +236,7 @@ const AddSurvey = (props) => {
             </CardSection>
 
             <Footer>
-                <Add onClick={uploadFiles}>
-                    تایید و ادامه
-                </Add>
-
+                <Add onClick={uploadFiles}>تایید و ادامه</Add>
             </Footer>
 
 
@@ -249,6 +244,7 @@ const AddSurvey = (props) => {
                 title={'تاریخ شروع'}
                 modalVisible={startDateModal}
                 closeModal={() => setStartDateModal(false)}
+                onClick={() => setStartDateModal(false)}
                 dayOnChange={e => setStartDay(e.target.value)}
                 monthOnChange={e => setStartMonth(e.target.value)}
                 yearOnChange={e => setStartYear(e.target.value)}
@@ -259,16 +255,62 @@ const AddSurvey = (props) => {
                 title={'تاریخ پایان'}
                 modalVisible={endDateModal}
                 closeModal={() => setEndDateModal(false)}
+                onClick={() => setEndDateModal(false)}
                 dayOnChange={e => setEndDay(e.target.value)}
                 monthOnChange={e => setEndMonth(e.target.value)}
                 yearOnChange={e => setEndYear(e.target.value)}
                 currentDate={`${endYear} / ${endMonth} / ${endDay}`}
             />
+
+            {loading ? <Loading /> : null}
         </div>
     );
 };
 
+const Input = styled.input`
+    background: transparent;
+    border-radius: 8px;
+    width: 450px;
+    height: 48px;
+    text-align: right;
+    color: #fff;
+    padding: 10px;
+    border: 0px;
+    margin-left: 16px;
+    border: 1px solid #7F829F;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 10px;
 
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+    }
+`;
+
+const Select = styled.select`
+    background: transparent;
+    color: #7F829F;
+    font-size: 16px;
+    width: 450px;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+    padding: 5px;
+    text-align: right;
+    direction: rtl;
+    margin-left: 16px;
+    height: 48px;
+    justify-content: flex-end;
+    align-self: flex-end;
+    display: flex;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        
+    }
+`;
 const Files = styled.div`
     background: #B4BBFF;
     border-radius: 8px;
@@ -307,8 +349,8 @@ const ClockView = styled.div`
     height: 48px;
     width: 23%;
     border: 1px solid #7F829F;
-box-sizing: border-box;
-border-radius: 8px;
+    box-sizing: border-box;
+    border-radius: 8px;
     justify-content: space-between;
     align-items: center;
     padding: 16px;
@@ -322,24 +364,13 @@ border-radius: 8px;
         color: #A7AAC6;
         font-size: 12px;
     }
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
-const selectStyle = {
-    background: 'transparent',
-    color: '#7F829F',
-    fontSize: 16,
-    width: 450,
-    borderRadius: 8,
-    flexDirection: 'row-reverse',
-    padding: 5,
-    textAlign: 'right',
-    direction: 'rtl',
-    marginLeft: 16,
-    height: 48,
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    display: 'flex',
-};
 
 const DateContainer = styled.div`
     align-items: center;
@@ -347,6 +378,11 @@ const DateContainer = styled.div`
     flex-direction: row;
     display: flex;
     margin-top: 16px;
+
+    @media(max-width: 768px) {
+        flex-direction: column-reverse;
+        margin-top: 0;
+    }
 `;
 
 
@@ -369,6 +405,10 @@ const Date = styled.div`
         height: 18.67px;
     }
 
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
 const Add = styled.button`
@@ -399,32 +439,12 @@ const TextInput = styled.textarea`
     font-weight: bold;
     color: #ffffff;
     font-size: 20px;
-`;
 
-const SelectView = styled.div`
-    flex-direction: row;
-    display: flex;
-    height: 48px;
-    width: 450px;
-    background: #545772;
-    border-radius: 8px;
-    margin-left: 16px;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    cursor: pointer;
-
-    img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
+    @media(max-width: 768px) {
+        margin-left: 0;
     }
 `;
+
 
 const View = styled.div`
     flex-direction: row;
@@ -441,16 +461,12 @@ const View = styled.div`
     border-radius: 8px;
 cursor: pointer;
 
-    /* img {
-        width: 48px;
-        height: 48px;
-        cursor: pointer;
+@media(max-width: 768px) {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        margin-bottom: 16px;
     }
-
-    span {
-        color: #A7AAC6;
-        font-size: 16px;
-    } */
 `;
 
 
@@ -460,7 +476,11 @@ const CardSection = styled.div`
     align-items: center;
     justify-content: flex-end;
     margin-top: 16px;
-    
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+        margin-top: 0;
+    }
 `;
 
 
@@ -482,6 +502,10 @@ const SurveyView = styled.div`
         color: #97A1FF;
         text-align: right;
 
+    }
+
+    @media(max-width: 768px) {
+        margin-bottom: 16px;
     }
 `;
 

@@ -38,17 +38,13 @@ const OngoingEvents = (props) => {
                             <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
                         </Wrap>
 
-                        <Button onClick={() => handleMeetingDetails(item.id)}>
-                            مشاهده و ویرایش
-                        </Button>
+                        <Button onClick={() => handleMeetingDetails(item.id)}>مشاهده و ویرایش</Button>
                     </Table>
                 )
             })}
 
 
-            <AddMeeting onClick={() => navigate('/admin/add')}>
-                افزودن مجمع
-            </AddMeeting>
+            <AddMeeting onClick={() => navigate('/admin/add')}>افزودن مجمع</AddMeeting>
 
             {loading ? <Loading /> : null}
         </Main>

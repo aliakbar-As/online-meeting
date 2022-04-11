@@ -163,6 +163,7 @@ const ForumList = (props) => {
                 content={'مجتمع با موفقیت ثبت شد.'}
             />
 
+
             {loading ? <Loading /> : null}
         </>
     );

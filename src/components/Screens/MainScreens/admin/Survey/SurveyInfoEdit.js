@@ -16,6 +16,7 @@ import StoreContext from '../../../../../Stores';
 import jalaali from 'jalaali-js';
 import moment from 'moment-jalaali';
 import useWindowDimensions from '../../../../../Utils/Dimension';
+import { AuthStore } from '../../../../../Stores/AuthStore';
 
 
 
@@ -157,6 +158,7 @@ const SurveyInfoEdit = (props) => {
         };
 
         SurveyStore.putSurveyInfo(newElement).then(() => {
+            AuthStore.setToken();
             if (width > 768) {
                 navigate('/admin/surveyType');
             } else {

@@ -319,7 +319,7 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 request.get('/Survey/Surveys', {
                     params: {
                         count: 50,
-                        orderBy: 'surveyType',
+                        orderBy: 'surveyType , startDatetime desc',
                         skip: 0,
                         surveyType: surveyType,
                         meetingId: self.meetingId,

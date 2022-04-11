@@ -220,7 +220,6 @@ const ForumInfo = (props) => {
 
             </Footer>
 
-
         </div>
     );
 };

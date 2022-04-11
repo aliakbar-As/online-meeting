@@ -12,6 +12,7 @@ import StoreContext from '../../../Stores';
 
 import spinner from '../../../assets/auth/spinner.svg';
 import { Logger } from '../../../Utils';
+import { ModalComponent } from '../../Commons';
 
 function Login() {
     const { AuthStore } = useContext(StoreContext);
@@ -47,7 +48,6 @@ function Login() {
                 } else {
                     alert(AuthStore.errMessage);
                     setLoading(false);
-
                 };
             });
 
@@ -78,6 +78,7 @@ function Login() {
                 <SignIn disabled={loading} onClick={loginUser}>
                     {loading ? <img src={spinner} alt='' /> : 'ورود'}
                 </SignIn>
+
 
             </Content>
         </>

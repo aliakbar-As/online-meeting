@@ -12,6 +12,7 @@ import menu from '../../../../assets/mainScreens/menu.svg';
 
 import StoreContext from '../../../../Stores';
 import { Loading } from '../../../Commons';
+import { Notify } from '../../../../Utils/Notify';
 
 let tabs = [
     {
@@ -72,7 +73,7 @@ const Form = (props) => {
     };
 
     return (
-        <>
+        <Notify>
             <TopView>
                 <IconsDiv onClick={removeUser}>
                     <UserIcon src={user} alt="user" />
@@ -108,7 +109,7 @@ const Form = (props) => {
             }
 
             {loading ? <Loading /> : null}
-        </>
+        </Notify>
     );
 };
 

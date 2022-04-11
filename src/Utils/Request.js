@@ -195,6 +195,7 @@ class Request {
 
     async expiredToken() {
         localStorage.removeItem('@token');
+        window.location.href = '/';
     };
 
     removeDuplicate(url, data) {

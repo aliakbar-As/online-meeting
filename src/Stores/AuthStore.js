@@ -7,7 +7,7 @@ const authStore = types.model('authStore', {
     loading: types.optional(types.boolean, false),
     phoneNumber: types.maybeNull(types.string),
     errMessage: types.maybeNull(types.string),
-
+    token: types.optional(types.string, ''),
     roleId: types.maybeNull(types.number),
 }).actions((self) => {
     return {
@@ -21,17 +21,13 @@ const authStore = types.model('authStore', {
                 }).then(({ data }) => {
 
                     Logger(data, 'Login');
-
-                    if (data.hasError) {
-                        this.setErrorMessage(data.error);
-                        resolve(false);
-                        return;
-                    };
-
                     resolve(true);
                     this.changeLoading(false);
-                }).catch(err => {
-                    console.log('error', err);
+                    
+                }).catch(error => {
+                    console.log('erroe', error);
+                    resolve(false);
+                    this.setErrorMessage(error.response.data.error);
                     this.changeLoading(false);
                 });
             }).catch(error => console.warn(error));
@@ -45,12 +41,6 @@ const authStore = types.model('authStore', {
                 }).then(res => {
                     const data = res.data;
                     Logger(data, 'Verification');
-
-                    if (data.hasError) {
-                        this.setErrorMessage(data.error);
-                        resolve(false);
-                        return;
-                    };
                     localStorage.setItem('@token', data.data.token);
 
                     resolve(data.data.active ? 'registered' : 'none');
@@ -58,7 +48,9 @@ const authStore = types.model('authStore', {
                     this.setRoleId(data.data.userRoles);
 
                 }).catch(error => {
-                    console.log('errr', error)
+                    resolve(false);
+                    console.log('erroe', error);
+                    this.setErrorMessage(error.response.data.error);
                 });
             }).catch(error => console.warn(error));
 
@@ -86,20 +78,20 @@ const authStore = types.model('authStore', {
                 }, {}, false).then(res => {
                     const data = res.data;
                     Logger(data, 'register');
-                    if (data.hasError) {
-                        this.setErrorMessage(data.error);
-                        resolve(false);
-                        return;
-                    };
                     resolve(true);
                 }).catch(err => {
                     console.log('erroe', err);
                     resolve(false);
+                    this.setErrorMessage(err.response.data.error);
                 });
             }).catch(erro => console.log('erro', erro));
         },
 
+        setToken() {
+            let token = localStorage.getItem('@token');
 
+            self.token = token;
+        },
         setRoleId(data) {
             if (data.length !== 2) {
                 self.roleId = data[0].roleId;

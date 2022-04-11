@@ -12,6 +12,7 @@ import Survey from './Survey/Survey';
 import empty from '../../../../assets/mainScreens/Exclude.png';
 import { Header, Loading } from '../../../Commons';
 import useWindowDimensions from '../../../../Utils/Dimension';
+import { Notify } from '../../../../Utils/Notify';
 
 const AdminSurveyTypes = (props) => {
     const navigate = useNavigate();
@@ -62,6 +63,7 @@ const AdminSurveyTypes = (props) => {
 
 
             {loading ? <Loading /> : null}
+            
         </div>
     );
 };

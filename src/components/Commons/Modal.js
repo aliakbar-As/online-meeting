@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
@@ -7,21 +6,6 @@ import styled from 'styled-components';
 import check from '../../assets/mainScreens/check.png';
 import error from '../../assets/mainScreens/error.png';
 import useWindowDimensions from '../../Utils/Dimension';
-
-
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: '#545772',
-        padding: '-120px',
-        borderRadius: '16px',
-    },
-};
 
 
 export const ModalComponent = ({
@@ -32,7 +16,8 @@ export const ModalComponent = ({
     content, alert,
     okOnclick,
     cancelOnclick,
-    hasError, okTitle, cancelTitle
+    hasError, okTitle, cancelTitle,
+    drawer, tabData, selectedTabId
 }) => {
     const { width } = useWindowDimensions();
 
@@ -44,6 +29,7 @@ export const ModalComponent = ({
                 onRequestClose={closeModal}
                 style={customStyles}
                 contentLabel={contentLabel}
+                ariaHideApp={false}
             >
                 <Alert size={width}>
                     <span>{content}</span>
@@ -69,6 +55,7 @@ export const ModalComponent = ({
                 onRequestClose={closeModal}
                 style={customStyles}
                 contentLabel={contentLabel}
+                ariaHideApp={false}
             >
                 <View size={width}>
                     <img src={hasError ? error : check} alt="check" />
@@ -80,13 +67,14 @@ export const ModalComponent = ({
     }
 };
 
+
 const No = styled.a`
     border-radius: 8px;
     height: 48px;
     width: 215px;
     color: #fff;
     font-size: 18px;
-    margin-right: 10px;
+    margin-left: 10px;
     cursor: pointer;
     background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
     text-align: center;
@@ -106,7 +94,7 @@ const Yes = styled.a`
     width: 215px;
     color: #fff;
     font-size: 18px;
-    margin-left: 10px;
+    margin-right: 10px;
     cursor: pointer;
     background: #6070FF;
     text-align: center;
@@ -136,7 +124,7 @@ const Footer = styled.div`
 
 const Alert = styled.div`
     width: 686px;
-    height: 220px;
+    /* height: 220px; */
 
     background: #545772;
 
@@ -147,11 +135,16 @@ const Alert = styled.div`
     flex-direction: column;
     display: flex;
     font-size: 20px;
-
+    text-align: center;
+    padding-bottom: 32px;
+    padding-top: 32px;
+    direction: rtl;
 
     @media(max-width: 768px) {
         width: ${props => (props.size)};
         font-size: 16px;
+        width: 100%;
+        
     }
 
     span {
@@ -180,3 +173,20 @@ const View = styled.div`
         margin-top: 20px;
     }
 `;
+
+
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#545772',
+        padding: '-120px',
+        borderRadius: '16px',
+    },
+};
+

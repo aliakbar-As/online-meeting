@@ -1,18 +1,28 @@
 import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel } from "@microsoft/signalr";
-
-import { Button, Input, notification } from "antd";
-import React, { useEffect, useState, createContext } from "react";
-import { ModalComponent } from "../components/Commons";
+import React, { useEffect, useState, createContext, useContext } from "react";
+import { Loading, ModalComponent } from "../components/Commons";
 import { AuthStore } from "../Stores/AuthStore";
+
+import { useNavigate } from 'react-router-dom';
+import StoreContext from '../Stores';
 
 
 export const SignalrContext = createContext();
 
 export const Notify = ({ children }) => {
+    const navigate = useNavigate();
+    const { MeetingProfileStore } = useContext(StoreContext);
+
     const [connection, setConnection] = useState(null);
     const [inputText, setInputText] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
-    const [messsage, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [notifyData, setNotifyData] = useState({
+        id: '',
+        notificationType: 0,
+        sendAt: '',
+        text: '',
+    });
 
 
     useEffect(() => {
@@ -24,13 +34,16 @@ export const Notify = ({ children }) => {
             connection
                 .start()
                 .then(() => {
-                    connection.on("ReceiveMessage", (message) => {
+                    connection.on("ReceiveMessage", (data) => {
+                        // console.log('receive messate', data)
                         setModalVisible(true);
-                        console.log('ressvei', message)
-                        setMessage(message);
+                        setNotifyData(data);
                     });
                 })
-                .catch((error) => console.log('EERROR', error));
+                .catch((error) => {
+                    setNotifyData({});
+                    console.log('EERROR', error)
+                });
         }
     }, [connection]);
 
@@ -44,7 +57,7 @@ export const Notify = ({ children }) => {
         };
 
         const connect = new HubConnectionBuilder()
-            .withUrl("http://om-api-test.hiweb.ir/hubs/notifications", hubConnectionOptions)
+            .withUrl(`http://om-api-test.hiweb.ir/hubs/notifications`, hubConnectionOptions)
             .configureLogging(LogLevel.Debug)
             .withAutomaticReconnect()
             .build();
@@ -57,21 +70,52 @@ export const Notify = ({ children }) => {
         setInputText("");
     };
 
+    const handleNotifyType = () => {
+        switch (notifyData.notificationType) {
+            case 1:
+                //meeting
+                setLoading(true);
+                MeetingProfileStore.setMettingId(notifyData.id);
+                MeetingProfileStore.getMeetingDetails(notifyData.id).then(() => {
+                    navigate('/form/info');
+                    setLoading(false);
+                });
+                break;
+
+            case 2:
+                //survey
+                MeetingProfileStore.setSurveyId(notifyData.id);
+                navigate('/form/info/survey/SurveyQuestion');
+                break;
+
+            case 3:
+                //election
+                MeetingProfileStore.setSurveyId(notifyData.id);
+                navigate('/form/info/election/SurveyQuestion');
+                break;
+
+            default:
+                break;
+        }
+    };
+
     return (
         <SignalrContext.Provider value={{ connection, setConnection, sendMessage }}>
-            
+
 
             {children}
 
             <ModalComponent
                 alert
-                okTitle={'برو به مجمع'}
-                okOnclick={() => setModalVisible(false)}
+                okTitle={`برو به ${notifyData.notificationType === 1 ? 'مجمع' : notifyData.notificationType === 2 ? 'نظرسنجی' : 'انتخابات'}`}
+                okOnclick={handleNotifyType}
                 cancelOnclick={() => setModalVisible(false)}
-                content={`${messsage}`}
+                content={`${notifyData.text}`}
                 cancelTitle={"بیخیال"}
                 modalVisible={modalVisible}
                 onRequestClose={() => setModalVisible(false)} />
+
+            {loading ? <Loading /> : null}
         </SignalrContext.Provider>
     );
 };

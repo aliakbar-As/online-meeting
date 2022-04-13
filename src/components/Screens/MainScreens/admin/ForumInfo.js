@@ -160,7 +160,7 @@ const ForumInfo = (props) => {
 
                     </DateView>
 
-                    <Edit onClick={() => navigate('/admin/info/editDate')}>
+                    <Edit hasStyled={'date'} onClick={() => navigate('/admin/info/editDate')}>
                         ویرایش
                     </Edit>
                 </Date>
@@ -213,16 +213,43 @@ const ForumInfo = (props) => {
             <Footer>
                 <Online>مشاهده آنلاین</Online>
 
-                <Button
-                    primary
-                    onPress={serveyOnclick}
-                    title={'انتخابات و نظرسنجی'} />
+                <SurveyButton onClick={serveyOnclick}>انتخابات و نظرسنجی</SurveyButton>
 
             </Footer>
 
         </div>
     );
 };
+
+const SurveyButton = styled.a`
+    width: 215px;
+    height: 48px;
+    
+    border: 1px solid transparent;
+
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    border-radius: 8px;
+
+
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    display: flex;
+    &:hover {
+        opacity: 1;
+        transition: opacity 0.2s ease 0s;
+    }
+
+    @media(max-width: 768px) {
+        margin-left: 0;
+        width: 100%;
+    }
+`;
 
 const FooterCard = styled.div`
     align-items: center;
@@ -233,7 +260,6 @@ const FooterCard = styled.div`
 
     @media(max-width: 768px) {
         width: 100%;
-        justify-content: space-between;
     }
 `;
 
@@ -244,6 +270,10 @@ const InnerPercent = styled.div`
     
     p {
         margin-left: 10px;
+
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 `;
 const Edit = styled.button`
@@ -257,6 +287,12 @@ const Edit = styled.button`
     align-self: flex-end;
     margin-top: 32px;
     cursor: pointer;
+    
+    margin-right: ${props => props.hasStyled === 'date' ? '16px' : 0};
+    @media(max-width: 768px) {
+        margin: auto;
+        margin-top: 10px;
+    }
 `;
 
 
@@ -270,6 +306,11 @@ const Online = styled.button`
     height: 48px;
     width: 40%;
     cursor: pointer;
+
+    @media(max-width: 768px) {
+        width: 100%;
+        margin-bottom: 16px;
+    }
 `;
 
 
@@ -287,20 +328,23 @@ const CardTwo = styled.div`
 
 
 const CardSection = styled.div`
-    width: 45%;
+    width: 100%;
     height: 150px;
-    
-    border-radius: 8px;
     padding-top: 16px;
     flex-direction: column;
     align-items: center;
     width: 100%;
     justify-content: center;
+    display: flex;
     
     span {
         font-size: 15px;
         color: #B4BBFF;
         text-align: center;
+
+        @media(max-width: 786px) {
+            font-size: 12px;
+        }
     }
 
     div {
@@ -312,6 +356,10 @@ const CardSection = styled.div`
         justify-content: flex-start;
         margin-left: 30%;
         height: 30%;
+
+        @media(max-width: 786px) {
+            margin-left: 15%;
+        }
     }
 
     p {
@@ -319,6 +367,10 @@ const CardSection = styled.div`
         color: #7B88FF;
         margin-left: 10px;
         text-align: center;
+
+        @media(max-width: 786px) {
+            font-size: 12px;
+        }
     }
 `;
 
@@ -331,8 +383,6 @@ const Date = styled.div`
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
     margin-right: 16px;
-    padding-right: 16px;
-    padding-left: 16px;
 
     @media(max-width: 768px) {
         width: 100%;
@@ -356,6 +406,11 @@ const Footer = styled.div`
     display: flex;
     margin-top: 20px;
     margin-bottom: 10px;
+
+
+    @media(max-width: 768px) {
+        flex-direction: column;
+    }
 `;
 
 
@@ -386,6 +441,10 @@ const Percent = styled.div`
         font-weight: 300;
         font-size: 20px;
         color: #D2BDFF;
+
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
 
@@ -393,6 +452,10 @@ const Percent = styled.div`
         font-weight: bold;
         font-size: 25px;
         color: #D2BDFF;
+
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     &:hover {
@@ -426,6 +489,10 @@ const Count = styled.div`
         font-size: 20px;
         color: #D2BDFF;
 
+        @media(max-width: 768px) {
+            font-size: 12px;
+            margin-top: 16px;
+        }
     }
 
     div {
@@ -442,6 +509,9 @@ const Count = styled.div`
         text-align: center;
         color: #D2BDFF;
 
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     img {

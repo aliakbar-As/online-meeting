@@ -22,6 +22,7 @@ import { Button, Header } from '../../../../components/Commons';
 
 import clock from '../../../../assets/mainScreens/clock.png';
 import calender from '../../../../assets/mainScreens/calender.png';
+import { Notify } from '../../../../Utils/Notify';
 
 const FormInfo = (props) => {
     const navigate = useNavigate();
@@ -53,166 +54,168 @@ const FormInfo = (props) => {
 
 
     return (
-        <div className="main">
+        <Notify>
+            <div className="main">
 
-            <Header backOnclick={() => navigate(-1)} />
+                <Header backOnclick={() => navigate(-1)} />
 
-            <Info>
-                <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
-            </Info>
+                <Info>
+                    <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
+                </Info>
 
-            <ShortDescription>
-                {MeetingProfileStore.meetingDetails.description}
-            </ShortDescription>
-
-
-            <Card>
-                <CardSectionTwo>
-
-                    <InfoView>
-                        <LogoView>
-                            <span>{MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
-
-                            <img src={MeetingProfileStore.meetingDetails.companyImageUrl} alt="alt" />
-                        </LogoView>
-
-                        <span style={{ color: '#A7AAC6' }}>{MeetingProfileStore.meetingDetails.tickerSymbol}  : کد </span>
-
-                        <span>
-                            {/* {moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')} */}
-                        </span>
-
-                    </InfoView>
+                <ShortDescription>
+                    {MeetingProfileStore.meetingDetails.description}
+                </ShortDescription>
 
 
-                    <View>
-                        <p>مجمع سالیانه {MeetingProfileStore.meetingDetails.holderCompanyTitle}</p>
+                <Card>
+                    <CardSectionTwo>
+
+                        <InfoView>
+                            <LogoView>
+                                <span>{MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
+
+                                <img src={MeetingProfileStore.meetingDetails.companyImageUrl} alt="alt" />
+                            </LogoView>
+
+                            <span style={{ color: '#A7AAC6' }}>{MeetingProfileStore.meetingDetails.tickerSymbol}  : کد </span>
+
+                            <span>
+                                {/* {moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')} */}
+                            </span>
+
+                        </InfoView>
 
 
-                        <span>بازار بورس : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.stockMarketTitle} </span></span>
-
-                        <span>گروه صنعت : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.industryGroupTitle} </span></span>
-                        <span>نام مدیر عامل : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.ceoTitle} </span></span>
-                        <span>حجم مبنا : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.baseVolume} </span></span>
-
-                        <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.companyDescription} </span>
-
-                    </View>
-
-                </CardSectionTwo>
+                        <View>
+                            <p>مجمع سالیانه {MeetingProfileStore.meetingDetails.holderCompanyTitle}</p>
 
 
-                <CardSectionOne>
+                            <span>بازار بورس : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.stockMarketTitle} </span></span>
 
-                    <CardSectionInfo>
-                        <span>اطلاعات مجمع</span>
+                            <span>گروه صنعت : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.industryGroupTitle} </span></span>
+                            <span>نام مدیر عامل : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.ceoTitle} </span></span>
+                            <span>حجم مبنا : <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.baseVolume} </span></span>
 
-                        <img src={infoIcon} alt="alt" />
-                    </CardSectionInfo>
+                            <span style={{ color: '#B4BBFF' }}> {MeetingProfileStore.meetingDetails.companyDescription} </span>
+
+                        </View>
+
+                    </CardSectionTwo>
 
 
-                    <View>
-                        {MeetingProfileStore.meetingDetails.meetingUserDuties.map(item => (
-                            <span key={item.id}>{item.dutyTitle} : <span style={{ color: '#B4BBFF' }}> {item.stockholderName} </span></span>
+                    <CardSectionOne>
+
+                        <CardSectionInfo>
+                            <span>اطلاعات مجمع</span>
+
+                            <img src={infoIcon} alt="alt" />
+                        </CardSectionInfo>
+
+
+                        <View>
+                            {MeetingProfileStore.meetingDetails.meetingUserDuties.map(item => (
+                                <span key={item.id}>{item.dutyTitle} : <span style={{ color: '#B4BBFF' }}> {item.stockholderName} </span></span>
+                            ))}
+                        </View>
+                    </CardSectionOne>
+
+                </Card>
+
+
+                <Card>
+                    <Date>
+
+                        <DateView>
+                            <CardSection>
+                                <span>تاریخ و ساعت پایان</span>
+
+                                <div>
+                                    <img src={calender} alt="calender" />
+
+                                    <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
+                                </div>
+
+                                <div>
+                                    <img src={clock} alt="clock" />
+
+                                    <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
+                                </div>
+                            </CardSection>
+
+
+                            <CardSection>
+                                <span>تاریخ و ساعت فروش</span>
+
+                                <div>
+                                    <img src={calender} alt="calender" />
+
+                                    <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
+                                </div>
+
+                                <div>
+                                    <img src={clock} alt="clock" />
+
+                                    <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
+                                </div>
+                            </CardSection>
+
+                        </DateView>
+                    </Date>
+
+
+                    <Links>
+
+                        <div>
+                            <p>لینک های مستندات مرتبط با مجمع</p>
+                            <img src={pin} alt="users" />
+                        </div>
+
+
+                        {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
+                            <InnerView key={i} href={item.fileUri} download>
+                                <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
+                                <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
+                            </InnerView>
                         ))}
-                    </View>
-                </CardSectionOne>
 
-            </Card>
+                    </Links>
 
-
-            <Card>
-                <Date>
-
-                    <DateView>
-                        <CardSection>
-                            <span>تاریخ و ساعت پایان</span>
-
-                            <div>
-                                <img src={calender} alt="calender" />
-
-                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('jYYYY/jMM/jDD')}</p>
-                            </div>
-
-                            <div>
-                                <img src={clock} alt="clock" />
-
-                                <p>{moment(MeetingProfileStore.meetingDetails.endDatetime).format('HH:MM')}</p>
-                            </div>
-                        </CardSection>
+                </Card>
 
 
-                        <CardSection>
-                            <span>تاریخ و ساعت فروش</span>
+                <FooterCard>
+                    <Percent>
+                        <span>درصد حضور</span>
 
-                            <div>
-                                <img src={calender} alt="calender" />
-
-                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('jYYYY/jMM/jDD')}</p>
-                            </div>
-
-                            <div>
-                                <img src={clock} alt="clock" />
-
-                                <p>{moment(MeetingProfileStore.meetingDetails.holdingDatetime).format('HH:MM')}</p>
-                            </div>
-                        </CardSection>
-
-                    </DateView>
-                </Date>
+                        <InnerPercent>
+                            <p> درصد </p> <p> {percent}      %        </p>
+                        </InnerPercent>
+                    </Percent>
 
 
-                <Links>
+                    <Count>
+                        <span>تعداد نفرات حاظر</span>
 
-                    <div>
-                        <p>لینک های مستندات مرتبط با مجمع</p>
-                        <img src={pin} alt="users" />
-                    </div>
-
-
-                    {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
-                        <InnerView key={i} href={item.fileUri} download>
-                            <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
-                            <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
-                        </InnerView>
-                    ))}
-
-                </Links>
-
-            </Card>
+                        <div>
+                            <p>نفر {count} </p>
+                            <img src={users} alt="users" />
+                        </div>
+                    </Count>
+                </FooterCard>
 
 
-            <FooterCard>
-                <Percent>
-                    <span>درصد حضور</span>
+                <Footer>
+                    <Online>مشاهده آنلاین</Online>
 
-                    <InnerPercent>
-                        <p> درصد </p> <p> {percent}      %        </p>
-                    </InnerPercent>
-                </Percent>
+                    <SurveyOnclick onClick={serveyOnclick}>انتخابات و نظرسنجی                </SurveyOnclick>
+
+                </Footer>
 
 
-                <Count>
-                    <span>تعداد نفرات حاظر</span>
-
-                    <div>
-                        <p>نفر {count} </p>
-                        <img src={users} alt="users" />
-                    </div>
-                </Count>
-            </FooterCard>
-
-
-            <Footer>
-                <Online>مشاهده آنلاین</Online>
-
-                <SurveyOnclick onClick={serveyOnclick}>انتخابات و نظرسنجی                </SurveyOnclick>
-
-            </Footer>
-
-
-            <Exit onClick={leaveMeeting}>خروج</Exit>
-        </div>
+                <Exit onClick={leaveMeeting}>خروج</Exit>
+            </div>
+        </Notify>
     );
 };
 
@@ -273,8 +276,6 @@ const Date = styled.div`
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
     margin-right: 16px;
-    padding-right: 16px;
-    padding-left: 16px;
 
     @media(max-width: 768px) {
         width: 100%;
@@ -298,7 +299,7 @@ const FooterCard = styled.div`
 
 
 const CardSection = styled.div`
-    width: 45%;
+    width: 100%;
     height: 150px;
     
     border-radius: 8px;
@@ -310,6 +311,10 @@ const CardSection = styled.div`
         font-size: 15px;
         color: #B4BBFF;
         text-align: center;
+
+        @media(max-width: 786px) {
+            font-size: 12px;
+        }
     }
 
     div {
@@ -321,6 +326,10 @@ const CardSection = styled.div`
         justify-content: flex-start;
         margin-left: 30%;
         height: 30%;
+
+        @media(max-width: 786px) {
+            margin-left: 15%;
+        }
     }
 
     p {
@@ -328,6 +337,10 @@ const CardSection = styled.div`
         color: #7B88FF;
         margin-left: 10px;
         text-align: center;
+
+        @media(max-width: 786px) {
+            font-size: 12px;
+        }
     }
 `;
 
@@ -391,6 +404,10 @@ const Percent = styled.div`
         font-weight: 300;
         font-size: 20px;
         color: #D2BDFF;
+
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
 
@@ -398,6 +415,10 @@ const Percent = styled.div`
         font-weight: bold;
         font-size: 25px;
         color: #D2BDFF;
+
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     &:hover {
@@ -429,6 +450,10 @@ const Count = styled.div`
         font-size: 20px;
         color: #D2BDFF;
 
+        @media(max-width: 768px) {
+            font-size: 12px;
+            margin-top: 16px;
+        }
     }
 
     div {
@@ -445,6 +470,9 @@ const Count = styled.div`
         text-align: center;
         color: #D2BDFF;
 
+        @media(max-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     img {

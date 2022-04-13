@@ -27,9 +27,6 @@ const SurveyTypes = (props) => {
     const [condidateData, setCondidateData] = useState([]);
 
     useEffect(() => {
-        // console.log('list', MeetingProfileStore.surveyList.length)
-        // console.log('list', surveyData.length)
-
         MeetingProfileStore.getSurvey(false, undefined).then(res => {
             setSurveyData(res);
         });

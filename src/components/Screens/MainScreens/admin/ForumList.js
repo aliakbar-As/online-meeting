@@ -18,6 +18,7 @@ import { ModalComponent, Loading } from '../../../Commons';
 
 import StoreContext from '../../../../Stores';
 import useWindowDimensions from '../../../../Utils/Dimension';
+import Modal from 'react-modal';
 
 
 let tabs = [
@@ -83,6 +84,7 @@ const ForumList = (props) => {
     const setTabSelectedOnclick = (id) => {
         setTabSelectedId(id);
         requestMeetingData(id);
+        setModalVisible(false);
     };
 
     return (
@@ -109,7 +111,7 @@ const ForumList = (props) => {
                         )
                     })}
 
-                    <img src={menu} alt='' />
+                    <img src={menu} alt='' onClick={() => setModalVisible(true)}/>
                 </TabContainer>
 
             </TopView>
@@ -165,10 +167,72 @@ const ForumList = (props) => {
 
 
             {loading ? <Loading /> : null}
+
+            <Modal
+                isOpen={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+                style={drawerStyle}
+            >
+                <Content>
+                    {tabs.map((item, index) => (
+                        <Tabs onClick={() => setTabSelectedOnclick(item.id)}>
+                            <p style={{ color: item.id === tabSelectedId ? '#97A1FF' : 'white', }}>
+                                {index + 1}) {item.title}
+                            </p>
+                        </Tabs>
+                    ))}
+
+                    <Confirm onClick={() => setModalVisible(false)}>
+                        بستن
+                    </Confirm>
+                </Content>
+            </Modal>
         </>
     );
 };
 
+
+const Confirm = styled.a`
+    width: 100%;
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    /* border-radius: 8px; */
+    border: 1px solid #7B88FF;
+    text-align: center;
+    height: 45px;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+`;
+
+const Tabs = styled.div`
+    color: #fff;
+    /* justify-content: flex-end; */
+    /* align-items: flex-end; */
+    /* display: flex; */
+    margin: 16px;
+    direction: rtl;
+    
+`;
+
+const Content = styled.div`
+    background-color: #232539;
+    height: 100%;
+    width: 100%;
+    /* position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0; */
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+`;
 
 const ElectionButton = styled.a`
     justify-content: space-evenly;
@@ -352,13 +416,21 @@ const TopView = styled.div`
     margin: 3%;
 `;
 
-const styles = {
-    tabContainer: {
-        flexDirection: 'row', alignItems: 'center',
-        justifyContent: 'flex-end',
-        display: 'flex',
-        width: '80%'
+
+const drawerStyle = {
+    content: {
+        top: '50%',
+        left: '70%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#232539',
+        padding: '-120px',
+        borderRadius: '16px',
+        width: '80%',
+        height: '100%',
+
     },
 };
-
 export default ForumList;

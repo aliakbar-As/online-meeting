@@ -32,9 +32,12 @@ const OngoingEvents = (props) => {
 
                 return (
                     <Table key={item.id}>
-                        <Wrap>
+                        <LogoView>
                             <Logo src={item.companyImageUrl} alt={item.id} />
                             <span style={{ color: '#EBEEFF', fontSize: 14 }}>{item.title}</span>
+                        </LogoView>
+
+                        <Wrap>
                             <span style={{ color: '#DDE0F3', fontSize: 14 }}>{item.holderCompanyTitle}</span>
                             <span style={{ color: '#A7AAC6', fontSize: 13 }}>{item.tickerSymbol} : کد</span>
                             <span style={{ color: '#E7E9FF', fontSize: 14 }}>{date}</span>
@@ -45,18 +48,32 @@ const OngoingEvents = (props) => {
                 )
             })}
 
+            {loading ? <Loading /> : null}
         </Main>
     );
 };
 
+const LogoView = styled.div`
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    width: 40%;
+    direction: rtl;
+    justify-content: space-around;
+
+    
+    @media(max-width: 768px) {
+            width: 100%;
+        }
+`;
 
 const Wrap = styled.div`
     flex-direction: row-reverse;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
     align-items: center;
-
+    
     @media(min-width: 768px) {
         padding-left: 20px;
     }
@@ -84,8 +101,9 @@ const Logo = styled.img`
     border-radius: 100%;
 
     @media(max-width: 768px) {
-        width: 30px;
-        height: 30px;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 16px;
     }
 `;
 

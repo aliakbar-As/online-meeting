@@ -13,6 +13,7 @@ import menu from '../../../../assets/mainScreens/menu.svg';
 import StoreContext from '../../../../Stores';
 import { Loading } from '../../../Commons';
 import { Notify } from '../../../../Utils/Notify';
+import Modal from 'react-modal';
 
 let tabs = [
     {
@@ -70,9 +71,15 @@ const Form = (props) => {
     const handleTabSelected = (id) => {
         setTabSelectedId(id);
         requestMeetingData(id);
+        setModalVisible(false);
+    };
+
+    const drawerOpen = () => {
+        setModalVisible(true);
     };
 
     return (
+
         <Notify>
             <TopView>
                 <IconsDiv onClick={removeUser}>
@@ -80,6 +87,7 @@ const Form = (props) => {
 
                     <ArrowIcon src={downArrow} alt="downArrow" />
                 </IconsDiv>
+                
 
                 <TabContainer>
                     {tabs.map((item, index) => {
@@ -95,7 +103,7 @@ const Form = (props) => {
                         )
                     })}
 
-                    <img src={menu} alt='' />
+                    <img src={menu} alt='' onClick={drawerOpen} />
                 </TabContainer>
 
             </TopView>
@@ -109,9 +117,73 @@ const Form = (props) => {
             }
 
             {loading ? <Loading /> : null}
+
+            <Modal
+                isOpen={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+                style={drawerStyle}
+                ariaHideApp={false}
+            >
+                <Content>
+                    {tabs.map((item, index) => (
+                        <Tabs onClick={() => handleTabSelected(item.id)}>
+                            <p style={{ color: item.id === tabSelectedId ? '#97A1FF' : 'white', }}>
+                                {index + 1}) {item.title}
+                            </p>
+                        </Tabs>
+                    ))}
+
+                    <Confirm onClick={() => setModalVisible(false)}>
+                        بستن
+                    </Confirm>
+                </Content>
+            </Modal>
         </Notify>
     );
 };
+
+
+const Confirm = styled.a`
+    width: 100%;
+    background: linear-gradient(266.53deg, #7B88FF 1%, #A17BF1 97.53%);
+    /* border-radius: 8px; */
+    border: 1px solid #7B88FF;
+    text-align: center;
+    height: 45px;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+`;
+
+const Tabs = styled.div`
+    color: #fff;
+    /* justify-content: flex-end; */
+    /* align-items: flex-end; */
+    /* display: flex; */
+    margin: 16px;
+    direction: rtl;
+    
+`;
+
+const Content = styled.div`
+    background-color: #232539;
+    height: 100%;
+    width: 100%;
+    /* position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0; */
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+`;
 
 const NullData = styled.div`
     font-size: 23px;
@@ -177,7 +249,7 @@ const IconsDiv = styled.div`
     align-items: center;
     justify-content: flex-start;
     cursor: pointer;
-
+    display: flex;
 `;
 
 
@@ -192,13 +264,20 @@ const TopView = styled.div`
     }
 `;
 
-const styles = {
-    tabContainer: {
-        flexDirection: 'row', alignItems: 'center',
-        justifyContent: 'flex-end',
-        display: 'flex',
-        width: '80%'
+const drawerStyle = {
+    content: {
+        top: '50%',
+        left: '70%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#232539',
+        padding: '-120px',
+        borderRadius: '16px',
+        width: '80%',
+        height: '100%',
+
     },
 };
-
 export default Form;

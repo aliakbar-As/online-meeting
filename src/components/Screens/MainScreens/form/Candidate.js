@@ -70,7 +70,7 @@ const Candidate = (props) => {
 
 
                 <CardSection>
-                    <span>تاریخ و ساعت فروش</span>
+                    <span>تاریخ و ساعت شروع</span>
 
                     <div>
                         <img src={calender} alt="calender" />
@@ -91,12 +91,13 @@ const Candidate = (props) => {
 
             <ShortDescription style={{ color: '#B592FE' }}>
                 {props.data.surveyStatus === 1 ?
-                    'در حال حاظر انتخابات ایجاد شده است'
+                    'در حال حاضر انتخابات ایجاد شده است'
                     :
                     props.data.surveyStatus === 2 ?
                         'انتخابات در حال برگزاری می‌باشد'
                         :
-                        'در حال حاظر انتخابات به پایان رسید'}
+                        'در حال حاضر انتخابات به پایان رسید'
+                }
 
 
             </ShortDescription>
@@ -107,9 +108,8 @@ const Candidate = (props) => {
             </Describtion>
 
             <Footer>
-                <Online>مشاهده آنلاین</Online>
 
-                <SurveyOnclick onClick={onTakeSurvey}>شرکت در انتخابات</SurveyOnclick>
+                {props.data.surveyStatus === 2 ? <SurveyOnclick onClick={onTakeSurvey}>شرکت در انتخابات</SurveyOnclick> : null}
 
             </Footer>
 

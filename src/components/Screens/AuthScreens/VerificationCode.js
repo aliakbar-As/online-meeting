@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './Login.css';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { Button } from '../../Commons/Button';
 import StoreContext from '../../../Stores';
 
 import spinner from '../../../assets/auth/spinner.svg';
+import clock from '../../../assets/auth/clock.png';
 
 function VerificationCode() {
     const { AuthStore } = useContext(StoreContext);
@@ -18,6 +19,27 @@ function VerificationCode() {
 
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState(60);
+
+
+
+    useEffect(() => {
+
+        let myInterval = setInterval(() => {
+            if (count > 0) {
+                setCount(count - 1);
+            }
+            if (count === 0) {
+                clearInterval(myInterval);
+            }
+
+        }, 1000);
+
+        return () => {
+            clearInterval(myInterval);
+        };
+
+    }, []);
 
 
     const onLogin = () => {
@@ -44,16 +66,37 @@ function VerificationCode() {
         };
     };
 
+    const sendCodeAgain = () => {
+        if (count === 0) {
+            setLoading(true);
+            AuthStore.loginUser(AuthStore.phoneNumber).then(res => {
+                if (res) {
+                    setCount(60);
+                    setLoading(false);
+
+                } else {
+                    alert(AuthStore.errMessage);
+                    setLoading(false);
+                };
+            });
+        } else {
+            alert('لطفا منتظر بمانید تا تایمر به صفر برسد');
+        };
+
+    };
+
+
     return (
 
         <>
             <Icon src={lock} alt="" />
 
             <Content>
-                <p>ورود | ثبت نام</p>
+                <div style={{ width: '50%' }}>
+                    <p>ورود | ثبت نام</p>
 
-                <span>.لطفا کد ارسال شده به شماره {AuthStore.phoneNumber} را وارد کنید</span>
-
+                    <span>.لطفا کد ارسال شده به شماره {AuthStore.phoneNumber} را وارد کنید</span>
+                </div>
 
                 <Input
                     value={code}
@@ -62,22 +105,53 @@ function VerificationCode() {
                     type={'text'}
                 />
 
-                <SignIn disabled={loading} onClick={onLogin}>
-                    {loading ? <img src={spinner} alt='' /> : 'دریافت کد تایید'}
-                </SignIn>
+                <Count>
+                    <p onClick={() => sendCodeAgain()} style={{ fontSize: 16 }}>ارسال مجدد</p>
+
+                    <div>
+                        <span>00:{count}</span>
+                        <img src={clock} alt='' />
+                    </div>
+                </Count>
+
+                <div style={{ width: '50%' }}>
+                    <SignIn disabled={loading} onClick={onLogin}>
+                        {loading ? <img src={spinner} alt='' /> : 'ورود'}
+                    </SignIn>
+                </div>
+
             </Content>
         </>
     );
 };
 
+const Count = styled.div`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    width: 50%;
+
+    p {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    div {
+        flex-direction: row;
+        align-items: center;
+        display: flex;
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+    }
+`;
 
 const SignIn = styled.button`
-    position: absolute;
-    right: 34.51%;
-    top: 50%;
-    bottom: 41.5%;
-
-    width: 215px;
+    width: 50%;
     height: 48px;
     
     border: 1px solid transparent;
@@ -97,6 +171,8 @@ const SignIn = styled.button`
 
     color: #fff;
     font-size: 20px;
+    margin-top: 16px;
+    margin-bottom: 16px;
     &:hover {
         transition: opacity 0.2s ease 0s;
     }
@@ -138,14 +214,9 @@ const Input = styled.input`
     border-radius: 8px;
     text-align: right;
 
-    width: 450px;
+    width: 50%;
     height: 48px;
 
-    
-    position: absolute;
-    right: 34.51%;
-    top: 35%;
-    bottom: 41.5%;
 
     @media(max-width: 768px) {
         right: 10px;
@@ -156,17 +227,14 @@ const Input = styled.input`
 
 const Content = styled.main`
     align-self: center;
-    position: relative;
-    min-height: calc(100vh - 250px);
     overflow-x: hidden;
-    display: block;
-    top: 10px;
-    padding: 0 calc(3.5vw + 5px);
-
+    flex-direction: column;
+    display: flex;
     text-align: right;
     align-items: center;
     justify-content: center;
-    
+
+
     p {
         text-align: right;
         color: #fff;
@@ -177,10 +245,6 @@ const Content = styled.main`
         font-style: normal;
         font-weight: normal;
 
-        position: absolute;
-        right: 34.51%;
-        top: 0px;
-        bottom: 41.5%;
     }
 
     span {
@@ -193,17 +257,9 @@ const Content = styled.main`
         font-style: normal;
         font-weight: 100;
 
-        position: absolute;
-        right: 34.51%;
-        top: 20%;
-        bottom: 41.5%;
     }
 
-
     @media (max-width: 768px) {
-       position: absolute;
-       right: 0;
-       top: 40%;
         width: 100%;
 
         p {

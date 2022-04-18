@@ -3,6 +3,11 @@ import Axios from 'axios';
 import { Logger, request } from '../Utils';
 import { UserModel } from './models';
 
+
+// const serverUrl = 'http://46.224.6.83:6222/api';
+const serverUrl = 'http://om-api-test.hiweb.ir/api';
+
+
 const authStore = types.model('authStore', {
     loading: types.optional(types.boolean, false),
     phoneNumber: types.maybeNull(types.string),
@@ -16,7 +21,7 @@ const authStore = types.model('authStore', {
             this.changeLoading(true);
 
             return new Promise(async (resolve, reject) => {
-                Axios.post('http://om-api-test.hiweb.ir/api/User/Login', {
+                Axios.post(`${serverUrl}/User/Login`, {
                     mobileNo: phoneNumber
                 }).then(({ data }) => {
 
@@ -35,7 +40,7 @@ const authStore = types.model('authStore', {
 
         async onLoginRole(code) {
             return new Promise(async (resolve, reject) => {
-                Axios.post('http://om-api-test.hiweb.ir/api/User/Login/Verification', {
+                Axios.post(`${serverUrl}/User/Login/Verification`, {
                     mobileNo: self.phoneNumber,
                     verificationCode: code,
                 }).then(res => {
@@ -58,14 +63,6 @@ const authStore = types.model('authStore', {
 
 
         async registerUser(name, nCode, bCode) {
-            // this.fillUserModel({
-            //     ...self.userModel,
-            //     fullName: name,
-            //     stockholderType: 1,
-            //     exchangeCode: bCode,
-            //     nationalCode: nCode,
-            //     registrationNo: ""
-            // });
             return new Promise(async (resolve, reject) => {
 
                 request.post('/User/User/Register', {

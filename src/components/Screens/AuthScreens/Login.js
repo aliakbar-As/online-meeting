@@ -27,7 +27,7 @@ function Login() {
     useEffect(() => {
 
         let token = localStorage.getItem('@token');
-        
+
         if (token !== null) {
             Logger(token, 'token');
             navigate('/admin');
@@ -37,10 +37,11 @@ function Login() {
 
 
     const loginUser = () => {
-        setLoading(true);
 
         if (phoneNumber.length !== 0) {
+            setLoading(true);
             AuthStore.loginUser(phoneNumber).then(res => {
+
                 if (res) {
                     navigate('/code');
                     setLoading(false);
@@ -76,7 +77,7 @@ function Login() {
                 />
 
                 <SignIn disabled={loading} onClick={loginUser}>
-                    {loading ? <img src={spinner} alt='' /> : 'ورود'}
+                    {loading ? <img src={spinner} alt='' /> : 'دریافت کد تایید'}
                 </SignIn>
 
 
@@ -89,7 +90,7 @@ function Login() {
 const SignIn = styled.button`
     position: absolute;
     right: 34.51%;
-    top: 65%;
+    top: 55%;
     bottom: 41.5%;
 
     width: 215px;

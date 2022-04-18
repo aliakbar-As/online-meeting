@@ -126,7 +126,7 @@ const Form = (props) => {
             >
                 <Content>
                     {tabs.map((item, index) => (
-                        <Tabs onClick={() => handleTabSelected(item.id)}>
+                        <Tabs key={index} onClick={() => handleTabSelected(item.id)}>
                             <p style={{ color: item.id === tabSelectedId ? '#97A1FF' : 'white', }}>
                                 {index + 1}) {item.title}
                             </p>

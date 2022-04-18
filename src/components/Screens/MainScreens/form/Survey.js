@@ -77,7 +77,7 @@ const Survey = (props) => {
 
 
                 <CardSection>
-                    <span>تاریخ و ساعت فروش</span>
+                    <span>تاریخ و ساعت شروع</span>
 
                     <div>
                         <img src={calender} alt="calender" />
@@ -96,13 +96,13 @@ const Survey = (props) => {
 
 
             <ShortDescription style={{ color: '#B592FE' }}>
-                {props.data.surveyStatus === 0 ?
-                    'در حال حاظر نظرسنجی ایجاد شده است'
+                {props.data.surveyStatus === 1 ?
+                    'در حال حاضر نظرسنجی ایجاد شده است'
                     :
-                    props.data.surveyStatus === 1 ?
+                    props.data.surveyStatus === 2 ?
                         'نظرسنجی در حال برگزاری می‌باشد'
                         :
-                        'در حال حاظر نظرسنجی به پایان رسید'}
+                        'در حال حاضر نظرسنجی به پایان رسید'}
 
 
             </ShortDescription>
@@ -113,9 +113,8 @@ const Survey = (props) => {
             </Describtion>
 
             <Footer>
-                <Online>مشاهده آنلاین</Online>
+                {props.data.surveyStatus === 2 ? <SurveyOnclick onClick={onTakeSurvey}>شرکت در نظرسنجی</SurveyOnclick> : null}
 
-                <SurveyOnclick onClick={onTakeSurvey}>شرکت در نظرسنجی</SurveyOnclick>
             </Footer>
 
             <ModalComponent

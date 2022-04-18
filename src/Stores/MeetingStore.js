@@ -299,12 +299,11 @@ const meetingProfileStore = types.model('meetingProfileStore', {
                 request.get(`/Meeting/${self.meetingId}/LeaveMeeting`)
                     .then(({ data }) => {
                         Logger(data, 'LeaveMeeting');
-                        if (!data.hasError) {
-                            resolve(data.data);
-                        };
-
-                    }).catch(err => {
-                        console.log('LeaveMeeting err', err);
+                        resolve(true);
+                    }).catch(error => {
+                        console.log('LeaveMeeting err', error);
+                        this.setErrorMessage(error.response.data.error);
+                        this.changeLoading(false);
                         resolve(false);
                     });
             });

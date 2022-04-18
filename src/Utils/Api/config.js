@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 
-// const serverUrl = 'http://46.224.6.83:6222/api';
-
+// const serverUrl = 'http://46.224.6.83:8026/api';
 const serverUrl = 'http://om-api-test.hiweb.ir/api';
 
 

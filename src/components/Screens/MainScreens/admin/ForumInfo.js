@@ -143,7 +143,7 @@ const ForumInfo = (props) => {
 
 
                         <CardSection>
-                            <span>تاریخ و ساعت فروش</span>
+                            <span>تاریخ و ساعت شروع</span>
 
                             <div>
                                 <img src={calender} alt="calender" />
@@ -199,7 +199,7 @@ const ForumInfo = (props) => {
 
 
                 <Count>
-                    <span>تعداد نفرات حاظر</span>
+                    <span>تعداد نفرات حاضر</span>
 
                     <div>
                         <p>نفر {count} </p>

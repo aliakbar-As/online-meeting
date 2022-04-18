@@ -21,17 +21,16 @@ function Register() {
     const [loading, setLoading] = useState(false);
 
 
-
     const registerUser = () => {
         setLoading(true);
         AuthStore.registerUser(fullName, nationalCode, exchangeCode).then(res => {
 
-        if(res) {
-            navigate('/form');
-            return;
-        };
-            
-        alert(AuthStore.errMessage);
+            if (res) {
+                navigate('/form');
+                return;
+            };
+
+            alert(AuthStore.errMessage);
         });
     };
 

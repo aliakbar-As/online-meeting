@@ -10,34 +10,40 @@ import { useNavigate } from 'react-router-dom';
 import Candidate from './Candidate';
 import Survey from './Survey';
 
-import backArrow from '../../../../assets/mainScreens/backArrow.png';
-import survey from '../../../../assets/mainScreens/survey.png';
-import clock from '../../../../assets/mainScreens/clock.png';
-import calender from '../../../../assets/mainScreens/calender.png';
 import empty from '../../../../assets/mainScreens/Exclude.png';
-import user from '../../../../assets/mainScreens/user.png';
-import downArrow from '../../../../assets/mainScreens/downArrow.png';
-import { Header } from '../../../Commons';
+import { Header, Loading } from '../../../Commons';
 
 const SurveyTypes = (props) => {
     const navigate = useNavigate();
     const { MeetingProfileStore } = useContext(StoreContext);
 
     const [surveyData, setSurveyData] = useState([]);
-    const [condidateData, setCondidateData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         MeetingProfileStore.getSurvey(false, undefined).then(res => {
             setSurveyData(res);
+            setLoading(false);
         });
     }, []);
 
 
 
     const leaveMeeting = () => {
-        MeetingProfileStore.leaveMeeting().then(() => {
+        if (MeetingProfileStore.meetingDetails.meetingStatus === 2) {
+            MeetingProfileStore.leaveMeeting().then(res => {
+                if(res) {
+                    navigate(-2);
+
+                } else {
+                    alert(MeetingProfileStore.errMessage)
+                }
+            });
+        } else {
             navigate(-2);
-        });
+        };
+
     };
 
     return (
@@ -61,7 +67,7 @@ const SurveyTypes = (props) => {
 
 
 
-            {MeetingProfileStore.surveyList.length === 0 && surveyData.length === 0 ?
+            {MeetingProfileStore.surveyList.length === 0 && surveyData.length === 0 && !loading ?
                 <Empty>
                     <p>در حال حاضر برای این مجمع نظرسنجی یا انتخاباتی ثبت نشده است</p>
                     <img src={empty} alt="empty" />
@@ -70,6 +76,7 @@ const SurveyTypes = (props) => {
                 <Exit onClick={leaveMeeting}>خروج</Exit>
             }
 
+            {loading ? <Loading /> : null}
         </div>
     );
 };

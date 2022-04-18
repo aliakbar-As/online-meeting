@@ -92,7 +92,7 @@ const ElectionDetails = (props) => {
                         )
                     })}
                 </ChartView> :
-                <Empty>در حال حاظر نظرسنجی موجود نمیباشد</Empty>
+                <Empty>در حال حاضر نظرسنجی موجود نمیباشد</Empty>
             }
 
 

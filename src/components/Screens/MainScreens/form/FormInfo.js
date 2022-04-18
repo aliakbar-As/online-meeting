@@ -38,6 +38,21 @@ const FormInfo = (props) => {
             setCount(res.countOfPresent);
         });
 
+        return (() => {
+            if (MeetingProfileStore.meetingDetails.meetingStatus === 2) {
+                MeetingProfileStore.leaveMeeting().then((res) => {
+                    if (res) {
+                        navigate(-1);
+
+                    } else {
+                        alert(MeetingProfileStore.errMessage)
+                    }
+                });
+            } else {
+                navigate(-1)
+            }
+        })
+
     }, []);
 
 
@@ -47,9 +62,19 @@ const FormInfo = (props) => {
 
 
     const leaveMeeting = () => {
-        MeetingProfileStore.leaveMeeting().then(() => {
-            navigate(-1);
-        });
+        if (MeetingProfileStore.meetingDetails.meetingStatus === 2) {
+            MeetingProfileStore.leaveMeeting().then((res) => {
+                if (res) {
+                    navigate(-1);
+
+                } else {
+                    alert(MeetingProfileStore.errMessage)
+                }
+            });
+        } else {
+            navigate(-1)
+        }
+
     };
 
 
@@ -145,7 +170,7 @@ const FormInfo = (props) => {
 
 
                             <CardSection>
-                                <span>تاریخ و ساعت فروش</span>
+                                <span>تاریخ و ساعت شروع</span>
 
                                 <div>
                                     <img src={calender} alt="calender" />
@@ -195,7 +220,7 @@ const FormInfo = (props) => {
 
 
                     <Count>
-                        <span>تعداد نفرات حاظر</span>
+                        <span>تعداد نفرات حاضر</span>
 
                         <div>
                             <p>نفر {count} </p>
@@ -206,7 +231,7 @@ const FormInfo = (props) => {
 
 
                 <Footer>
-                    <Online>مشاهده آنلاین</Online>
+                    {MeetingProfileStore.meetingDetails.meetingStatus === 2 ? <Online>مشاهده آنلاین</Online> : null}
 
                     <SurveyOnclick onClick={serveyOnclick}>انتخابات و نظرسنجی                </SurveyOnclick>
 

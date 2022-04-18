@@ -12,7 +12,6 @@ import Survey from './Survey/Survey';
 import empty from '../../../../assets/mainScreens/Exclude.png';
 import { Header, Loading } from '../../../Commons';
 import useWindowDimensions from '../../../../Utils/Dimension';
-import { Notify } from '../../../../Utils/Notify';
 
 const AdminSurveyTypes = (props) => {
     const navigate = useNavigate();
@@ -55,7 +54,7 @@ const AdminSurveyTypes = (props) => {
 
 
 
-            {MeetingProfileStore.surveyList.length === 0 && surveyData.length === 0 ?
+            {MeetingProfileStore.surveyList.length === 0 && surveyData.length === 0 && !loading?
                 <Empty>
                     <p>در حال حاضر برای این مجمع نظرسنجی یا انتخاباتی ثبت نشده است</p>
                     <img src={empty} alt="empty" />

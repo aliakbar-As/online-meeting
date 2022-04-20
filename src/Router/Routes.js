@@ -39,6 +39,7 @@ import SurveyMobile from '../components/Screens/MainScreens/admin/Survey/SurveyM
 import ElectionMobile from '../components/Screens/MainScreens/admin/election/ElectionMobile';
 import SurveyQuestion from '../components/Screens/MainScreens/form/SurveyQuestion';
 import CondidateQuestion from '../components/Screens/MainScreens/form/CondidateQuestion';
+import LoginType from '../components/Screens/AuthScreens/LoginType';
 
 function RouterComponent() {
     return (
@@ -54,6 +55,10 @@ function RouterComponent() {
 
             <Route path="/code/register"
                 element={<Register />}
+            />
+
+            <Route path="/code/login"
+                element={<LoginType />}
             />
 
 

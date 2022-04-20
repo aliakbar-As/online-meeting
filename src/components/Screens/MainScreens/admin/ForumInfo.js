@@ -166,25 +166,26 @@ const ForumInfo = (props) => {
                 </Date>
 
 
-                <Links>
+                    <Links>
 
-                    <div>
-                        <p>لینک های مستندات مرتبط با مجمع</p>
-                        <img src={pin} alt="users" />
-                    </div>
+                        <div>
+                            <p>لینک های مستندات مرتبط با مجمع</p>
+                            <img src={pin} alt="users" />
+                        </div>
 
 
-                    {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
-                        <InnerView key={i} href={item.fileUri} download>
-                            <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
-                            <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
-                        </InnerView>
-                    ))}
+                        {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
+                            <InnerView key={i} href={item.fileUri} download>
+                                <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
+                                <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
+                            </InnerView>
+                        ))}
 
-                    <Edit onClick={() => navigate('/admin/info/editFiles')}>
-                        ویرایش
-                    </Edit>
-                </Links>
+                        <Edit onClick={() => navigate('/admin/info/editFiles')}>
+                            ویرایش
+                        </Edit>
+                    </Links>
+
 
             </CardTwo>
 
@@ -382,7 +383,7 @@ const Date = styled.div`
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
-    margin-right: 16px;
+    margin-right: ${props => props.noFiles ? 0 : '16px'};
 
     @media(max-width: 768px) {
         width: 100%;

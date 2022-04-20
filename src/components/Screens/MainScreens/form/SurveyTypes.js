@@ -20,6 +20,7 @@ const SurveyTypes = (props) => {
     const [surveyData, setSurveyData] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    
     useEffect(() => {
         setLoading(true);
         MeetingProfileStore.getSurvey(false, undefined).then(res => {
@@ -37,8 +38,8 @@ const SurveyTypes = (props) => {
                     navigate(-2);
 
                 } else {
-                    alert(MeetingProfileStore.errMessage)
-                }
+                    alert(MeetingProfileStore.errMessage);
+                };
             });
         } else {
             navigate(-2);

@@ -19,27 +19,31 @@ function VerificationCode() {
 
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
-    const [count, setCount] = useState(60);
-
+    const [counter, setCounter] = useState(180);
+    const [minutes, setMinutes] = useState(2);
+    const [seconds, setSeconds] = useState(60);
 
 
     useEffect(() => {
 
         let myInterval = setInterval(() => {
-            if (count > 0) {
-                setCount(count - 1);
+            if (seconds > 0) {
+                setSeconds((seconds) => seconds - 1);
             }
-            if (count === 0) {
-                clearInterval(myInterval);
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    clearInterval(myInterval)
+                } else {
+                    setMinutes((minutes) => minutes - 1);
+                    setSeconds(59);
+                }
             }
-
-        }, 1000);
-
+        }, 1000)
         return () => {
             clearInterval(myInterval);
         };
 
-    }, []);
+    }, [seconds, minutes]);
 
 
     const onLogin = () => {
@@ -53,10 +57,13 @@ function VerificationCode() {
                     } else if (AuthStore.roleId === 2) {
                         navigate('/form');
                         setLoading(false);
+                    } else {
+                        navigate('/code/login');
+                        setLoading(false);
                     };
 
                 } else {
-                    navigate('register');
+                    navigate('/code/register');
                     setLoading(false);
                 };
             });
@@ -67,11 +74,11 @@ function VerificationCode() {
     };
 
     const sendCodeAgain = () => {
-        if (count === 0) {
+        if (minutes === 0) {
             setLoading(true);
             AuthStore.loginUser(AuthStore.phoneNumber).then(res => {
                 if (res) {
-                    setCount(60);
+                    setCounter(180);
                     setLoading(false);
 
                 } else {
@@ -109,7 +116,7 @@ function VerificationCode() {
                     <p onClick={() => sendCodeAgain()} style={{ fontSize: 16 }}>ارسال مجدد</p>
 
                     <div>
-                        <span>00:{count}</span>
+                        <span>0{minutes} : {seconds}</span>
                         <img src={clock} alt='' />
                     </div>
                 </Count>

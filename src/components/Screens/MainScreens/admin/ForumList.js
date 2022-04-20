@@ -119,9 +119,7 @@ const ForumList = (props) => {
 
             {MeetingStore.data.length !== 0 ?
                 <>
-                    <OngoingEvents
-                        id={tabSelectedId}
-                    />
+                    <OngoingEvents id={tabSelectedId}/>
 
                     <Footer>
                         {width > 768 ?
@@ -175,16 +173,14 @@ const ForumList = (props) => {
             >
                 <Content>
                     {tabs.map((item, index) => (
-                        <Tabs onClick={() => setTabSelectedOnclick(item.id)}>
+                        <Tabs key={index} onClick={() => setTabSelectedOnclick(item.id)}>
                             <p style={{ color: item.id === tabSelectedId ? '#97A1FF' : 'white', }}>
                                 {index + 1}) {item.title}
                             </p>
                         </Tabs>
                     ))}
 
-                    <Confirm onClick={() => setModalVisible(false)}>
-                        بستن
-                    </Confirm>
+                    <Confirm onClick={() => setModalVisible(false)}>بستن</Confirm>
                 </Content>
             </Modal>
         </>

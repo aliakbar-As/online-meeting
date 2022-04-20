@@ -71,7 +71,7 @@ function Register() {
 
 
                 <LoginText>
-                    قبلا ثبت نام کرده‌ام <span onClick={() => navigate('/login')}>ورود</span>
+                    قبلا ثبت نام کرده‌ام <span onClick={() => navigate('/')}>ورود</span>
                 </LoginText>
 
             </Content>

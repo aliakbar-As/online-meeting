@@ -172,7 +172,7 @@ const Chart = styled.div`
 
 const Empty = styled.div`
     width: 100%;
-    margin-top: 50%;
+    margin-top: 25%;
     font-size: 18px;
     text-align: center;
     font-weight: bold;

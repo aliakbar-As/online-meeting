@@ -8,11 +8,12 @@ import '../election/election.css';
 
 import StoreContext from '../../../../../Stores';
 import moment from 'moment-jalaali';
-import useWindowDimensions from '../../../../../Utils/Dimension';
+// import useWindowDimensions from '../../../../../Utils/Dimension';
+
+
 const SurveyDetails = (props) => {
 
     const navigate = useNavigate();
-    const { width } = useWindowDimensions();
     const { MeetingProfileStore } = useContext(StoreContext);
 
     const [list, setList] = useState([]);
@@ -53,9 +54,7 @@ const SurveyDetails = (props) => {
     return (
         <div>
             <div style={{ padding: '10px' }}>
-                <Header
-                    backOnclick={() => navigate(-1)}
-                />
+                <Header backOnclick={() => navigate(-1)}/>
             </div>
 
             <Info>
@@ -88,23 +87,28 @@ const SurveyDetails = (props) => {
 
                                     <InnderChart>
                                         {item.showSrvResults.map((data, i) => (
-                                            <Item >
-                                                <span>{toggle ? data.percentageSharesAnswer.toFixed(2) : data.percentageNumberAnswer}%</span>
+                                            <Item>
+                                                <span style={{
+                                                    position: 'absolute',
+                                                    top: (toggle ? data.percentageSharesAnswer.toFixed(2): data.percentageNumberAnswer) * 2,
+                                                    zIndex: 1
+                                                }}>{toggle ? data.percentageSharesAnswer.toFixed(2) : data.percentageNumberAnswer}%</span>
 
-                                                <View key={i}>
+                                                <View key={i} percent={toggle ? data.percentageSharesAnswer: data.percentageNumberAnswer}>
 
                                                     <ChartTheme
                                                         percent={data.percentageNumberAnswer}
                                                         onClick={() => getSurveyDetails(data.questionOptionId, item.questionRank)}
-                                                        style={{ cursor: 'pointer', marginLeft: 10, width: '100px', height: `${toggle ? data.percentageSharesAnswer : data.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${toggle ? data.percentageSharesAnswer : data.percentageNumberAnswer / 100})` }}
+                                                        style={{ cursor: 'pointer', marginLeft: 10, width: '50px', height: `${toggle ? data.percentageSharesAnswer : data.percentageNumberAnswer}%`, background: `rgb(255, 0, 0,${toggle ? data.percentageSharesAnswer : data.percentageNumberAnswer / 100})` }}
                                                     />
                                                 </View>
-                                                <span>{data.answerTitle}</span>
+                                                <span style={{marginTop: '10px', marginRight: '16px'}}>جواب {data.optionRank}</span>
                                             </Item>
 
                                         ))}
                                     </InnderChart>
                                 </Chart>
+                                
                                 {selectedId === item.questionRank ?
                                     <Content>
                                         <Table>
@@ -157,11 +161,17 @@ const Item = styled.div`
     flex-direction: column;
     display: flex;
     align-items: center;
-    padding-top: 5px;
     height: inherit;
+    position: relative;
+    text-align: center;
+    justify-content: center;
+    padding-top: 5px;
+
 
     span {
-        margin-top: 16px;
+        width: 50px;
+        font-size: 13px;
+        
     }
 `;
 
@@ -212,7 +222,7 @@ const Chart = styled.div`
 
 const Empty = styled.div`
     width: 100%;
-    margin-top: 50%;
+    margin-top: 25%;
     font-size: 18px;
     text-align: center;
     font-weight: bold;
@@ -221,7 +231,6 @@ const Empty = styled.div`
 const ChartTheme = styled.div`
     cursor: pointer;
     margin-left: 10px;
-    width: 100px;
     height: ${props => props.percent * 100};
     /* background: rgb(255, 0, 0,${props => props.percent}); */
     background: red;
@@ -264,7 +273,7 @@ border-radius: 8px;
 const View = styled.div`
     margin-right: 5px;
     height: 400px;
-    margin-top: 40px;
+    /* margin-top: 40px; */
     transform: rotate(180deg);
 
 

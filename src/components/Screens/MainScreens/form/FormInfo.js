@@ -85,7 +85,7 @@ const FormInfo = (props) => {
                 <Header backOnclick={() => navigate(-1)} />
 
                 <Info>
-                    <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.holderCompanyTitle}</span>
+                    <span>مجمع ها / مجمع {MeetingProfileStore.meetingDetails.title}</span>
                 </Info>
 
                 <ShortDescription>
@@ -149,7 +149,7 @@ const FormInfo = (props) => {
 
 
                 <Card>
-                    <Date>
+                    <Date noFiles={MeetingProfileStore.meetingDetails.meetingDocuments === 0}>
 
                         <DateView>
                             <CardSection>
@@ -189,22 +189,23 @@ const FormInfo = (props) => {
                     </Date>
 
 
-                    <Links>
+                    {MeetingProfileStore.meetingDetails.meetingDocuments === 0 ? null :
+                        <Links>
 
-                        <div>
-                            <p>لینک های مستندات مرتبط با مجمع</p>
-                            <img src={pin} alt="users" />
-                        </div>
+                            <div>
+                                <p>لینک های مستندات مرتبط با مجمع</p>
+                                <img src={pin} alt="users" />
+                            </div>
 
 
-                        {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
-                            <InnerView key={i} href={item.fileUri} download>
-                                <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
-                                <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
-                            </InnerView>
-                        ))}
+                            {MeetingProfileStore.meetingDetails.meetingDocuments.map((item, i) => (
+                                <InnerView key={i} href={item.fileUri} download>
+                                    <span style={{ color: '#B4BBFF' }}> دریافت فایل {item.documentType === 2 ? 'پی دی اف' : item.documentType === 3 ? 'اکسل' : 'اطلاعیه'} </span>
+                                    <img src={item.documentType === 2 ? pdf : item.documentType === 3 ? excel : info} alt="alt" />
+                                </InnerView>
+                            ))}
 
-                    </Links>
+                        </Links>}
 
                 </Card>
 
@@ -233,7 +234,7 @@ const FormInfo = (props) => {
                 <Footer>
                     {MeetingProfileStore.meetingDetails.meetingStatus === 2 ? <Online>مشاهده آنلاین</Online> : null}
 
-                    <SurveyOnclick onClick={serveyOnclick}>انتخابات و نظرسنجی                </SurveyOnclick>
+                    <SurveyOnclick onClick={() => navigate('/form/info/survey')}>انتخابات و نظرسنجی                </SurveyOnclick>
 
                 </Footer>
 
@@ -300,7 +301,7 @@ const Date = styled.div`
     background: #2F3247;
     box-shadow: 0px 0px 15px rgba(35, 36, 45, 0.8);
     border-radius: 8px;
-    margin-right: 16px;
+    margin-right: ${props => props.noFiles ? 0 : '16px'};
 
     @media(max-width: 768px) {
         width: 100%;
@@ -704,7 +705,7 @@ const Info = styled.div`
     text-align: right;
     margin-top: 16px;
     padding: 10px;
-    
+    direction: rtl;
     span {
         color: #545772;
         font-size: 14px;
